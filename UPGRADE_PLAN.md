@@ -150,19 +150,19 @@ ncats-adme/
 
 ### Current vs Target Versions
 
-| Package      | Current Version  | Target Version | Breaking Changes         | Action Required          |
-| ------------ | ---------------- | -------------- | ------------------------ | ------------------------ |
-| Python       | ≥3.7             | 3.11           | Minor                    | Update environment       |
-| PyTorch      | 1.6.0            | 2.2.x          | Model loading changes    | Test model compatibility |
-| Chemprop     | 0.0.4 (vendored) | 2.2.1          | **Complete API rewrite** | Major code refactor      |
-| scikit-learn | 0.22             | 1.4.x          | Pickle incompatible      | Retrain models           |
-| XGBoost      | 2.0.3            | 2.0.3          | None                     | ✅ Already current       |
-| RDKit        | 2020.03          | 2024.03        | Some API changes         | Test descriptors         |
-| NumPy        | 1.18             | 1.26.x         | Deprecations             | Update code              |
-| Pandas       | 1.1.3            | 2.2.x          | `append()` removed       | **Fix immediately**      |
-| Flask        | 2.2.2            | 3.x            | Minor                    | Update                   |
-| TensorFlow   | 2.2.0            | Remove?        | N/A                      | Investigate if used      |
-| FPSim2       | 0.2.6            | 0.4.x          | API changes              | Test similarity calc     |
+| Package      | Current Version  | Target Version | Breaking Changes         | Action Required                     |
+| ------------ | ---------------- | -------------- | ------------------------ | ----------------------------------- |
+| Python       | ≥3.7             | 3.11           | Minor                    | Update environment                  |
+| PyTorch      | 1.6.0            | 2.2.x          | Model loading changes    | Test model compatibility            |
+| Chemprop     | 0.0.4 (vendored) | 2.2.1          | **Complete API rewrite** | Major code refactor                 |
+| scikit-learn | 0.22             | 1.4.x          | Pickle incompatible      | Retrain models                      |
+| XGBoost      | 2.0.3            | 2.0.3          | None                     | ✅ Already current                  |
+| RDKit        | 2020.03          | 2024.03        | Some API changes         | Test descriptors                    |
+| NumPy        | 1.18             | 1.26.x         | Deprecations             | Update code                         |
+| Pandas       | 1.1.3            | 2.2.x          | `append()` removed       | **Fix immediately**                 |
+| Flask        | 2.2.2            | 3.x            | Minor                    | Update                              |
+| TensorFlow   | 2.2.0            | 2.16.x         | API changes              | **Keep - needed for new DNN model** |
+| FPSim2       | 0.2.6            | 0.4.x          | API changes              | Test similarity calc                |
 
 ### Docker Image
 
