@@ -1,0 +1,14 @@
+FROM continuumio/miniconda:4.7.12
+
+WORKDIR /opt/adme
+
+COPY server ./
+
+RUN conda env create -f environment.yml
+
+ENV PATH=/opt/conda/envs/ncats-adme/bin:$PATH
+
+EXPOSE 5000
+
+CMD ["python", "app.py"]
+
