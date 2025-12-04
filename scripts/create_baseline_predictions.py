@@ -80,25 +80,20 @@ INVALID_MOLECULES = [
 ]
 
 
-def make_prediction(base_url: str, smiles_list: list, model: str, timeout: int = 300) -> dict:
+def make_single_prediction(base_url: str, smiles: str, model: str, timeout: int = 300) -> dict:
     """
-    Make a prediction API call for a single model.
+    Make a prediction API call for a single molecule and model.
     
     Args:
         base_url: Base URL of the API
-        smiles_list: List of SMILES strings
+        smiles: Single SMILES string
         model: Model name
         timeout: Request timeout in seconds (default 5 min for CYP450)
     
     Returns:
         Dictionary with status_code and response
     """
-    params = []
-    for smiles in smiles_list:
-        if smiles:  # Skip empty strings for the main request
-            params.append(("smiles", smiles))
-    params.append(("model", model))
-    
+    params = [("smiles", smiles), ("model", model)]
     url = f"{base_url}{API_ENDPOINT}"
     
     try:
@@ -132,6 +127,7 @@ def make_prediction(base_url: str, smiles_list: list, model: str, timeout: int =
 def capture_baseline(base_url: str) -> dict:
     """
     Capture predictions from all models for all test molecules.
+    Sends one molecule at a time to work with the current API.
     
     Args:
         base_url: Base URL of the API
@@ -147,7 +143,7 @@ def capture_baseline(base_url: str) -> dict:
             "models_tested": MODELS,
             "num_valid_molecules": len(TEST_MOLECULES),
             "num_invalid_molecules": len(INVALID_MOLECULES),
-            "script_version": "1.0.0",
+            "script_version": "1.1.0",
         },
         "test_molecules": {name: smiles for name, smiles in TEST_MOLECULES},
         "invalid_molecules": {name: smiles for name, smiles in INVALID_MOLECULES},
@@ -159,67 +155,91 @@ def capture_baseline(base_url: str) -> dict:
         }
     }
     
-    # Extract just the SMILES strings for valid molecules
-    valid_smiles = [smiles for _, smiles in TEST_MOLECULES]
-    
     # Test each model with valid molecules
     print("=" * 70)
     print("CAPTURING BASELINE PREDICTIONS")
     print("=" * 70)
     print(f"Base URL: {base_url}")
-    print(f"Test molecules: {len(valid_smiles)}")
+    print(f"Test molecules: {len(TEST_MOLECULES)}")
     print(f"Models to test: {len(MODELS)}")
     print("=" * 70)
     
     for i, model in enumerate(MODELS, 1):
         print(f"\n[{i}/{len(MODELS)}] {model.upper()}")
-        print(f"    Testing with {len(valid_smiles)} molecules...")
+        print(f"    Testing {len(TEST_MOLECULES)} molecules (one at a time)...")
         
-        result = make_prediction(base_url, valid_smiles, model)
-        results["predictions"][model] = result
+        model_results = {
+            "molecules": {},
+            "successful_count": 0,
+            "failed_count": 0,
+            "columns": None,
+        }
         
-        if result["success"] and result["status_code"] == 200:
-            response_data = result["response"]
-            if model in response_data:
-                model_response = response_data[model]
-                data = model_response.get("data", [])
-                has_errors = model_response.get("hasErrors", False)
-                
-                print(f"    ✓ Success: {len(data)} predictions returned")
-                
-                if has_errors:
-                    error_msgs = model_response.get("errorMessages", [])
-                    print(f"    ⚠ Model reported errors: {error_msgs}")
-                
-                # Log column information
-                columns = model_response.get("columns", [])
-                print(f"    Columns: {columns}")
-                
+        for mol_name, smiles in TEST_MOLECULES:
+            result = make_single_prediction(base_url, smiles, model)
+            
+            if result["success"] and result["status_code"] == 200:
+                response_data = result["response"]
+                if model in response_data:
+                    model_response = response_data[model]
+                    data = model_response.get("data", [])
+                    
+                    if model_results["columns"] is None:
+                        model_results["columns"] = model_response.get("columns", [])
+                    
+                    model_results["molecules"][mol_name] = {
+                        "smiles": smiles,
+                        "status_code": result["status_code"],
+                        "data": data[0] if data else None,
+                        "hasErrors": model_response.get("hasErrors", False),
+                        "errorMessages": model_response.get("errorMessages", []),
+                    }
+                    model_results["successful_count"] += 1
+                else:
+                    model_results["molecules"][mol_name] = {
+                        "smiles": smiles,
+                        "status_code": result["status_code"],
+                        "error": f"Model key '{model}' not in response",
+                    }
+                    model_results["failed_count"] += 1
+            else:
+                model_results["molecules"][mol_name] = {
+                    "smiles": smiles,
+                    "status_code": result["status_code"],
+                    "error": result["response"][:200] if isinstance(result["response"], str) else str(result["response"]),
+                }
+                model_results["failed_count"] += 1
+        
+        results["predictions"][model] = model_results
+        
+        if model_results["failed_count"] == 0:
+            print(f"    ✓ Success: {model_results['successful_count']}/{len(TEST_MOLECULES)} predictions")
+            print(f"    Columns: {model_results['columns']}")
+            results["summary"]["models_successful"].append(model)
+        else:
+            print(f"    ⚠ Partial: {model_results['successful_count']}/{len(TEST_MOLECULES)} succeeded, {model_results['failed_count']} failed")
+            if model_results["successful_count"] > 0:
                 results["summary"]["models_successful"].append(model)
             else:
-                print(f"    ✗ Model key '{model}' not in response")
                 results["summary"]["models_failed"].append(model)
-        else:
-            print(f"    ✗ Failed: status={result['status_code']}")
-            if not result["success"]:
-                print(f"    Error: {result['response'][:200]}")
-            results["summary"]["models_failed"].append(model)
     
     # Test error handling with invalid molecules
     print("\n" + "=" * 70)
     print("TESTING ERROR HANDLING")
     print("=" * 70)
     
-    # Test with invalid SMILES
-    invalid_smiles = [smiles for _, smiles in INVALID_MOLECULES if smiles]
-    
-    for model in ["rlm", "hlm"]:  # Test error handling on just a couple models
+    for model in ["rlm", "hlm"]:
         print(f"\n[{model.upper()}] Testing with invalid SMILES...")
         
-        if invalid_smiles:
-            result = make_prediction(base_url, invalid_smiles, model, timeout=60)
-            results["error_handling_tests"][f"{model}_invalid_smiles"] = result
-            print(f"    Status: {result['status_code']}")
+        for mol_name, smiles in INVALID_MOLECULES:
+            if smiles:
+                result = make_single_prediction(base_url, smiles, model, timeout=60)
+                results["error_handling_tests"][f"{model}_{mol_name}"] = {
+                    "smiles": smiles,
+                    "status_code": result["status_code"],
+                    "response": result["response"],
+                }
+                print(f"    {mol_name}: status={result['status_code']}")
     
     # Test with no model specified
     print(f"\nTesting API error handling (no model)...")

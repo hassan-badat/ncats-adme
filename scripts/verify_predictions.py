@@ -58,43 +58,67 @@ def compare_predictions(
         baseline_pred = baseline["predictions"].get(model, {})
         updated_pred = updated["predictions"].get(model, {})
         
-        # Check status codes
-        baseline_status = baseline_pred.get("status_code")
-        updated_status = updated_pred.get("status_code")
+        # Get molecules dict for each
+        baseline_molecules = baseline_pred.get("molecules", {})
+        updated_molecules = updated_pred.get("molecules", {})
         
-        if baseline_status != updated_status:
-            differences.append(
-                f"[{model}] Status code changed: {baseline_status} -> {updated_status}"
-            )
-            continue
+        # Check if molecules match
+        baseline_mol_names = set(baseline_molecules.keys())
+        updated_mol_names = set(updated_molecules.keys())
         
-        # If both failed, skip detailed comparison
-        if baseline_status != 200:
-            continue
+        if baseline_mol_names != updated_mol_names:
+            missing = baseline_mol_names - updated_mol_names
+            extra = updated_mol_names - baseline_mol_names
+            if missing:
+                differences.append(f"[{model}] Missing molecules in updated: {missing}")
+            if extra:
+                differences.append(f"[{model}] Extra molecules in updated: {extra}")
         
-        # Compare response data
-        baseline_response = baseline_pred.get("response", {})
-        updated_response = updated_pred.get("response", {})
-        
-        if model not in baseline_response or model not in updated_response:
-            if model in baseline_response and model not in updated_response:
-                differences.append(f"[{model}] Model key missing in updated response")
-            continue
-        
-        baseline_data = baseline_response[model].get("data", [])
-        updated_data = updated_response[model].get("data", [])
-        
-        if len(baseline_data) != len(updated_data):
-            differences.append(
-                f"[{model}] Different number of results: {len(baseline_data)} -> {len(updated_data)}"
-            )
-            continue
-        
-        # Compare each prediction row
-        for i, (b_row, u_row) in enumerate(zip(baseline_data, updated_data)):
-            row_diffs = compare_rows(b_row, u_row, tolerance)
+        # Compare each molecule's predictions
+        for mol_name in baseline_mol_names & updated_mol_names:
+            b_mol = baseline_molecules[mol_name]
+            u_mol = updated_molecules[mol_name]
+            
+            # Check status codes
+            b_status = b_mol.get("status_code")
+            u_status = u_mol.get("status_code")
+            
+            if b_status != u_status:
+                differences.append(
+                    f"[{model}][{mol_name}] Status code changed: {b_status} -> {u_status}"
+                )
+                continue
+            
+            # If both failed, skip detailed comparison
+            if b_status != 200:
+                continue
+            
+            # Check for errors
+            b_error = b_mol.get("error")
+            u_error = u_mol.get("error")
+            
+            if b_error and not u_error:
+                differences.append(f"[{model}][{mol_name}] Error resolved: was '{b_error}'")
+                continue
+            if not b_error and u_error:
+                differences.append(f"[{model}][{mol_name}] New error: '{u_error}'")
+                continue
+            if b_error and u_error:
+                continue
+            
+            # Compare prediction data
+            b_data = b_mol.get("data", {})
+            u_data = u_mol.get("data", {})
+            
+            if b_data is None and u_data is None:
+                continue
+            if b_data is None or u_data is None:
+                differences.append(f"[{model}][{mol_name}] Data presence changed")
+                continue
+            
+            row_diffs = compare_rows(b_data, u_data, tolerance)
             for diff in row_diffs:
-                differences.append(f"[{model}] Row {i}: {diff}")
+                differences.append(f"[{model}][{mol_name}] {diff}")
     
     return len(differences) == 0, differences
 
