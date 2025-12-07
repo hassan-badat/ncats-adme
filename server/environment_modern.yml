@@ -1,0 +1,30 @@
+name: ncats-adme
+channels:
+  - conda-forge
+  - pytorch
+  - defaults
+dependencies:
+  - python=3.11
+  - pytorch=2.2
+  - cpuonly
+  - flask=3.0
+  - flask-cors=4.0
+  - werkzeug>=3.0
+  - numpy=1.26
+  - pandas=2.2
+  - scikit-learn=1.4
+  - rdkit=2024.03
+  - fpsim2=0.4
+  - matplotlib=3.8
+  - networkx=3.2
+  - tqdm=4.66
+  - pip
+  - pip:
+      - chemprop>=2.0
+      - lightning>=2.0
+      - xgboost==2.0.3
+      - gunicorn==21.2.0
+      - flask-swagger-ui==4.11.1
+      - py-healthcheck==1.10.1
+      - requests>=2.31
+

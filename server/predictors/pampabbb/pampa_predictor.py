@@ -1,34 +1,20 @@
 import numpy as np
 import pandas as pd
 from pandas import DataFrame
-import numpy as np
-import pandas as pd
-import pickle
-# from keras.preprocessing.text import Tokenizer
-# from keras.preprocessing.sequence import pad_sequences
 from rdkit import Chem
 import warnings
 warnings.filterwarnings('ignore')
-import sys
-sys.path.insert(0, '../chemprop')
-from chemprop.data.utils import get_data, get_data_from_smiles
-from chemprop.data import MoleculeDataLoader, MoleculeDataset
-from chemprop.train import predict
-from rdkit.Chem import PandasTools
-import random
-import string
-from rdkit.Chem.rdchem import Mol
 from numpy import array
 from typing import Tuple
-from ..features.morgan_fp import MorganFPGenerator
 from ..utilities.utilities import get_processed_smi, calc_rdkit_desc_req
 from . import pampa_gcnn_scaler, pampa_gcnn_model, pampa_rdkit_desc, pampa_rdkit_desc_scaler
 from ..base.gcnn import GcnnBase
 import time
 
+
 class PAMPABBBPredictior(GcnnBase):
     """
-    Makes RLM stability preditions
+    Makes PAMPA BBB permeability predictions
 
     Attributes:
         df (DataFrame): DataFrame containing column with smiles
@@ -48,7 +34,7 @@ class PAMPABBBPredictior(GcnnBase):
 
         df_desc = calc_rdkit_desc_req(kekule_smiles, pampa_rdkit_desc)
 
-        df_feat = df_desc.iloc[:,1:]
+        df_feat = df_desc.iloc[:, 1:]
         df_feat = df_feat[pampa_rdkit_desc]
 
         df_feat_scaled = pd.DataFrame(pampa_rdkit_desc_scaler.transform(df_feat))
@@ -82,11 +68,7 @@ class PAMPABBBPredictior(GcnnBase):
             print(f'PAMPA BBB: {end - start} seconds to predict {len(self.predictions_df.index)} molecules')
 
             self.predictions_df['Prediction'] = pd.Series(
-                pd.Series(np.where(gcnn_predictions>=0.5, 'low permeability', 'moderate or high permeability'))
+                pd.Series(np.where(gcnn_predictions >= 0.5, 'low permeability', 'moderate or high permeability'))
             )
-
-            # if not intrprt_df.empty:
-            #     intrprt_df['final_smiles'] = np.where(intrprt_df['rationale_score']>0, intrprt_df['smiles'].astype(str)+'_'+intrprt_df['rationale_smiles'].astype(str), intrprt_df['smiles'].astype(str))
-            #     self.predictions_df['mol'] = pd.Series(intrprt_df['final_smiles'].tolist())
 
         return self.predictions_df

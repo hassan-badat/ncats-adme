@@ -215,9 +215,9 @@ df = pd.concat([df, new_df], ignore_index=True)
 
 #### 1.2 Create Test Infrastructure
 
-- [ ] Create `scripts/` directory for testing tools
-- [ ] Create baseline prediction capture script
-- [ ] Create prediction comparison script
+- [x] Create `scripts/` directory for testing tools
+- [x] Create baseline prediction capture script
+- [x] Create prediction comparison script
 - [ ] Create individual predictor test script
 
 #### 1.3 Create Modern Dockerfile (Proof of Concept)
@@ -396,12 +396,12 @@ All items below can be completed independently without waiting for Claire's team
 
 #### Baseline Capture (Before Any Code Changes)
 
-- [ ] Set up local development environment (`conda env create -f environment.yml`)
-- [ ] Run server locally (models auto-download from NCATS servers)
-- [ ] Create `scripts/` directory with test infrastructure
-- [ ] Create baseline prediction capture script
-- [ ] Create prediction comparison/verification script
-- [ ] **Capture baseline predictions from all 8 models** → `baseline_predictions.json`
+- [x] Set up local development environment (`conda env create -f environment.yml`)
+- [x] Run server locally (models auto-download from NCATS servers)
+- [x] Create `scripts/` directory with test infrastructure
+- [x] Create baseline prediction capture script
+- [x] Create prediction comparison/verification script
+- [x] **Capture baseline predictions from all 8 models** → `baseline_predictions.json`
 
 #### Code Fixes
 

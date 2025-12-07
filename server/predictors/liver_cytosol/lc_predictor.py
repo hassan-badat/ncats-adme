@@ -1,30 +1,20 @@
 import os
-import random
-import string
-import sys
 import pandas as pd
 from pandas import DataFrame
 import numpy as np
-from rdkit.Chem import PandasTools
 from numpy import array
-from typing import Tuple
-from rdkit.Chem.rdchem import Mol
-from ..utilities.utilities import get_processed_smi
 from rdkit import Chem
 from ..features.descriptor_gen import DescriptorGen
 from ..liver_cytosol import lc_models_dict
 import time
-from tqdm import tqdm
-from copy import deepcopy
-import multiprocessing as mp
-import platform
 import csv
 from datetime import timezone
 import datetime
 
+
 class LCPredictor:
     """
-    Makes Livr Cytosol Stability preditions
+    Makes Liver Cytosol Stability predictions
 
     Attributes:
         df (DataFrame): DataFrame containing column with smiles
@@ -47,7 +37,7 @@ class LCPredictor:
 
     def __init__(self, kekule_smiles: array = None, morgan_fp: array = None, smiles: array = None):
         """
-        Constructor for RLMPredictior class
+        Constructor for LCPredictor class
 
         Parameters:
             kekule_mols (array): n x 1 array of RDKit molecule objects kekulized
@@ -81,15 +71,20 @@ class LCPredictor:
         for model_name in lc_models_dict.keys():
             model = lc_models_dict[model_name]
             pred_probs = model.predict_proba(features).T[1]
-            self.raw_predictions_df[model_name] =  pred_probs
+            self.raw_predictions_df[model_name] = pred_probs
 
         self.raw_predictions_df['average'] = self.raw_predictions_df.mean(axis=1)
         avg_pred_probs = self.raw_predictions_df['average'].tolist()
-        #self.predictions_df['Predicted Class (Probability)'] = pd.Series(pd.Series(avg_pred_probs).round().astype(int).astype(str) + ' (' + pd.Series(avg_pred_probs).round(2).astype(str) + ')')
-        self.predictions_df['Predicted Class (Probability)'] = pd.Series(pd.Series(avg_pred_probs).round().astype(int).astype(str) + ' (' + pd.Series(np.where(np.asarray(avg_pred_probs)>=0.5, np.asarray(avg_pred_probs), (1-np.asarray(avg_pred_probs)))).round(2).astype(str) + ')')
-        self.predictions_df['Prediction'] = pd.Series(pd.Series(np.where(np.asarray(avg_pred_probs)>=0.5, 'unstable', 'stable')))
 
-        # empyting the raw df
+        self.predictions_df['Predicted Class (Probability)'] = pd.Series(
+            pd.Series(avg_pred_probs).round().astype(int).astype(str) + ' (' +
+            pd.Series(np.where(np.asarray(avg_pred_probs) >= 0.5, np.asarray(avg_pred_probs), (1-np.asarray(avg_pred_probs)))).round(2).astype(str) + ')'
+        )
+        self.predictions_df['Prediction'] = pd.Series(
+            pd.Series(np.where(np.asarray(avg_pred_probs) >= 0.5, 'unstable', 'stable'))
+        )
+
+        # emptying the raw df
         self.raw_predictions_df = pd.DataFrame(None)
 
         # populate raw df for recording preds
@@ -100,7 +95,7 @@ class LCPredictor:
             self.raw_predictions_df = pd.concat([
                 self.raw_predictions_df,
                 pd.DataFrame(
-                    { 'SMILES': self.smiles, 'model': 'hlc', 'prediction': avg_pred_probs, 'timestamp': utc_timestamp }
+                    {'SMILES': self.smiles, 'model': 'hlc', 'prediction': avg_pred_probs, 'timestamp': utc_timestamp}
                 )
             ], ignore_index=True)
 
