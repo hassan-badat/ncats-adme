@@ -5,11 +5,6 @@ import pickle
 from rdkit import Chem
 import warnings
 warnings.filterwarnings('ignore')
-import sys
-sys.path.insert(0, '../chemprop')
-import random
-import string
-from rdkit.Chem.rdchem import Mol
 from numpy import array
 from typing import Tuple
 from ..utilities.utilities import calc_rdkit_desc_req
@@ -21,9 +16,10 @@ from datetime import timezone
 import datetime
 import csv
 
+
 class HLMPredictior(GcnnBase):
     """
-    Makes HLM stability preditions
+    Makes HLM stability predictions
 
     Attributes:
         df (DataFrame): DataFrame containing column with smiles
@@ -51,7 +47,7 @@ class HLMPredictior(GcnnBase):
         Parameters:
             kekule_smiles (Array): numpy array of RDkit molecules
         """
-        GcnnBase.__init__(self, kekule_smiles, column_dict_key='Predicted Class (Probability)', columns_dict_order = 1, smiles=smiles)
+        GcnnBase.__init__(self, kekule_smiles, column_dict_key='Predicted Class (Probability)', columns_dict_order=1, smiles=smiles)
 
         # get RLM predictions
         rlm_predictions, rlm_labels = self.gcnn_predict(rlm_gcnn_model, rlm_gcnn_scaler)
@@ -67,7 +63,7 @@ class HLMPredictior(GcnnBase):
             # restore original feature column order
             hlm_rdkit_desc_ordered = ['RDKit_' + str(desc) for desc in hlm_rdkit_desc]
             hlm_rdkit_desc_ordered.insert(0, 'RLM_Pred')
-            df_desc = df_desc[hlm_rdkit_desc_ordered] # order restored here
+            df_desc = df_desc[hlm_rdkit_desc_ordered]
             self.features = df_desc.to_numpy()
         else:
             self.model_errors = 'Error calculating descriptors for HLM predictions'
@@ -94,26 +90,31 @@ class HLMPredictior(GcnnBase):
             model = hlm_model_dict['hlm_model']
             pred_probs = model.predict_proba(features).T[1]
 
-            self.predictions_df['Predicted Class (Probability)'] = pd.Series(pd.Series(pred_probs).round().astype(int).astype(str) + ' (' + pd.Series(np.where(np.asarray(pred_probs)>=0.5, np.asarray(pred_probs), (1-np.asarray(pred_probs)))).round(2).astype(str) + ')')
-            self.predictions_df['Prediction'] = pd.Series(pd.Series(np.where(np.asarray(pred_probs)>=0.5, 'unstable', 'stable')))
+            self.predictions_df['Predicted Class (Probability)'] = pd.Series(
+                pd.Series(pred_probs).round().astype(int).astype(str) + ' (' +
+                pd.Series(np.where(np.asarray(pred_probs) >= 0.5, np.asarray(pred_probs), (1-np.asarray(pred_probs)))).round(2).astype(str) + ')'
+            )
+            self.predictions_df['Prediction'] = pd.Series(
+                pd.Series(np.where(np.asarray(pred_probs) >= 0.5, 'unstable', 'stable'))
+            )
 
             # populate raw df for recording preds
             if self.smiles is not None:
                 dt = datetime.datetime.now(timezone.utc)
                 utc_time = dt.replace(tzinfo=timezone.utc)
                 utc_timestamp = utc_time.timestamp()
-                self.raw_predictions_df = self.raw_predictions_df.append(
+                self.raw_predictions_df = pd.concat([
+                    self.raw_predictions_df,
                     pd.DataFrame(
-                        { 'SMILES': self.smiles, 'model': 'hlm', 'prediction': pred_probs, 'timestamp': utc_timestamp }
-                    ),
-                    ignore_index = True
-                )
+                        {'SMILES': self.smiles, 'model': 'hlm', 'prediction': pred_probs, 'timestamp': utc_timestamp}
+                    )
+                ], ignore_index=True)
 
             end = time.time()
             print(f'HLM: {end - start} seconds to predict {len(self.predictions_df.index)} molecules')
 
         return self.predictions_df
-    
+
     def _error_callback(self, error):
         print(error)
 

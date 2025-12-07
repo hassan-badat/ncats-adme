@@ -1,31 +1,22 @@
 import os
-import random
-import string
-import sys
 import pandas as pd
 from pandas import DataFrame
 import numpy as np
-from rdkit.Chem import PandasTools
 from numpy import array
-from typing import Tuple
-from rdkit.Chem.rdchem import Mol
-from ..features.morgan_fp import MorganFPGenerator
-from ..utilities.utilities import get_processed_smi
 from rdkit import Chem
+from ..features.morgan_fp import MorganFPGenerator
 from ..features.rdkit_descriptors import RDKitDescriptorsGenerator
 from ..cyp450 import cyp450_models_dict
 import time
-from tqdm import tqdm
-from copy import deepcopy
 import multiprocessing as mp
-import platform
 import csv
 from datetime import timezone
 import datetime
 
+
 class CYP450Predictor:
     """
-    Makes CYP450 preditions
+    Makes CYP450 predictions
 
     Attributes:
         df (DataFrame): DataFrame containing column with smiles
@@ -68,7 +59,7 @@ class CYP450Predictor:
 
     def __init__(self, kekule_mols: array = None, rdkit_descriptors_matrix: array = None, morgan_fp_matrix: array = None, smiles: array = None):
         """
-        Constructor for RLMPredictior class
+        Constructor for CYP450Predictor class
 
         Parameters:
             kekule_mols (array): n x 1 array of RDKit molecule objects kekulized
@@ -87,7 +78,6 @@ class CYP450Predictor:
         if len(self.kekule_mols) == 0:
             raise ValueError('Please provide valid smiles')
 
-
         if morgan_fp_matrix is None:
             # generate morgan fingerprints
             morgan_fp_generator = MorganFPGenerator(self.kekule_mols)
@@ -98,7 +88,9 @@ class CYP450Predictor:
         if rdkit_descriptors_matrix is None:
             # generate rdkit descriptors
             rdkit_descriptors_generator = RDKitDescriptorsGenerator(self.kekule_mols)
-            self.rdkit_desc_matrix = rdkit_descriptors_generator.get_rdkit_descriptors(['MolLogP', 'TPSA', 'ExactMolWt', 'NumHDonors', 'NumHAcceptors'])
+            self.rdkit_desc_matrix = rdkit_descriptors_generator.get_rdkit_descriptors(
+                ['MolLogP', 'TPSA', 'ExactMolWt', 'NumHDonors', 'NumHAcceptors']
+            )
         else:
             self.rdkit_desc_matrix = rdkit_descriptors_matrix
 
@@ -114,8 +106,7 @@ class CYP450Predictor:
         start = time.time()
 
         processes_dict = {}
-        #conns_dict = {}
-        response_queues_dict ={}
+        response_queues_dict = {}
 
         if mp.cpu_count() > 1:
             processes = mp.cpu_count() - 1
@@ -124,9 +115,6 @@ class CYP450Predictor:
         with mp.Pool(processes=processes) as pool:
 
             for model_name in cyp450_models_dict.keys():
-
-                # parent_conn, child_conn = mp.Pipe()
-                # conns_dict[model_name] = parent_conn
 
                 manager = mp.Manager()
                 request_queue = manager.Queue()
@@ -139,17 +127,18 @@ class CYP450Predictor:
                     "error_threshold_length": len(self.predictions_df.index)
                 }
 
-                #parent_conn.send(params_dict)
                 request_queue.put(params_dict)
 
-                #processes_dict[model_name] = pool.apply_async(self._get_model_predictions, args=(child_conn,))
-                processes_dict[model_name] = pool.apply_async(self._get_model_predictions, args=(request_queue, response_queue,), error_callback=self._error_callback)
+                processes_dict[model_name] = pool.apply_async(
+                    self._get_model_predictions,
+                    args=(request_queue, response_queue,),
+                    error_callback=self._error_callback
+                )
 
             for model_name in cyp450_models_dict.keys():
                 processes_dict[model_name].wait()
 
             for model_name in cyp450_models_dict.keys():
-                #response_dict = conns_dict[model_name].recv()
 
                 response_dict = response_queues_dict[model_name].get()
                 model_has_error = response_dict["model_has_error"]
@@ -162,24 +151,22 @@ class CYP450Predictor:
                 model_name_uc = model_name.split('_')[0].upper() + '_' + model_name.split('_')[1]
 
                 self.predictions_df[f'{model_name_uc}'] = pd.Series(
-                    pd.Series(np.where(mean_probs>=0.5, 1, 0)).round(2).astype(str)
-                    +' ('
-                    + pd.Series(np.where(mean_probs>=0.5, mean_probs, (1-mean_probs))).round(2).astype(str)
-                    +')'
+                    pd.Series(np.where(mean_probs >= 0.5, 1, 0)).round(2).astype(str)
+                    + ' ('
+                    + pd.Series(np.where(mean_probs >= 0.5, mean_probs, (1-mean_probs))).round(2).astype(str)
+                    + ')'
                 )
 
                 if self.smiles is not None:
                     dt = datetime.datetime.now(timezone.utc)
                     utc_time = dt.replace(tzinfo=timezone.utc)
                     utc_timestamp = utc_time.timestamp()
-                    self.raw_predictions_df = self.raw_predictions_df.append(
+                    self.raw_predictions_df = pd.concat([
+                        self.raw_predictions_df,
                         pd.DataFrame(
-                            { 'SMILES': self.smiles, 'model': model_name_uc, 'prediction': mean_probs, 'timestamp': utc_timestamp }
-                        ),
-                        ignore_index = True
-                    )
-
-                #conns_dict[model_name].close()
+                            {'SMILES': self.smiles, 'model': model_name_uc, 'prediction': mean_probs, 'timestamp': utc_timestamp}
+                        )
+                    ], ignore_index=True)
 
             pool.close()
             pool.terminate()
@@ -193,9 +180,7 @@ class CYP450Predictor:
     def _error_callback(self, error):
         print(error)
 
-    #def _get_model_predictions(self, con):
     def _get_model_predictions(self, request_queue, response_queue):
-        #params_dict = con.recv()
         params_dict = request_queue.get()
 
         model_name = params_dict['model_name']
@@ -208,7 +193,7 @@ class CYP450Predictor:
         for model_number in range(0, 64):
             probs = models[f'model_{model_number}'].predict_proba(features)
             probs_matrix[model_number, :probs.shape[0]] = probs.T[1]
-            if model_has_error == False and error_threshold_length > len(probs):
+            if model_has_error is False and error_threshold_length > len(probs):
                 model_has_error = True
 
         mean_probs = probs_matrix.mean(axis=0)
@@ -217,8 +202,6 @@ class CYP450Predictor:
             "model_has_error": model_has_error
         }
 
-        #con.send(response_dict)
-        #con.close()
         response_queue.put(response_dict)
         return None
 

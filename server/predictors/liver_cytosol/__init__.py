@@ -1,17 +1,16 @@
 import warnings
 warnings.filterwarnings("ignore")
-import os, sys
-import numpy as np
-import pandas as pd
+import os
+import sys
 import pickle
-import shutil
 from tqdm import tqdm
 import requests
 from io import BytesIO
 from os import path
-import multiprocessing
+
 
 def download_file(base_url, model_number, models_dict):
+    """Download liver cytosol model file from URL."""
     lc_rf_pkl_url = f'{base_url}/model_{model_number}.pkl'
     lc_model_path = f'./models/liver_cytosol/model_{model_number}.pkl'
     lc_rf_pkl_file_request = requests.get(lc_rf_pkl_url)
@@ -30,11 +29,11 @@ def download_file(base_url, model_number, models_dict):
     lc_rf_model = pickle.load(BytesIO(lc_rf_pkl_file_request.content))
     return lc_rf_model
 
+
 def load_models():
-    # processes = []
-    #with ThreadPoolExecutor() as executor:
+    """Load all liver cytosol random forest models."""
     base_url = 'https://opendata.ncats.nih.gov/public/adme/models/current/static/liver_cytosol/'
-    print(f'Loading human liver cytosol stability random forest models', file=sys.stdout)
+    print('Loading human liver cytosol stability random forest models', file=sys.stdout)
 
     lc_models_dict = {}
 
@@ -44,10 +43,10 @@ def load_models():
             with open(lc_model_path, 'rb') as pkl_file:
                 lc_models_dict[f'model_{model_number}'] = pickle.load(pkl_file)
         else:
-            os.makedirs(f'./models/liver_cytosol', exist_ok=True)
+            os.makedirs('./models/liver_cytosol', exist_ok=True)
             lc_models_dict[f'model_{model_number}'] = download_file(base_url, model_number, lc_models_dict)
 
-    print(f'Finished loading human liver cytosol stability models', file=sys.stdout)
+    print('Finished loading human liver cytosol stability models', file=sys.stdout)
     return lc_models_dict
 
 

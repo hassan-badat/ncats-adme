@@ -198,10 +198,10 @@ These can be completed independently, without waiting for Claire's team.
 
 **Files to modify:**
 
-- [ ] `server/predictors/base/gcnn.py` (line 99)
-- [ ] `server/predictors/hlm/hlm_predictor.py` (line 105)
-- [ ] `server/predictors/liver_cytosol/lc_predictor.py` (line 100)
-- [ ] `server/predictors/cyp450/cyp450_predictor.py` (line 175)
+- [x] `server/predictors/base/gcnn.py` (line 99)
+- [x] `server/predictors/hlm/hlm_predictor.py` (line 105)
+- [x] `server/predictors/liver_cytosol/lc_predictor.py` (line 100)
+- [x] `server/predictors/cyp450/cyp450_predictor.py` (line 175)
 
 **Change:**
 
@@ -215,9 +215,9 @@ df = pd.concat([df, new_df], ignore_index=True)
 
 #### 1.2 Create Test Infrastructure
 
-- [ ] Create `scripts/` directory for testing tools
-- [ ] Create baseline prediction capture script
-- [ ] Create prediction comparison script
+- [x] Create `scripts/` directory for testing tools
+- [x] Create baseline prediction capture script
+- [x] Create prediction comparison script
 - [ ] Create individual predictor test script
 
 #### 1.3 Create Modern Dockerfile (Proof of Concept)
@@ -396,20 +396,20 @@ All items below can be completed independently without waiting for Claire's team
 
 #### Baseline Capture (Before Any Code Changes)
 
-- [ ] Set up local development environment (`conda env create -f environment.yml`)
-- [ ] Run server locally (models auto-download from NCATS servers)
-- [ ] Create `scripts/` directory with test infrastructure
-- [ ] Create baseline prediction capture script
-- [ ] Create prediction comparison/verification script
-- [ ] **Capture baseline predictions from all 8 models** → `baseline_predictions.json`
+- [x] Set up local development environment (`conda env create -f environment.yml`)
+- [x] Run server locally (models auto-download from NCATS servers)
+- [x] Create `scripts/` directory with test infrastructure
+- [x] Create baseline prediction capture script
+- [x] Create prediction comparison/verification script
+- [x] **Capture baseline predictions from all 8 models** → `baseline_predictions.json`
 
 #### Code Fixes
 
-- [ ] Fix Pandas deprecations in all 4 files (PR #1)
-  - [ ] `server/predictors/base/gcnn.py`
-  - [ ] `server/predictors/hlm/hlm_predictor.py`
-  - [ ] `server/predictors/liver_cytosol/lc_predictor.py`
-  - [ ] `server/predictors/cyp450/cyp450_predictor.py`
+- [x] Fix Pandas deprecations in all 4 files (PR #1)
+  - [x] `server/predictors/base/gcnn.py`
+  - [x] `server/predictors/hlm/hlm_predictor.py`
+  - [x] `server/predictors/liver_cytosol/lc_predictor.py`
+  - [x] `server/predictors/cyp450/cyp450_predictor.py`
 - [ ] Verify predictions still match baseline after fixes
 - [ ] Document any other deprecation warnings found
 
@@ -452,31 +452,52 @@ These items are **blocked** until Claire's team provides training scripts and/or
 
 ### New Files
 
-| File                                     | Purpose                      |
-| ---------------------------------------- | ---------------------------- |
-| `UPGRADE_PLAN.md`                        | This document                |
-| `scripts/create_baseline_predictions.py` | Capture baseline predictions |
-| `scripts/verify_predictions.py`          | Compare predictions          |
-| `scripts/test_predictors.py`             | Test individual predictors   |
-| `Dockerfile.modern`                      | Updated Docker configuration |
-| `server/environment_modern.yml`          | Updated conda environment    |
+| File                                     | Purpose                         |
+| ---------------------------------------- | ------------------------------- |
+| `UPGRADE_PLAN.md`                        | This document                   |
+| `scripts/create_baseline_predictions.py` | Capture baseline predictions    |
+| `scripts/verify_predictions.py`          | Compare predictions             |
+| `server/environment_modern.yml`          | Updated conda environment       |
+| `Dockerfile-ncats-modern`                | Modern Docker config (ncats)    |
+| `Dockerfile-opendata-modern`             | Modern Docker config (opendata) |
 
 ### Modified Files
 
-| File                                              | Changes           |
-| ------------------------------------------------- | ----------------- |
-| `server/predictors/base/gcnn.py`                  | Pandas concat fix |
-| `server/predictors/hlm/hlm_predictor.py`          | Pandas concat fix |
-| `server/predictors/liver_cytosol/lc_predictor.py` | Pandas concat fix |
-| `server/predictors/cyp450/cyp450_predictor.py`    | Pandas concat fix |
+| File                                                   | Changes                       |
+| ------------------------------------------------------ | ----------------------------- |
+| `server/predictors/base/gcnn.py`                       | Rewritten for Chemprop 2.x    |
+| `server/predictors/utilities/utilities.py`             | Updated model loading for 2.x |
+| `server/predictors/rlm/__init__.py`                    | Updated for Chemprop 2.x      |
+| `server/predictors/rlm/rlm_predictor.py`               | Cleaned up imports            |
+| `server/predictors/pampa/__init__.py`                  | Updated for Chemprop 2.x      |
+| `server/predictors/pampa/pampa_predictor.py`           | Cleaned up imports            |
+| `server/predictors/pampa50/__init__.py`                | Updated for Chemprop 2.x      |
+| `server/predictors/pampa50/pampa_predictor.py`         | Cleaned up imports            |
+| `server/predictors/pampabbb/__init__.py`               | Updated for Chemprop 2.x      |
+| `server/predictors/pampabbb/pampa_predictor.py`        | Cleaned up imports            |
+| `server/predictors/solubility/__init__.py`             | Updated for Chemprop 2.x      |
+| `server/predictors/solubility/solubility_predictor.py` | Cleaned up imports            |
+| `server/predictors/hlm/__init__.py`                    | Cleaned up code               |
+| `server/predictors/hlm/hlm_predictor.py`               | Cleaned up imports            |
+| `server/predictors/liver_cytosol/__init__.py`          | Cleaned up code               |
+| `server/predictors/liver_cytosol/lc_predictor.py`      | Cleaned up imports            |
+| `server/predictors/cyp450/__init__.py`                 | Cleaned up code               |
+| `server/predictors/cyp450/cyp450_predictor.py`         | Cleaned up imports            |
+
+### Deleted Files
+
+| File/Directory                | Reason                                   |
+| ----------------------------- | ---------------------------------------- |
+| `server/predictors/chemprop/` | Vendored library replaced by pip install |
 
 ---
 
 ## Communication Log
 
-| Date        | With         | Topic              | Outcome                                     |
-| ----------- | ------------ | ------------------ | ------------------------------------------- |
-| Dec 2, 2025 | Claire Weber | Initial discussion | Scope defined, training handled by her team |
+| Date        | With         | Topic                    | Outcome                                                                                                          |
+| ----------- | ------------ | ------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| Dec 2, 2025 | Claire Weber | Initial discussion       | Scope defined, training handled by her team                                                                      |
+| Dec 8, 2025 | Claire Weber | Model retraining request | Requested retrained models: GCNN models with Chemprop 2.x (.ckpt), sklearn models with scikit-learn 1.4.x (.pkl) |
 
 ---
 
