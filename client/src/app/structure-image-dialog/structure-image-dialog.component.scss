@@ -1,4 +1,44 @@
+/* ============================================
+   Structure Image Dialog Styles
+   ============================================ */
+
+:host {
+    display: block;
+}
+
+:host ::ng-deep .mat-dialog-container {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow-lg);
+}
+
 img {
-    height: 60vh;
+    max-height: 60vh;
+    max-width: 100%;
     width: auto;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Dialog Actions */
+:host ::ng-deep .mat-dialog-actions {
+    padding: var(--spacing-md) 0 0 0;
+    margin: 0;
+    justify-content: flex-end;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    img {
+        max-height: 50vh;
+    }
+    
+    :host ::ng-deep .mat-dialog-container {
+        padding: var(--spacing-sm);
+        border-radius: var(--radius-md);
+    }
 }
