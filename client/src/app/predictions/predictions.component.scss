@@ -1,58 +1,256 @@
+/* ============================================
+   Predictions Page Styles
+   ============================================ */
+
+:host {
+    display: block;
+    background: linear-gradient(180deg, var(--primary-lightest) 0%, var(--background) 50%);
+}
+
 .content-container {
-    min-height: calc(100vh - 80px);
+    min-height: calc(100vh - 144px);
     display: flex;
     flex-direction: column;
-    padding: 10px 20px;
-    margin: 0px;
+    padding: var(--spacing-lg) var(--spacing-xl);
+    margin: 0;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
-.mat-tab-group {
+/* Model Selection Section */
+.model-input {
     width: 100%;
-}
-
-.tab-body {
-    padding-top: 15px;
-    max-width: 100%;
-    width: 100%;
-    overflow: auto;
-    padding-bottom: 10px;
-}
-
-.molecule-input {
-    display: flex;
-    width: 100%;
-    max-width: 100%;
-    .mat-tab-header {
-        margin-bottom: 10px;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    
+    span {
+        font-weight: var(--font-weight-medium);
+        color: var(--text-primary);
+        margin-right: var(--spacing-md);
+    }
+    
+    form {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--spacing-sm);
     }
 }
 
-.error-message-container {
-    margin: 15px 0;
-    font-weight: 500;
-    color: red;
-    border: solid 1px red;
-    border-radius: 2px;
+:host ::ng-deep .model-input {
+    mat-checkbox {
+        margin: var(--spacing-xs) var(--spacing-md) var(--spacing-xs) var(--spacing-xs);
+        
+        .mat-checkbox-layout {
+            margin-bottom: 0;
+        }
+        
+        .mat-checkbox-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+    }
+    
+    .mat-checkbox-checked .mat-checkbox-label {
+        color: var(--text-primary);
+        font-weight: var(--font-weight-medium);
+    }
+}
+
+/* Tab Groups */
+.molecule-input {
     display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+:host ::ng-deep .mat-tab-group {
+    width: 100%;
+}
+
+:host ::ng-deep .mat-tab-header {
+    background-color: var(--primary-lightest);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 0;
+}
+
+:host ::ng-deep .mat-tab-label {
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    opacity: 1;
+    min-width: 120px;
+    padding: 0 var(--spacing-lg);
+    
+    &.mat-tab-label-active {
+        color: var(--primary);
+    }
+}
+
+:host ::ng-deep .mat-ink-bar {
+    background-color: var(--primary) !important;
+    height: 3px;
+}
+
+:host ::ng-deep .mat-tab-body-wrapper {
+    padding: var(--spacing-lg);
+}
+
+.tab-body {
+    padding-top: var(--spacing-md);
+    max-width: 100%;
+    width: 100%;
+    overflow: auto;
+    padding-bottom: var(--spacing-md);
+}
+
+/* Error Message Styling */
+.error-message-container {
+    margin: var(--spacing-md) 0;
+    background-color: var(--error-light);
+    border: 1px solid var(--error);
+    border-left: 4px solid var(--error);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: flex-start;
+    animation: slideIn var(--transition-normal) ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .error-message {
     flex-grow: 1;
-    padding: 12px 7px;
+    padding: var(--spacing-md);
+    color: var(--error);
+    font-weight: var(--font-weight-medium);
+    font-size: 0.875rem;
+    
+    div {
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    ul {
+        margin: var(--spacing-sm) 0 0 0;
+        padding-left: var(--spacing-lg);
+        
+        li {
+            margin-bottom: var(--spacing-xs);
+            font-weight: var(--font-weight-regular);
+            color: var(--text-primary);
+        }
+    }
 }
 
 .error-message-actions {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: flex-start;
+    padding: var(--spacing-xs);
+    
+    button {
+        color: var(--error) !important;
+        
+        &:hover {
+            background-color: rgba(198, 40, 40, 0.1);
+        }
+    }
 }
 
-.model-input span, mat-checkbox{
-  margin: 0 10px 0 5px;
+/* Results Tab Group */
+:host ::ng-deep .mat-tab-body-content > div > .mat-tab-group {
+    margin-top: var(--spacing-md);
+    
+    .mat-tab-header {
+        background-color: transparent;
+        border-bottom: 2px solid var(--border-color);
+    }
+    
+    .mat-tab-label {
+        min-width: 100px;
+        font-size: 0.875rem;
+    }
 }
 
-.model-input {
-  width: 100%;
-  margin-top: 10px;
-  margin-bottom: 10px;
+/* Responsive Styles */
+@media (max-width: 1024px) {
+    .content-container {
+        padding: var(--spacing-md);
+    }
+}
+
+@media (max-width: 768px) {
+    .content-container {
+        padding: var(--spacing-md) var(--spacing-sm);
+    }
+    
+    .model-input {
+        padding: var(--spacing-md);
+        
+        span {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        form {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+    
+    :host ::ng-deep .model-input mat-checkbox {
+        margin: var(--spacing-xs) 0;
+    }
+    
+    :host ::ng-deep .mat-tab-label {
+        min-width: 80px;
+        padding: 0 var(--spacing-md);
+        font-size: 0.8125rem;
+    }
+    
+    :host ::ng-deep .mat-tab-body-wrapper {
+        padding: var(--spacing-md);
+    }
+}
+
+@media (max-width: 576px) {
+    .molecule-input {
+        border-radius: var(--radius-md);
+    }
+    
+    .model-input {
+        border-radius: var(--radius-md);
+    }
+    
+    :host ::ng-deep .mat-tab-label {
+        min-width: 60px;
+        padding: 0 var(--spacing-sm);
+    }
+    
+    .error-message-container {
+        flex-direction: column;
+    }
+    
+    .error-message-actions {
+        flex-direction: row;
+        width: 100%;
+        justify-content: flex-end;
+        padding: 0 var(--spacing-sm) var(--spacing-sm);
+    }
 }
