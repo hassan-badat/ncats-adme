@@ -97,12 +97,12 @@ class LCPredictor:
             dt = datetime.datetime.now(timezone.utc)
             utc_time = dt.replace(tzinfo=timezone.utc)
             utc_timestamp = utc_time.timestamp()
-            self.raw_predictions_df = self.raw_predictions_df.append(
+            self.raw_predictions_df = pd.concat([
+                self.raw_predictions_df,
                 pd.DataFrame(
                     { 'SMILES': self.smiles, 'model': 'hlc', 'prediction': avg_pred_probs, 'timestamp': utc_timestamp }
-                ),
-                ignore_index = True
-            )
+                )
+            ], ignore_index=True)
 
         end = time.time()
         print(f'HLC: {end - start} seconds to predict {len(self.raw_predictions_df.index)} molecules')

@@ -198,10 +198,10 @@ These can be completed independently, without waiting for Claire's team.
 
 **Files to modify:**
 
-- [ ] `server/predictors/base/gcnn.py` (line 99)
-- [ ] `server/predictors/hlm/hlm_predictor.py` (line 105)
-- [ ] `server/predictors/liver_cytosol/lc_predictor.py` (line 100)
-- [ ] `server/predictors/cyp450/cyp450_predictor.py` (line 175)
+- [x] `server/predictors/base/gcnn.py` (line 99)
+- [x] `server/predictors/hlm/hlm_predictor.py` (line 105)
+- [x] `server/predictors/liver_cytosol/lc_predictor.py` (line 100)
+- [x] `server/predictors/cyp450/cyp450_predictor.py` (line 175)
 
 **Change:**
 
@@ -405,11 +405,11 @@ All items below can be completed independently without waiting for Claire's team
 
 #### Code Fixes
 
-- [ ] Fix Pandas deprecations in all 4 files (PR #1)
-  - [ ] `server/predictors/base/gcnn.py`
-  - [ ] `server/predictors/hlm/hlm_predictor.py`
-  - [ ] `server/predictors/liver_cytosol/lc_predictor.py`
-  - [ ] `server/predictors/cyp450/cyp450_predictor.py`
+- [x] Fix Pandas deprecations in all 4 files (PR #1)
+  - [x] `server/predictors/base/gcnn.py`
+  - [x] `server/predictors/hlm/hlm_predictor.py`
+  - [x] `server/predictors/liver_cytosol/lc_predictor.py`
+  - [x] `server/predictors/cyp450/cyp450_predictor.py`
 - [ ] Verify predictions still match baseline after fixes
 - [ ] Document any other deprecation warnings found
 

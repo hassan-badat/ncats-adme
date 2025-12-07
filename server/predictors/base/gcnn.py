@@ -96,12 +96,12 @@ class GcnnBase(PredictorBase):
             utc_time = dt.replace(tzinfo=timezone.utc)
             utc_timestamp = utc_time.timestamp()
 
-            self.raw_predictions_df = self.raw_predictions_df.append(
+            self.raw_predictions_df = pd.concat([
+                self.raw_predictions_df,
                 pd.DataFrame(
                     { 'SMILES': self.smiles, 'model': self.model_name, 'prediction': predictions, 'timestamp': utc_timestamp }
-                ),
-                ignore_index = True
-            )
+                )
+            ], ignore_index=True)
 
         # if self.interpret == True:
         #     intrprt_df = get_interpretation(self.smiles, self.model_name)
