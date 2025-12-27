@@ -118,7 +118,7 @@
             opacity: 0.85;
             text-decoration: underline;
         }
-        
+
         u {
             text-decoration-thickness: 1px;
             text-underline-offset: 2px;
@@ -220,11 +220,11 @@
             
             &:hover {
                 background-color: rgba(255, 255, 255, 0.15);
-            }
         }
     }
-    
-    .footer {
+}
+
+.footer {
         min-height: auto;
         padding: var(--spacing-md) var(--spacing-sm);
         
@@ -235,8 +235,8 @@
             justify-content: center;
             gap: var(--spacing-xs);
         }
-    }
-    
+}
+
     .v-bar-1,
     .v-bar-2 {
         display: none;

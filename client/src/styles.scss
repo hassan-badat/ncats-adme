@@ -122,9 +122,9 @@ a {
     
     &:hover {
         color: var(--primary-dark);
-        cursor: pointer;
-    }
-    
+    cursor: pointer;
+}
+
     &:focus {
         outline: 2px solid var(--primary-light);
         outline-offset: 2px;
@@ -172,7 +172,7 @@ a {
     
     &:hover {
         box-shadow: var(--shadow-md);
-    }
+}
 }
 
 /* Definition Lists */
@@ -259,7 +259,7 @@ a {
 
 .mat-form-field-appearance-outline .mat-form-field-outline {
     color: var(--border-color);
-}
+    }
 
 /* Tab Enhancements */
 .mat-tab-label {
@@ -304,7 +304,7 @@ a {
 :focus-visible {
     outline: 2px solid var(--primary);
     outline-offset: 2px;
-}
+    }
 
 /* Selection */
 ::selection {
@@ -322,11 +322,11 @@ a {
     h1 { font-size: 1.75rem; }
     h2 { font-size: 1.375rem; }
     h3 { font-size: 1.125rem; }
-    
+
     .container {
         padding: var(--spacing-md);
     }
-    
+
     .inner-container {
         max-width: 100%;
         padding: 0;
