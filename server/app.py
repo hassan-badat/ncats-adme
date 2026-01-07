@@ -313,7 +313,7 @@ def predict_df(df, smi_column_name, models):
         model_errors = errors_dict['model_errors']
 
         if len(model_errors) > 0:
-            error_message = base_models_error_message + model_errors.join(', ')
+            error_message = base_models_error_message + ', '.join(model_errors)
             error_messages.append(error_message)
 
         response[model]['errorMessages'] = error_messages

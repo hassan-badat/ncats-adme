@@ -77,10 +77,31 @@ class GcnnBase(PredictorBase):
         dataset = MoleculeDataset(datapoints)
         dataloader = build_dataloader(dataset, batch_size=64, num_workers=0, shuffle=False)
 
-        # Run prediction
+        # Run prediction using Chemprop 2.x API
+        # In Chemprop 2.x, we iterate through batches and call the model directly
         model.eval()
+        all_preds = []
+        
         with torch.no_grad():
-            model_preds = model.predict(dataloader)
+            for batch in dataloader:
+                # Get model predictions for this batch
+                # The model returns logits, we apply sigmoid to get probabilities for binary classification
+                batch_preds = model(batch)
+                # If output is a tensor, convert to numpy and apply sigmoid if needed
+                if isinstance(batch_preds, torch.Tensor):
+                    # Apply sigmoid for binary classification to get probabilities
+                    batch_preds = torch.sigmoid(batch_preds).cpu().numpy()
+                else:
+                    batch_preds = np.array(batch_preds)
+                
+                # Handle multi-dimensional output (batch_size x num_tasks)
+                if len(batch_preds.shape) > 1:
+                    # For binary classification, take the first (and only) task
+                    batch_preds = batch_preds[:, 0] if batch_preds.shape[1] > 0 else batch_preds.flatten()
+                else:
+                    batch_preds = batch_preds.flatten()
+                
+                all_preds.extend(batch_preds.tolist())
 
         # Map predictions back to original indices
         predictions = np.ma.empty(len(smiles_list))
@@ -90,9 +111,10 @@ class GcnnBase(PredictorBase):
         labels.mask = True
 
         for full_index, valid_idx in full_to_valid_indices.items():
-            pred_value = model_preds[valid_idx][0] if len(model_preds[valid_idx]) > 0 else model_preds[valid_idx]
-            predictions[full_index] = float(pred_value)
-            labels[full_index] = int(np.round(float(pred_value), 0))
+            if valid_idx < len(all_preds):
+                pred_value = float(all_preds[valid_idx])
+                predictions[full_index] = pred_value
+                labels[full_index] = int(np.round(pred_value, 0))
 
         # Record raw predictions if smiles provided
         if self.smiles is not None:

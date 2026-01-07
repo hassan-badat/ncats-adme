@@ -1,0 +1,2148 @@
+{
+  "metadata": {
+    "capture_date": "2026-01-07T11:59:53.815207",
+    "base_url": "http://localhost:5001",
+    "api_endpoint": "/api/v1/predict",
+    "models_tested": [
+      "rlm",
+      "hlm",
+      "pampa",
+      "pampa50",
+      "pampabbb",
+      "solubility",
+      "hlc"
+    ],
+    "num_valid_molecules": 21,
+    "script_version": "1.0.0"
+  },
+  "test_molecules": {
+    "Ethanol": "CCO",
+    "Methanol": "CO",
+    "Acetone": "CC(=O)C",
+    "Benzaldehyde": "C1=CC=C(C=C1)C=O",
+    "Phenol": "C1=CC=C(C=C1)O",
+    "Toluene": "CC1=CC=CC=C1",
+    "Aspirin": "CC(=O)OC1=CC=CC=C1C(=O)O",
+    "Caffeine": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+    "Ibuprofen": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+    "Paracetamol": "CC(=O)NC1=CC=C(C=C1)O",
+    "Metformin": "CN(C)C(=N)NC(=N)N",
+    "Warfarin": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O",
+    "Pyridine": "C1=CC=NC=C1",
+    "Imidazole": "C1=CN=CN1",
+    "Thiophene": "C1=CSC=C1",
+    "Glycine": "NCC(=O)O",
+    "Acetic_acid": "CC(=O)O",
+    "Ethylamine": "CCN",
+    "Diethyl_ether": "CCOCC",
+    "Omeprazole": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC",
+    "Atorvastatin": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4"
+  },
+  "predictions": {
+    "rlm": {
+      "molecules": {
+        "Ethanol": {
+          "smiles": "CCO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.18",
+            "smiles": "CCO"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Methanol": {
+          "smiles": "CO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.09",
+            "smiles": "CO"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Acetone": {
+          "smiles": "CC(=O)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.23",
+            "smiles": "CC(=O)C"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Benzaldehyde": {
+          "smiles": "C1=CC=C(C=C1)C=O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "C1=CC=C(C=C1)C=O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Phenol": {
+          "smiles": "C1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.33",
+            "smiles": "C1=CC=C(C=C1)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Toluene": {
+          "smiles": "CC1=CC=CC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.36",
+            "smiles": "CC1=CC=CC=C1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Aspirin": {
+          "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Caffeine": {
+          "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Ibuprofen": {
+          "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.39",
+            "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Paracetamol": {
+          "smiles": "CC(=O)NC1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.64",
+            "smiles": "CC(=O)NC1=CC=C(C=C1)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Metformin": {
+          "smiles": "CN(C)C(=N)NC(=N)N",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.2",
+            "smiles": "CN(C)C(=N)NC(=N)N"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Warfarin": {
+          "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.35",
+            "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Pyridine": {
+          "smiles": "C1=CC=NC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.35",
+            "smiles": "C1=CC=NC=C1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Imidazole": {
+          "smiles": "C1=CN=CN1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.19",
+            "smiles": "C1=CN=CN1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Thiophene": {
+          "smiles": "C1=CSC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "C1=CSC=C1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Glycine": {
+          "smiles": "NCC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.23",
+            "smiles": "NCC(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Acetic_acid": {
+          "smiles": "CC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.27",
+            "smiles": "CC(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Ethylamine": {
+          "smiles": "CCN",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CCN"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Diethyl_ether": {
+          "smiles": "CCOCC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CCOCC"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Omeprazole": {
+          "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.6",
+            "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Atorvastatin": {
+          "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.31",
+            "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        }
+      },
+      "successful_count": 21,
+      "failed_count": 0,
+      "columns": [
+        "smiles",
+        "Predicted Class (Probability)",
+        "Prediction"
+      ]
+    },
+    "hlm": {
+      "molecules": {
+        "Ethanol": {
+          "smiles": "CCO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.93)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.23",
+            "smiles": "CCO"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Methanol": {
+          "smiles": "CO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.91)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CO"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Acetone": {
+          "smiles": "CC(=O)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.84)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.27",
+            "smiles": "CC(=O)C"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Benzaldehyde": {
+          "smiles": "C1=CC=C(C=C1)C=O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.86)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.33",
+            "smiles": "C1=CC=C(C=C1)C=O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Phenol": {
+          "smiles": "C1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.86)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.35",
+            "smiles": "C1=CC=C(C=C1)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Toluene": {
+          "smiles": "CC1=CC=CC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.81)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.35",
+            "smiles": "CC1=CC=CC=C1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Aspirin": {
+          "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.55)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.39",
+            "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Caffeine": {
+          "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.5)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.6",
+            "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Ibuprofen": {
+          "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.57)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.6",
+            "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Paracetamol": {
+          "smiles": "CC(=O)NC1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.9)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.57",
+            "smiles": "CC(=O)NC1=CC=C(C=C1)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Metformin": {
+          "smiles": "CN(C)C(=N)NC(=N)N",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.96)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.24",
+            "smiles": "CN(C)C(=N)NC(=N)N"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Warfarin": {
+          "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.96)",
+            "Prediction": "unstable",
+            "Tanimoto Similarity": "0.57",
+            "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Pyridine": {
+          "smiles": "C1=CC=NC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.86)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.22",
+            "smiles": "C1=CC=NC=C1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Imidazole": {
+          "smiles": "C1=CN=CN1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.8)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.12",
+            "smiles": "C1=CN=CN1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Thiophene": {
+          "smiles": "C1=CSC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.83)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.15",
+            "smiles": "C1=CSC=C1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Glycine": {
+          "smiles": "NCC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.79)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.25",
+            "smiles": "NCC(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Acetic_acid": {
+          "smiles": "CC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.94)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.25",
+            "smiles": "CC(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Ethylamine": {
+          "smiles": "CCN",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.95)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.17",
+            "smiles": "CCN"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Diethyl_ether": {
+          "smiles": "CCOCC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.87)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.19",
+            "smiles": "CCOCC"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Omeprazole": {
+          "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.56)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.6",
+            "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Atorvastatin": {
+          "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.96)",
+            "Prediction": "unstable",
+            "Tanimoto Similarity": "0.28",
+            "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        }
+      },
+      "successful_count": 21,
+      "failed_count": 0,
+      "columns": [
+        "smiles",
+        "Predicted Class (Probability)",
+        "Prediction"
+      ]
+    },
+    "pampa": {
+      "molecules": {
+        "Ethanol": {
+          "smiles": "CCO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.18",
+            "smiles": "CCO"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Methanol": {
+          "smiles": "CO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.11",
+            "smiles": "CO"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Acetone": {
+          "smiles": "CC(=O)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.23",
+            "smiles": "CC(=O)C"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Benzaldehyde": {
+          "smiles": "C1=CC=C(C=C1)C=O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.27",
+            "smiles": "C1=CC=C(C=C1)C=O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Phenol": {
+          "smiles": "C1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.33",
+            "smiles": "C1=CC=C(C=C1)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Toluene": {
+          "smiles": "CC1=CC=CC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.32",
+            "smiles": "CC1=CC=CC=C1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Aspirin": {
+          "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Caffeine": {
+          "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Ibuprofen": {
+          "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.39",
+            "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Paracetamol": {
+          "smiles": "CC(=O)NC1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.64",
+            "smiles": "CC(=O)NC1=CC=C(C=C1)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Metformin": {
+          "smiles": "CN(C)C(=N)NC(=N)N",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.2",
+            "smiles": "CN(C)C(=N)NC(=N)N"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Warfarin": {
+          "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.35",
+            "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Pyridine": {
+          "smiles": "C1=CC=NC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.35",
+            "smiles": "C1=CC=NC=C1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Imidazole": {
+          "smiles": "C1=CN=CN1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.19",
+            "smiles": "C1=CN=CN1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Thiophene": {
+          "smiles": "C1=CSC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "C1=CSC=C1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Glycine": {
+          "smiles": "NCC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.23",
+            "smiles": "NCC(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Acetic_acid": {
+          "smiles": "CC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.22",
+            "smiles": "CC(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Ethylamine": {
+          "smiles": "CCN",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CCN"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Diethyl_ether": {
+          "smiles": "CCOCC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CCOCC"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Omeprazole": {
+          "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.6",
+            "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Atorvastatin": {
+          "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.28",
+            "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        }
+      },
+      "successful_count": 21,
+      "failed_count": 0,
+      "columns": [
+        "smiles",
+        "Predicted Class (Probability)",
+        "Prediction"
+      ]
+    },
+    "pampa50": {
+      "molecules": {
+        "Ethanol": {
+          "smiles": "CCO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.17",
+            "smiles": "CCO"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Methanol": {
+          "smiles": "CO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.09",
+            "smiles": "CO"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Acetone": {
+          "smiles": "CC(=O)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.23",
+            "smiles": "CC(=O)C"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Benzaldehyde": {
+          "smiles": "C1=CC=C(C=C1)C=O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.27",
+            "smiles": "C1=CC=C(C=C1)C=O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Phenol": {
+          "smiles": "C1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.33",
+            "smiles": "C1=CC=C(C=C1)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Toluene": {
+          "smiles": "CC1=CC=CC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.31",
+            "smiles": "CC1=CC=CC=C1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Aspirin": {
+          "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Caffeine": {
+          "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Ibuprofen": {
+          "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.3",
+            "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Paracetamol": {
+          "smiles": "CC(=O)NC1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.64",
+            "smiles": "CC(=O)NC1=CC=C(C=C1)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Metformin": {
+          "smiles": "CN(C)C(=N)NC(=N)N",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.16",
+            "smiles": "CN(C)C(=N)NC(=N)N"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Warfarin": {
+          "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.26",
+            "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Pyridine": {
+          "smiles": "C1=CC=NC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.21",
+            "smiles": "C1=CC=NC=C1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Imidazole": {
+          "smiles": "C1=CN=CN1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "C1=CN=CN1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Thiophene": {
+          "smiles": "C1=CSC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.11",
+            "smiles": "C1=CSC=C1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Glycine": {
+          "smiles": "NCC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.19",
+            "smiles": "NCC(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Acetic_acid": {
+          "smiles": "CC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.22",
+            "smiles": "CC(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Ethylamine": {
+          "smiles": "CCN",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.11",
+            "smiles": "CCN"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Diethyl_ether": {
+          "smiles": "CCOCC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CCOCC"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Omeprazole": {
+          "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.6",
+            "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Atorvastatin": {
+          "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.31",
+            "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        }
+      },
+      "successful_count": 21,
+      "failed_count": 0,
+      "columns": [
+        "smiles",
+        "Predicted Class (Probability)",
+        "Prediction"
+      ]
+    },
+    "pampabbb": {
+      "molecules": {
+        "Ethanol": {
+          "smiles": "CCO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.17",
+            "smiles": "CCO"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Methanol": {
+          "smiles": "CO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.1",
+            "smiles": "CO"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Acetone": {
+          "smiles": "CC(=O)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.24",
+            "smiles": "CC(=O)C"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Benzaldehyde": {
+          "smiles": "C1=CC=C(C=C1)C=O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.28",
+            "smiles": "C1=CC=C(C=C1)C=O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Phenol": {
+          "smiles": "C1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.3",
+            "smiles": "C1=CC=C(C=C1)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Toluene": {
+          "smiles": "CC1=CC=CC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.35",
+            "smiles": "CC1=CC=CC=C1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Aspirin": {
+          "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.51",
+            "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Caffeine": {
+          "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "1.0",
+            "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Ibuprofen": {
+          "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.33",
+            "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Paracetamol": {
+          "smiles": "CC(=O)NC1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "1.0",
+            "smiles": "CC(=O)NC1=CC=C(C=C1)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Metformin": {
+          "smiles": "CN(C)C(=N)NC(=N)N",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CN(C)C(=N)NC(=N)N"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Warfarin": {
+          "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.29",
+            "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Pyridine": {
+          "smiles": "C1=CC=NC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.21",
+            "smiles": "C1=CC=NC=C1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Imidazole": {
+          "smiles": "C1=CN=CN1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.13",
+            "smiles": "C1=CN=CN1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Thiophene": {
+          "smiles": "C1=CSC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.11",
+            "smiles": "C1=CSC=C1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Glycine": {
+          "smiles": "NCC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.33",
+            "smiles": "NCC(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Acetic_acid": {
+          "smiles": "CC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.27",
+            "smiles": "CC(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Ethylamine": {
+          "smiles": "CCN",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CCN"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Diethyl_ether": {
+          "smiles": "CCOCC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.13",
+            "smiles": "CCOCC"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Omeprazole": {
+          "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.33",
+            "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Atorvastatin": {
+          "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.29",
+            "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        }
+      },
+      "successful_count": 21,
+      "failed_count": 0,
+      "columns": [
+        "smiles",
+        "Predicted Class (Probability)",
+        "Prediction"
+      ]
+    },
+    "solubility": {
+      "molecules": {
+        "Ethanol": {
+          "smiles": "CCO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.18",
+            "smiles": "CCO"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Methanol": {
+          "smiles": "CO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.17",
+            "smiles": "CO"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Acetone": {
+          "smiles": "CC(=O)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.31",
+            "smiles": "CC(=O)C"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Benzaldehyde": {
+          "smiles": "C1=CC=C(C=C1)C=O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "C1=CC=C(C=C1)C=O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Phenol": {
+          "smiles": "C1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.33",
+            "smiles": "C1=CC=C(C=C1)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Toluene": {
+          "smiles": "CC1=CC=CC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.36",
+            "smiles": "CC1=CC=CC=C1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Aspirin": {
+          "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Caffeine": {
+          "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Ibuprofen": {
+          "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.39",
+            "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Paracetamol": {
+          "smiles": "CC(=O)NC1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.64",
+            "smiles": "CC(=O)NC1=CC=C(C=C1)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Metformin": {
+          "smiles": "CN(C)C(=N)NC(=N)N",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.2",
+            "smiles": "CN(C)C(=N)NC(=N)N"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Warfarin": {
+          "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.35",
+            "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Pyridine": {
+          "smiles": "C1=CC=NC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.35",
+            "smiles": "C1=CC=NC=C1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Imidazole": {
+          "smiles": "C1=CN=CN1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.19",
+            "smiles": "C1=CN=CN1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Thiophene": {
+          "smiles": "C1=CSC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "C1=CSC=C1"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Glycine": {
+          "smiles": "NCC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.24",
+            "smiles": "NCC(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Acetic_acid": {
+          "smiles": "CC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.38",
+            "smiles": "CC(=O)O"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Ethylamine": {
+          "smiles": "CCN",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CCN"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Diethyl_ether": {
+          "smiles": "CCOCC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CCOCC"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Omeprazole": {
+          "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.6",
+            "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        },
+        "Atorvastatin": {
+          "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": " (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.31",
+            "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4"
+          },
+          "hasErrors": true,
+          "errorMessages": [
+            "We were not able to make predictions using the following model(s): graph convolutional neural network"
+          ]
+        }
+      },
+      "successful_count": 21,
+      "failed_count": 0,
+      "columns": [
+        "smiles",
+        "Predicted Class (Probability)",
+        "Prediction"
+      ]
+    },
+    "hlc": {
+      "molecules": {
+        "Ethanol": {
+          "smiles": "CCO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.65)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.1",
+            "smiles": "CCO"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Methanol": {
+          "smiles": "CO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.66)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.08",
+            "smiles": "CO"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Acetone": {
+          "smiles": "CC(=O)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.66)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.11",
+            "smiles": "CC(=O)C"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Benzaldehyde": {
+          "smiles": "C1=CC=C(C=C1)C=O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.62)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.3",
+            "smiles": "C1=CC=C(C=C1)C=O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Phenol": {
+          "smiles": "C1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.68)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.2",
+            "smiles": "C1=CC=C(C=C1)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Toluene": {
+          "smiles": "CC1=CC=CC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.74)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.29",
+            "smiles": "CC1=CC=CC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Aspirin": {
+          "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.62)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.2",
+            "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Caffeine": {
+          "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.68)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.22",
+            "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Ibuprofen": {
+          "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.71)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.16",
+            "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Paracetamol": {
+          "smiles": "CC(=O)NC1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.68)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.25",
+            "smiles": "CC(=O)NC1=CC=C(C=C1)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Metformin": {
+          "smiles": "CN(C)C(=N)NC(=N)N",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.73)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CN(C)C(=N)NC(=N)N"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Warfarin": {
+          "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.7)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.19",
+            "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Pyridine": {
+          "smiles": "C1=CC=NC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.72)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.17",
+            "smiles": "C1=CC=NC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Imidazole": {
+          "smiles": "C1=CN=CN1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.73)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.1",
+            "smiles": "C1=CN=CN1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Thiophene": {
+          "smiles": "C1=CSC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.67)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.07",
+            "smiles": "C1=CSC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Glycine": {
+          "smiles": "NCC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.72)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.11",
+            "smiles": "NCC(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Acetic_acid": {
+          "smiles": "CC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.68)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.11",
+            "smiles": "CC(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Ethylamine": {
+          "smiles": "CCN",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.69)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.07",
+            "smiles": "CCN"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Diethyl_ether": {
+          "smiles": "CCOCC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.66)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.09",
+            "smiles": "CCOCC"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Omeprazole": {
+          "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.52)",
+            "Prediction": "unstable",
+            "Tanimoto Similarity": "0.21",
+            "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Atorvastatin": {
+          "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.72)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.22",
+            "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        }
+      },
+      "successful_count": 21,
+      "failed_count": 0,
+      "columns": [
+        "smiles",
+        "Predicted Class (Probability)",
+        "Prediction"
+      ]
+    }
+  },
+  "summary": {
+    "models_successful": [
+      "rlm",
+      "hlm",
+      "pampa",
+      "pampa50",
+      "pampabbb",
+      "solubility",
+      "hlc"
+    ],
+    "models_failed": []
+  }
+}
