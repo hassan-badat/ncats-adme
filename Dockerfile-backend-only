@@ -1,4 +1,4 @@
-FROM continuumio/miniconda:4.7.12
+FROM --platform=linux/amd64 continuumio/miniconda3:24.7.1-0
 
 WORKDIR /opt/adme
 

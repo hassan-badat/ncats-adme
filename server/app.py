@@ -14,7 +14,6 @@ from rdkit.Chem import Draw
 from rdkit.Chem.Draw import rdMolDraw2D
 from rdkit.Chem import rdDepictor
 rdDepictor.SetPreferCoordGen(True)
-from rdkit.Chem.Draw import IPythonConsole
 import rdkit
 from flask import abort, send_file
 from predictors.rlm.rlm_predictor import RLMPredictior
