@@ -7,7 +7,7 @@ This script calls the prediction API for all 8 models with a set of
 diverse test molecules and saves the complete responses.
 
 Usage:
-    python scripts/create_baseline_predictions.py [--output baseline_predictions.json] [--url http://localhost:5001]
+    python testing/create_baseline_predictions.py [--output testing/baseline_predictions.json] [--url http://localhost:5001]
 
 Requirements:
     pip install requests
@@ -285,20 +285,20 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-    # Default: localhost:5001, output to baseline_predictions.json
-    python scripts/create_baseline_predictions.py
+    # Default: localhost:5001, output to testing/baseline_predictions.json
+    python testing/create_baseline_predictions.py
     
     # Custom URL and output file
-    python scripts/create_baseline_predictions.py --url http://adme-server:5000 --output my_baseline.json
+    python testing/create_baseline_predictions.py --url http://adme-server:5000 --output my_baseline.json
     
     # Skip server check (if healthcheck endpoint is different)
-    python scripts/create_baseline_predictions.py --skip-healthcheck
+    python testing/create_baseline_predictions.py --skip-healthcheck
         """
     )
     parser.add_argument(
         "--output", "-o",
-        default="baseline_predictions.json",
-        help="Output file path (default: baseline_predictions.json)"
+        default="testing/baseline_predictions.json",
+        help="Output file path (default: testing/baseline_predictions.json)"
     )
     parser.add_argument(
         "--url", "-u",

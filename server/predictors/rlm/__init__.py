@@ -12,8 +12,8 @@ def load_gcnn_model():
     os.makedirs(rlm_base_models_path, exist_ok=True)
     print('Loading RLM graph convolutional neural network model', file=sys.stdout)
 
-    model_file_path = f'{rlm_base_models_path}/gcnn_model.ckpt'
-    model_file_url = f'{base_url}/gcnn_model.ckpt'
+    model_file_path = f'{rlm_base_models_path}/gcnn_model.pt'
+    model_file_url = f'{base_url}/gcnn_model.pt'
 
     scaler, model, model_version = load_gcnn_model_with_versioninfo(
         model_file_path, model_file_url

@@ -5,7 +5,7 @@ Compare baseline predictions to verify model outputs haven't changed.
 Use this script after making code changes to ensure predictions remain identical.
 
 Usage:
-    python scripts/verify_predictions.py baseline_predictions.json updated_predictions.json
+    python testing/verify_predictions.py baseline_predictions.json updated_predictions.json
 
 Requirements:
     pip install requests
@@ -199,10 +199,10 @@ def main():
         epilog="""
 Examples:
     # Compare baseline to updated predictions
-    python scripts/verify_predictions.py baseline_predictions.json updated_predictions.json
+    python testing/verify_predictions.py testing/baseline_predictions.json testing/retrained_predictions.json
     
     # With custom tolerance for numeric comparisons
-    python scripts/verify_predictions.py baseline.json updated.json --tolerance 0.001
+    python testing/verify_predictions.py baseline.json updated.json --tolerance 0.001
         """
     )
     parser.add_argument(

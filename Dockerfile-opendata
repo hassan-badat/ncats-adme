@@ -1,18 +1,19 @@
-FROM node:16 AS build
+FROM node:20 AS build
 
 WORKDIR /opt/adme
 
 COPY client ./
 
-RUN npm install && npm install -g @angular/cli@12
+RUN npm install && npm install -g @angular/cli
 
 # build parameter for opendata subdomain
+ENV NODE_OPTIONS=--openssl-legacy-provider
 RUN ng build --configuration production --deploy-url=/adme/client/ --base-href=/adme
 
-FROM continuumio/miniconda:4.7.12
+FROM --platform=linux/amd64 continuumio/miniconda3:24.7.1-0
 
-# Install NCATS required packages
-RUN apt-get install -y net-tools
+# Install required packages
+RUN apt-get update && apt-get install -y iproute2 && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/adme
 
@@ -31,3 +32,4 @@ COPY --from=build /opt/adme/dist/client client
 CMD /bin/bash startup.sh
 
 EXPOSE 5000
+

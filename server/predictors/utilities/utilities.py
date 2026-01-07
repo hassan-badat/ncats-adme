@@ -103,7 +103,30 @@ def load_gcnn_model(model_file_path: str, model_file_url: str):
         print('Model File Exists Locally')
 
     # Load model using Chemprop 2.x API
-    model = MPNN.load_from_checkpoint(model_file_path)
+    # Some checkpoints may be missing Lightning metadata, so we patch it if needed
+    import torch
+    checkpoint = torch.load(model_file_path, map_location='cpu')
+    
+    # Patch checkpoint if it's missing Lightning version info
+    if isinstance(checkpoint, dict) and 'pytorch-lightning_version' not in checkpoint:
+        checkpoint['pytorch-lightning_version'] = '2.0.0'
+        # Save patched checkpoint temporarily
+        import tempfile
+        import os as os_module
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.pt') as tmp_file:
+            tmp_path = tmp_file.name
+            torch.save(checkpoint, tmp_path)
+        
+        try:
+            model = MPNN.load_from_checkpoint(tmp_path, map_location='cpu')
+        finally:
+            # Clean up temporary file
+            if os_module.path.exists(tmp_path):
+                os_module.unlink(tmp_path)
+    else:
+        # Load normally if checkpoint has proper metadata
+        model = MPNN.load_from_checkpoint(model_file_path, map_location='cpu')
+    
     model.eval()
 
     # In Chemprop 2.x, scaler is embedded in checkpoint, return None for compatibility
