@@ -8,7 +8,7 @@ import threading
 from enum import Enum
 from typing import Optional
 
-hlc_model_path = './models/liver_cytosol/model.pkl'
+mlc_model_path = './models/mlc/model.pkl'
 
 
 class ModelStatus(Enum):
@@ -18,8 +18,8 @@ class ModelStatus(Enum):
     FAILED = "failed"
 
 
-class LazyHLCModel:
-    """Lazy loader for HLC model - loads in background thread to avoid blocking startup."""
+class LazyMLCModel:
+    """Lazy loader for MLC model - loads in background thread to avoid blocking startup."""
     
     def __init__(self):
         self._model: Optional[object] = None
@@ -47,7 +47,7 @@ class LazyHLCModel:
     def get_status_dict(self) -> dict:
         """Get status information as a dictionary for API responses."""
         return {
-            "model": "hlc",
+            "model": "mlc",
             "status": self._status.value,
             "is_ready": self.is_ready,
             "error": self._error
@@ -61,7 +61,7 @@ class LazyHLCModel:
         self._status = ModelStatus.LOADING
         self._load_thread = threading.Thread(target=self._load_model, daemon=True)
         self._load_thread.start()
-        print('HLC model loading started in background thread', file=sys.stdout)
+        print('MLC model loading started in background thread', file=sys.stdout)
         sys.stdout.flush()
     
     def wait_for_completion(self, timeout: float = None) -> bool:
@@ -72,61 +72,61 @@ class LazyHLCModel:
     
     def _load_model(self) -> None:
         """Load the model (runs in background thread)."""
-        print('Loading Human Liver Cytosol stability model (background)', file=sys.stdout)
+        print('Loading Mouse Liver Cytosol stability model (background)', file=sys.stdout)
         sys.stdout.flush()
         
-        if not os.path.exists(hlc_model_path) or os.path.getsize(hlc_model_path) == 0:
-            self._error = f'HLC model file not found at {hlc_model_path}'
+        if not os.path.exists(mlc_model_path) or os.path.getsize(mlc_model_path) == 0:
+            self._error = f'MLC model file not found at {mlc_model_path}'
             self._status = ModelStatus.FAILED
             print(f'ERROR: {self._error}', file=sys.stderr)
             return
         
         try:
-            with open(hlc_model_path, 'rb') as pkl_file:
+            with open(mlc_model_path, 'rb') as pkl_file:
                 with self._lock:
                     self._model = pickle.load(pkl_file)
             self._status = ModelStatus.LOADED
-            print(f'Successfully loaded HLC model: {type(self._model).__name__}', file=sys.stdout)
+            print(f'Successfully loaded MLC model: {type(self._model).__name__}', file=sys.stdout)
         except ModuleNotFoundError as e:
-            self._error = f'HLC model requires missing module: {e}'
+            self._error = f'MLC model requires missing module: {e}'
             self._status = ModelStatus.FAILED
             print(f'ERROR: {self._error}', file=sys.stderr)
             traceback.print_exc(file=sys.stderr)
         except Exception as e:
-            self._error = f'Failed to load HLC model: {type(e).__name__}: {e}'
+            self._error = f'Failed to load MLC model: {type(e).__name__}: {e}'
             self._status = ModelStatus.FAILED
             print(f'ERROR: {self._error}', file=sys.stderr)
             traceback.print_exc(file=sys.stderr)
         
-        print('Finished loading Human Liver Cytosol stability model', file=sys.stdout)
+        print('Finished loading Mouse Liver Cytosol stability model', file=sys.stdout)
         sys.stdout.flush()
 
 
 # Global lazy loader instance
-hlc_lazy_loader = LazyHLCModel()
+mlc_lazy_loader = LazyMLCModel()
 
-# NOTE: Loading is NOT started automatically - call start_hlc_loading() after other models are loaded
+# NOTE: Loading is NOT started automatically - call start_mlc_loading() after HLC is loaded
 # This prevents resource contention during startup
 
 # For backwards compatibility - will be None until loaded
-lc_models_dict = None
+mlc_model = None
 
 
-def start_hlc_loading() -> None:
-    """Start loading the HLC model in background. Call after other models are loaded."""
-    hlc_lazy_loader.start_loading()
+def start_mlc_loading() -> None:
+    """Start loading the MLC model in background. Call after HLC is loaded."""
+    mlc_lazy_loader.start_loading()
 
 
-def wait_for_hlc() -> bool:
-    """Wait for HLC model to finish loading. Returns True if successful."""
-    return hlc_lazy_loader.wait_for_completion()
+def wait_for_mlc() -> bool:
+    """Wait for MLC model to finish loading. Returns True if successful."""
+    return mlc_lazy_loader.wait_for_completion()
 
 
-def get_hlc_model():
-    """Get the HLC model, returns None if not yet loaded."""
-    return hlc_lazy_loader.model
+def get_mlc_model():
+    """Get the MLC model, returns None if not yet loaded."""
+    return mlc_lazy_loader.model
 
 
-def get_hlc_status():
-    """Get the current loading status of the HLC model."""
-    return hlc_lazy_loader.get_status_dict()
+def get_mlc_status():
+    """Get the current loading status of the MLC model."""
+    return mlc_lazy_loader.get_status_dict()

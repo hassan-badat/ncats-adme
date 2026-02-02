@@ -5,10 +5,14 @@ Compare baseline predictions to verify model outputs haven't changed.
 Use this script after making code changes to ensure predictions remain identical.
 
 Usage:
-    python testing/verify_predictions.py baseline_predictions.json updated_predictions.json
+    python testing/scripts/verify_predictions.py testing/baseline_predictions.json testing/runs/YYYY-MM-DD_HHMMSS/predictions.json
 
-Requirements:
-    pip install requests
+Examples:
+    # Compare baseline to a test run
+    python testing/scripts/verify_predictions.py testing/baseline_predictions.json testing/runs/2026-01-25_143022/predictions.json
+    
+    # With custom tolerance
+    python testing/scripts/verify_predictions.py baseline.json updated.json --tolerance 0.01
 """
 
 import json
@@ -198,11 +202,11 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-    # Compare baseline to updated predictions
-    python testing/verify_predictions.py testing/baseline_predictions.json testing/retrained_predictions.json
+    # Compare baseline to a test run
+    python testing/scripts/verify_predictions.py testing/baseline_predictions.json testing/runs/2026-01-25_143022/predictions.json
     
     # With custom tolerance for numeric comparisons
-    python testing/verify_predictions.py baseline.json updated.json --tolerance 0.001
+    python testing/scripts/verify_predictions.py baseline.json updated.json --tolerance 0.001
         """
     )
     parser.add_argument(

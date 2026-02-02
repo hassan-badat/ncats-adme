@@ -4,46 +4,40 @@ import os
 import sys
 import pandas as pd
 import pickle
-from tqdm import tqdm
-import requests
-from io import BytesIO
-from os import path
+import traceback
 
-hlm_model_file_url = 'https://opendata.ncats.nih.gov/public/adme/models/current/static/hlm/model.pkl'
 hlm_model_file_path = './models/hlm/model.pkl'
 hlm_rdkit_desc_path = 'predictors/hlm/rdkit_desc.csv'
 
 
-def download_file(model_file_url):
-    """Download HLM model file from URL."""
-    hlm_xgb_pkl_file_request = requests.get(model_file_url)
-    with tqdm.wrapattr(
-        open(os.devnull, "wb"),
-        "write",
-        miniters=1,
-        desc='hlm_model',
-        total=int(hlm_xgb_pkl_file_request.headers.get('content-length', 0))
-    ) as fout:
-        for chunk in hlm_xgb_pkl_file_request.iter_content(chunk_size=4096):
-            fout.write(chunk)
-    with open(hlm_model_file_path, 'wb') as pkl_file_writer:
-        pkl_file_writer.write(hlm_xgb_pkl_file_request.content)
+def load_model():
+    """Load HLM XGBoost model from models directory."""
+    print('Loading HLM XGBoost model', file=sys.stdout)
+    sys.stdout.flush()
 
-    hlm_xgb_model = pickle.load(BytesIO(hlm_xgb_pkl_file_request.content))
-    return hlm_xgb_model
+    hlm_model = None
+
+    try:
+        if os.path.exists(hlm_model_file_path) and os.path.getsize(hlm_model_file_path) > 0:
+            with open(hlm_model_file_path, 'rb') as pkl_file:
+                hlm_model = pickle.load(pkl_file)
+            print(f'Successfully loaded HLM model: {type(hlm_model).__name__}', file=sys.stdout)
+        else:
+            print(f'ERROR: HLM model file not found at {hlm_model_file_path}', file=sys.stderr)
+    except ModuleNotFoundError as e:
+        print(f'ERROR: HLM model requires missing module: {e}', file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
+    except Exception as e:
+        print(f'ERROR: Failed to load HLM model: {type(e).__name__}: {e}', file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
+
+    print('Finished loading HLM models', file=sys.stdout)
+    sys.stdout.flush()
+    return hlm_model
 
 
 hlm_model_dict = {}
-print('Loading HLM XGBoost model', file=sys.stdout)
-os.makedirs('./models/hlm', exist_ok=True)
-
-if path.exists(hlm_model_file_path) and os.path.getsize(hlm_model_file_path) > 0:
-    with open(hlm_model_file_path, 'rb') as pkl_file:
-        hlm_model_dict['hlm_model'] = pickle.load(pkl_file)
-else:
-    hlm_model_dict['hlm_model'] = download_file(hlm_model_file_url)
+hlm_model_dict['hlm_model'] = load_model()
 
 df_rdkit_desc = pd.read_csv(hlm_rdkit_desc_path, header=None)
 hlm_rdkit_desc = df_rdkit_desc[0].tolist()
-
-print('Finished loading HLM models', file=sys.stdout)

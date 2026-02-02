@@ -1,27 +1,35 @@
-import os
 import sys
-from datetime import datetime
+import traceback
 
-from ..utilities.utilities import load_gcnn_model_with_versioninfo
+from ..utilities.utilities import load_gcnn_model_local
 
-base_url = 'https://opendata.ncats.nih.gov/public/adme/models/current/biweekly/rlm/'
-rlm_base_models_path = './models/rlm'
+rlm_model_file_path = './models/rlm/gcnn_model.ckpt'
 
 
-def load_gcnn_model():
-    os.makedirs(rlm_base_models_path, exist_ok=True)
+def load_model():
+    """Load RLM GCNN model from models directory."""
     print('Loading RLM graph convolutional neural network model', file=sys.stdout)
+    sys.stdout.flush()
 
-    model_file_path = f'{rlm_base_models_path}/gcnn_model.pt'
-    model_file_url = f'{base_url}/gcnn_model.pt'
+    scaler = None
+    model = None
+    model_version = 'unknown'
 
-    scaler, model, model_version = load_gcnn_model_with_versioninfo(
-        model_file_path, model_file_url
-    )
+    try:
+        scaler, model, model_version = load_gcnn_model_local(rlm_model_file_path)
+        print(f'Successfully loaded RLM GCNN model version: {model_version}', file=sys.stdout)
+    except FileNotFoundError as e:
+        print(f'ERROR: RLM model file not found: {e}', file=sys.stderr)
+    except ModuleNotFoundError as e:
+        print(f'ERROR: RLM model requires missing module: {e}', file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
+    except Exception as e:
+        print(f'ERROR: Failed to load RLM model: {type(e).__name__}: {e}', file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
 
+    print('Finished loading RLM model files', file=sys.stdout)
+    sys.stdout.flush()
     return scaler, model, f'rlm_{model_version}'
 
 
-rlm_gcnn_scaler, rlm_gcnn_model, rlm_gcnn_model_version = load_gcnn_model()
-
-print('Finished loading RLM model files', file=sys.stdout)
+rlm_gcnn_scaler, rlm_gcnn_model, rlm_gcnn_model_version = load_model()
