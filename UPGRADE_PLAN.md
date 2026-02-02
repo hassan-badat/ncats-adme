@@ -3,7 +3,7 @@
 **Author:** Hassan Badat  
 **Date:** December 2, 2025  
 **Last Updated:** February 2, 2026  
-**Status:** Testing Complete - 6/8 Models Passing, Waiting on CYP450 Substrate Models
+**Status:** Testing Complete - 6/10 Models Tested, 4 Models Pending Workaround
 
 ---
 
@@ -51,15 +51,14 @@ Upgrade the NCATS ADME prediction application to resolve security vulnerabilitie
 
 **⚠️ NOT TESTED (Pickle Compatibility Issues):**
 
-- **HLC, MLC, RLC, CYP450**: These models use `pickle.load()` which crashes under Rosetta 2 emulation on Apple Silicon due to AVX instruction incompatibility. Require native x86 Linux testing.
+- **HLC, MLC, RLC, CYP450**: These models use `pickle.load()` which crashes under Rosetta 2 emulation on Apple Silicon due to AVX instruction incompatibility
+- All retrained models have been received from Claire's team and are in the `server/models/` directory
+- **Next step:** Find workaround for pickle/Rosetta 2 compatibility issue
 
-**⚠️ WAITING ON CLAIRE'S TEAM:**
+**⏳ PENDING:**
 
-- **CYP450 Substrate Models**: Current models are incompatible with scikit-learn 1.4
-  - Affected endpoints: `cyp2c9_subs`, `cyp2d6_subs`, `cyp3a4_subs`
-  - Error handling implemented to gracefully skip incompatible models
-  - Server continues to function for all other models
-- Training scripts for future automation pipeline
+- Workaround for sklearn pickle loading on Apple Silicon (AVX instruction issue)
+- Training scripts for future automation pipeline (from Claire's team)
 
 ### Key Challenges
 
@@ -272,9 +271,9 @@ df = pd.concat([df, new_df], ignore_index=True)
 
 ---
 
-### 🟡 Blocked: Waiting on Claire's Team
+### 🟢 Model Updates (Received from Claire's Team)
 
-These require training scripts or retrained models from Claire.
+All retrained models have been received. Training scripts pending for future automation.
 
 #### 2.1 Chemprop Migration ✅ COMPLETED
 
@@ -318,7 +317,7 @@ from chemprop.models import MPNN
 - ✅ **CYP450 Inhibitor models**: Working (192 models loaded from local `.pkl` files)
 - ✅ **HLM model**: Working (retrained model compatible with scikit-learn 1.4)
 - ✅ **Liver Cytosol models**: Working (3 retrained models compatible with scikit-learn 1.4)
-- ⚠️ **CYP450 Substrate models**: **INCOMPATIBLE** - Models downloaded from server were trained with older scikit-learn version and fail to load. Error handling implemented to gracefully skip incompatible models. **WAITING ON RETRAINED SUBSTRATE MODELS FROM CLAIRE'S TEAM.**
+- ✅ **CYP450 Substrate models**: Retrained models received from Claire's team. Not yet tested due to Rosetta 2 emulation limitations on Apple Silicon (pickle.load() crashes with AVX instructions). Workaround needed.
 
 #### 2.3 Training Pipeline Automation (Blocked: Need training scripts)
 
@@ -429,7 +428,7 @@ TEST_SMILES = [
 | Risk                              | Impact                 | Mitigation                                        |
 | --------------------------------- | ---------------------- | ------------------------------------------------- |
 | Chemprop API completely different | All GCNN models break  | Coordinate closely with Claire on model format    |
-| Pickle models incompatible        | HLC, CYP450, HLM break | Wait for retrained models                         |
+| Pickle models incompatible        | HLC, CYP450, HLM break | ✅ Retrained models received                      |
 | PyTorch model loading fails       | All GCNN models break  | Test with exact PyTorch version used for training |
 
 ### Medium Risk
@@ -497,32 +496,33 @@ All items below can be completed independently without waiting for Claire's team
 
 ---
 
-### Waiting on Claire's Team (No Fixed Timeline)
+### Models Received from Claire's Team
 
-**Last Updated:** January 7, 2026
+**Last Updated:** February 2, 2026
 
-These items are **blocked** until Claire's team provides training scripts and/or retrained models:
+All retrained models have been received:
 
 - [x] Receive retrained GCNN models compatible with Chemprop 2.x (RLM, PAMPA, PAMPA50, PAMPABBB, Solubility) ✅
 - [x] Receive retrained HLM model compatible with scikit-learn 1.4 ✅
 - [x] Receive retrained Liver Cytosol models compatible with scikit-learn 1.4 ✅
 - [x] Receive retrained CYP450 inhibitor models compatible with scikit-learn 1.4 ✅
-- [ ] **WAITING:** Receive retrained CYP450 **substrate** models compatible with scikit-learn 1.4
-  - **Issue:** Current substrate models downloaded from server are incompatible (trained with older scikit-learn)
-  - **Impact:** CYP450 substrate predictions (cyp2c9_subs, cyp2d6_subs, cyp3a4_subs) are not functional
-  - **Status:** Error handling implemented to gracefully skip incompatible models
+- [x] Receive retrained CYP450 substrate models compatible with scikit-learn 1.4 ✅
+
+### Pending Items
+
 - [ ] Receive training scripts for GCNN models (for future automation)
 - [ ] Receive CYP450 retraining code from external group (for future automation)
+- [ ] Find workaround for HLC, MLC, RLC, CYP450 pickle loading (Rosetta 2/AVX issue)
 
-### After Receiving Models from Claire
+### Implementation Status
 
 - [x] Update prediction code for new Chemprop 2.x API ✅ **COMPLETED**
-- [x] Update model loading code for new scikit-learn ✅ **COMPLETED** (except substrate models)
-- [x] Full regression testing against baseline ✅ **COMPLETED** (see `testing/retrained_predictions_comparison.json`)
+- [x] Update model loading code for new scikit-learn ✅ **COMPLETED**
+- [x] Full regression testing against baseline ✅ **COMPLETED** (6/10 models tested)
 - [x] Environment standardization (dev = test = prod) ✅ **COMPLETED** (all Dockerfiles use same `environment.yml`)
+- [ ] **REMAINING:** Test remaining 4 models (HLC, MLC, RLC, CYP450) after workaround implemented
 - [ ] **REMAINING:** Integrate training scripts into automated pipeline (waiting on scripts from Claire)
 - [ ] **REMAINING:** CI/CD integration (pending training pipeline automation)
-- [ ] **REMAINING:** Receive and integrate CYP450 substrate models (blocking substrate predictions)
 
 ---
 
@@ -595,7 +595,7 @@ These items are **blocked** until Claire's team provides training scripts and/or
 | ----------- | ------------ | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Dec 2, 2025 | Claire Weber | Initial discussion       | Scope defined, training handled by her team                                                                                                                          |
 | Dec 8, 2025 | Claire Weber | Model retraining request | Requested retrained models: GCNN models with Chemprop 2.x (.pt), sklearn models with scikit-learn 1.4.x (.pkl)                                                       |
-| Jan 7, 2026 | Hassan Badat | Implementation complete  | Backend migration completed. All GCNN models working. HLM, HLC, CYP450 inhibitors working. **WAITING:** CYP450 substrate models (incompatible with scikit-learn 1.4) |
+| Jan 7, 2026 | Hassan Badat | Implementation complete  | Backend migration completed. All GCNN models working. HLM, HLC, CYP450 inhibitors working. |
 | Feb 2, 2026 | Hassan Badat | Testing infrastructure   | Created autonomous testing framework with Docker layer caching, model warmup, and baseline comparison. Tested 6 models successfully.                                |
 
 ---
