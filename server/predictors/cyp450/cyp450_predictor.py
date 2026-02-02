@@ -4,206 +4,212 @@ from pandas import DataFrame
 import numpy as np
 from numpy import array
 from rdkit import Chem
-from ..features.morgan_fp import MorganFPGenerator
-from ..features.rdkit_descriptors import RDKitDescriptorsGenerator
-from ..cyp450 import cyp450_models_dict
+from ..features.descriptor_gen import DescriptorGen
+from . import load_model, CYP450_ENDPOINTS, NUM_MODELS_PER_ENDPOINT
 import time
-import multiprocessing as mp
 import csv
 from datetime import timezone
 import datetime
+import gc
 
 
 class CYP450Predictor:
     """
-    Makes CYP450 predictions
+    Makes CYP450 predictions for 6 endpoints:
+    - cyp2c9_inhib: CYP2C9 Inhibition
+    - cyp2c9_subs: CYP2C9 Substrate
+    - cyp2d6_inhib: CYP2D6 Inhibition
+    - cyp2d6_subs: CYP2D6 Substrate
+    - cyp3a4_inhib: CYP3A4 Inhibition
+    - cyp3a4_subs: CYP3A4 Substrate
 
-    Attributes:
-        df (DataFrame): DataFrame containing column with smiles
-        smiles_column_index (int): index of column containing smiles
-        predictions_df (DataFrame): DataFrame hosting all predictions
+    Each endpoint uses 64 Random Forest models with consensus voting.
+    Models are loaded on-demand to minimize memory usage.
     """
 
     _columns_dict = {
-        'CYP2C9_inhib': {
+        'CYP2C9 Inhibition': {
             'order': 1,
-            'description': 'CYP2C9 inhibitor',
+            'description': 'CYP2C9 inhibition prediction (consensus of 64 models)',
             'isSmilesColumn': False
         },
-        'CYP2C9_subs': {
+        'CYP2C9 Substrate': {
             'order': 2,
-            'description': 'CYP2C9 substrate',
+            'description': 'CYP2C9 substrate prediction (consensus of 64 models)',
             'isSmilesColumn': False
         },
-        'CYP2D6_inhib': {
+        'CYP2D6 Inhibition': {
             'order': 3,
-            'description': 'CYP2D6 inhibitor',
+            'description': 'CYP2D6 inhibition prediction (consensus of 64 models)',
             'isSmilesColumn': False
         },
-        'CYP2D6_subs': {
+        'CYP2D6 Substrate': {
             'order': 4,
-            'description': 'CYP450 CYP2D6 substrate',
+            'description': 'CYP2D6 substrate prediction (consensus of 64 models)',
             'isSmilesColumn': False
         },
-        'CYP3A4_inhib': {
+        'CYP3A4 Inhibition': {
             'order': 5,
-            'description': 'CYP450 CYP3A4 inhibitor',
+            'description': 'CYP3A4 inhibition prediction (consensus of 64 models)',
             'isSmilesColumn': False
         },
-        'CYP3A4_subs': {
+        'CYP3A4 Substrate': {
             'order': 6,
-            'description': 'CYP450 CYP3A4 substrate',
+            'description': 'CYP3A4 substrate prediction (consensus of 64 models)',
             'isSmilesColumn': False
         }
     }
 
-    def __init__(self, kekule_mols: array = None, rdkit_descriptors_matrix: array = None, morgan_fp_matrix: array = None, smiles: array = None):
+    # Mapping from endpoint names to display names
+    _endpoint_to_column = {
+        'cyp2c9_inhib': 'CYP2C9 Inhibition',
+        'cyp2c9_subs': 'CYP2C9 Substrate',
+        'cyp2d6_inhib': 'CYP2D6 Inhibition',
+        'cyp2d6_subs': 'CYP2D6 Substrate',
+        'cyp3a4_inhib': 'CYP3A4 Inhibition',
+        'cyp3a4_subs': 'CYP3A4 Substrate'
+    }
+
+    def __init__(self, kekule_mols: array = None, smiles: array = None):
         """
         Constructor for CYP450Predictor class
 
         Parameters:
-            kekule_mols (array): n x 1 array of RDKit molecule objects kekulized
-            rdkit_descriptors_matrix (array): optional numpy array of rdkit descriptors for each molecule,
-            morgan_fp_matrix (array): optional numpy array of morgan fingerprints for each molecule,
-            smiles (array): optional n x 1 array of SMILES used to record raw predictions in raw_predictions_df property
+            kekule_mols (array): n x 1 array of RDKit molecule objects
+            smiles (array): optional n x 1 array of SMILES for recording predictions
         """
+        if kekule_mols is None or len(kekule_mols) == 0:
+            raise ValueError('Please provide valid molecules')
 
-        self.kekule_mols = kekule_mols
+        # Generate Morgan fingerprints from mol objects
+        desc_gen = DescriptorGen()
+        fingerprints = []
+        for mol in kekule_mols:
+            if mol is not None:
+                fp = desc_gen.from_mol(mol)
+                fingerprints.append(fp)
+            else:
+                fingerprints.append(None)
 
-        # create dataframe to be filled with predictions
+        self.morgan_fp = np.array([fp for fp in fingerprints if fp is not None])
+        self.valid_indices = [i for i, fp in enumerate(fingerprints) if fp is not None]
+
+        # Create dataframe for predictions
         columns = self._columns_dict.keys()
         self.predictions_df = pd.DataFrame(columns=columns)
         self.raw_predictions_df = pd.DataFrame()
 
-        if len(self.kekule_mols) == 0:
-            raise ValueError('Please provide valid smiles')
-
-        if morgan_fp_matrix is None:
-            # generate morgan fingerprints
-            morgan_fp_generator = MorganFPGenerator(self.kekule_mols)
-            self.morgan_fp_matrix = morgan_fp_generator.get_morgan_features()
-        else:
-            self.morgan_fp_matrix = morgan_fp_matrix
-
-        if rdkit_descriptors_matrix is None:
-            # generate rdkit descriptors
-            rdkit_descriptors_generator = RDKitDescriptorsGenerator(self.kekule_mols)
-            self.rdkit_desc_matrix = rdkit_descriptors_generator.get_rdkit_descriptors(
-                ['MolLogP', 'TPSA', 'ExactMolWt', 'NumHDonors', 'NumHAcceptors']
-            )
-        else:
-            self.rdkit_desc_matrix = rdkit_descriptors_matrix
-
         self.smiles = smiles
-
         self.has_errors = False
         self.model_errors = []
 
-    def get_predictions(self):
+    def _predict_endpoint(self, endpoint: str, features: array) -> array:
+        """
+        Make predictions for a single CYP450 endpoint using all 64 models.
+        Models are loaded one at a time to minimize memory usage.
 
-        features = np.append(self.morgan_fp_matrix, self.rdkit_desc_matrix, axis=1)
+        Parameters:
+            endpoint: The CYP450 endpoint name
+            features: Morgan fingerprint features
 
+        Returns:
+            Array of averaged prediction probabilities
+        """
+        all_predictions = []
+        models_loaded = 0
+
+        for model_num in range(NUM_MODELS_PER_ENDPOINT):
+            model = load_model(endpoint, model_num)
+            if model is not None:
+                try:
+                    pred_probs = model.predict_proba(features)[:, 1]
+                    all_predictions.append(pred_probs)
+                    models_loaded += 1
+                except Exception as e:
+                    print(f'ERROR: Prediction failed for {endpoint}/model_{model_num}: {e}')
+                finally:
+                    # Release model from memory
+                    del model
+
+            # Periodically run garbage collection to free memory
+            if model_num % 16 == 15:
+                gc.collect()
+
+        if models_loaded == 0:
+            self.model_errors.append(f'No models loaded for {endpoint}')
+            return np.zeros(len(features))
+
+        # Average predictions across all models
+        avg_predictions = np.mean(all_predictions, axis=0)
+
+        # Final garbage collection after endpoint
+        gc.collect()
+
+        return avg_predictions
+
+    def get_predictions(self) -> DataFrame:
+        """
+        Calculate predictions for all 6 CYP450 endpoints.
+
+        Returns:
+            DataFrame with predictions for all endpoints
+        """
+        if len(self.morgan_fp) == 0:
+            self.has_errors = True
+            self.model_errors.append('No valid molecules to predict')
+            return self.predictions_df
+
+        features = self.morgan_fp
         start = time.time()
 
-        processes_dict = {}
-        response_queues_dict = {}
+        # Process each endpoint
+        for endpoint in CYP450_ENDPOINTS:
+            column_name = self._endpoint_to_column[endpoint]
+            print(f'CYP450: Processing {endpoint}...', flush=True)
 
-        if mp.cpu_count() > 1:
-            processes = mp.cpu_count() - 1
-        else:
-            processes = 1
-        with mp.Pool(processes=processes) as pool:
+            pred_probs = self._predict_endpoint(endpoint, features)
 
-            for model_name in cyp450_models_dict.keys():
+            # Format predictions with class and probability
+            self.predictions_df[column_name] = pd.Series(
+                pd.Series(pred_probs).round().astype(int).astype(str) + ' (' +
+                pd.Series(np.where(
+                    np.asarray(pred_probs) >= 0.5,
+                    np.asarray(pred_probs),
+                    (1 - np.asarray(pred_probs))
+                )).round(2).astype(str) + ')'
+            )
 
-                manager = mp.Manager()
-                request_queue = manager.Queue()
-                response_queue = manager.Queue()
-                response_queues_dict[model_name] = response_queue
+        # Populate raw predictions for recording
+        if self.smiles is not None:
+            dt = datetime.datetime.now(timezone.utc)
+            utc_time = dt.replace(tzinfo=timezone.utc)
+            utc_timestamp = utc_time.timestamp()
 
-                params_dict = {
-                    "model_name": model_name,
-                    "features": features,
-                    "error_threshold_length": len(self.predictions_df.index)
-                }
+            for endpoint in CYP450_ENDPOINTS:
+                column_name = self._endpoint_to_column[endpoint]
+                # Extract just the probability from the formatted string
+                probs = self.predictions_df[column_name].str.extract(r'\(([0-9.]+)\)')[0].astype(float)
 
-                request_queue.put(params_dict)
-
-                processes_dict[model_name] = pool.apply_async(
-                    self._get_model_predictions,
-                    args=(request_queue, response_queue,),
-                    error_callback=self._error_callback
-                )
-
-            for model_name in cyp450_models_dict.keys():
-                processes_dict[model_name].wait()
-
-            for model_name in cyp450_models_dict.keys():
-
-                response_dict = response_queues_dict[model_name].get()
-                model_has_error = response_dict["model_has_error"]
-                mean_probs = response_dict["mean_probs"]
-
-                if model_has_error:
-                    self.has_errors = True
-                    self.model_errors.append(self._columns_dict[model_name]['description'])
-
-                model_name_uc = model_name.split('_')[0].upper() + '_' + model_name.split('_')[1]
-
-                self.predictions_df[f'{model_name_uc}'] = pd.Series(
-                    pd.Series(np.where(mean_probs >= 0.5, 1, 0)).round(2).astype(str)
-                    + ' ('
-                    + pd.Series(np.where(mean_probs >= 0.5, mean_probs, (1-mean_probs))).round(2).astype(str)
-                    + ')'
-                )
-
-                if self.smiles is not None:
-                    dt = datetime.datetime.now(timezone.utc)
-                    utc_time = dt.replace(tzinfo=timezone.utc)
-                    utc_timestamp = utc_time.timestamp()
-                    self.raw_predictions_df = pd.concat([
-                        self.raw_predictions_df,
-                        pd.DataFrame(
-                            {'SMILES': self.smiles, 'model': model_name_uc, 'prediction': mean_probs, 'timestamp': utc_timestamp}
-                        )
-                    ], ignore_index=True)
-
-            pool.close()
-            pool.terminate()
-            pool.join()
+                self.raw_predictions_df = pd.concat([
+                    self.raw_predictions_df,
+                    pd.DataFrame({
+                        'SMILES': self.smiles[self.valid_indices],
+                        'model': endpoint,
+                        'prediction': probs.values,
+                        'timestamp': utc_timestamp
+                    })
+                ], ignore_index=True)
 
         end = time.time()
-        print(f'CYP450: {end - start} seconds to predict {len(self.predictions_df.index)} molecules')
+        print(f'CYP450: {end - start:.2f} seconds to predict {len(features)} molecules across 6 endpoints')
+
+        if self.model_errors:
+            self.has_errors = True
 
         return self.predictions_df
 
     def _error_callback(self, error):
         print(error)
-
-    def _get_model_predictions(self, request_queue, response_queue):
-        params_dict = request_queue.get()
-
-        model_name = params_dict['model_name']
-        features = params_dict['features']
-        error_threshold_length = params_dict['error_threshold_length']
-        models = cyp450_models_dict[model_name]
-        model_has_error = False
-        probs_matrix = np.ma.empty((64, features.shape[0]))
-        probs_matrix.mask = True
-        for model_number in range(0, 64):
-            probs = models[f'model_{model_number}'].predict_proba(features)
-            probs_matrix[model_number, :probs.shape[0]] = probs.T[1]
-            if model_has_error is False and error_threshold_length > len(probs):
-                model_has_error = True
-
-        mean_probs = probs_matrix.mean(axis=0)
-        response_dict = {
-            "mean_probs": mean_probs,
-            "model_has_error": model_has_error
-        }
-
-        response_queue.put(response_dict)
-        return None
 
     def get_errors(self):
         return {
@@ -219,3 +225,4 @@ class CYP450Predictor:
                 rows = self.raw_predictions_df.values.tolist()
                 cw = csv.writer(fw)
                 cw.writerows(rows)
+

@@ -1,3 +1,10 @@
+# Dockerfile for OpenData subdomain deployment (opendata.ncats.nih.gov/adme)
+# Full stack with Angular frontend and Flask backend
+#
+# Usage:
+#   docker build -f docker/Dockerfile.opendata -t ncats-adme-opendata .
+#   docker run -p 5000:5000 ncats-adme-opendata
+
 FROM node:20 AS build
 
 WORKDIR /opt/adme
@@ -6,7 +13,7 @@ COPY client ./
 
 RUN npm install && npm install -g @angular/cli
 
-# build parameter for opendata subdomain
+# Build parameter for opendata subdomain
 ENV NODE_OPTIONS=--openssl-legacy-provider
 RUN ng build --configuration production --deploy-url=/adme/client/ --base-href=/adme
 
@@ -25,7 +32,7 @@ ENV PATH /opt/conda/envs/ncats-adme/bin:$PATH
 
 RUN chmod +x startup.sh
 
-# clean existing client folder
+# Clean existing client folder
 RUN rm -rf client
 COPY --from=build /opt/adme/dist/client client
 

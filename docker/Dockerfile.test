@@ -1,0 +1,49 @@
+# Dockerfile for autonomous testing
+# Optimized for layer caching and model warmup during build
+#
+# Must use amd64 platform - rdkit/fpsim2 packages not available for arm64
+# On Apple Silicon: runs via Rosetta 2 emulation (limited compatibility)
+#
+# Usage:
+#   docker build -f docker/Dockerfile.test -t ncats-adme-test .
+#   docker run -v $(pwd)/results:/results ncats-adme-test
+
+FROM --platform=linux/amd64 continuumio/miniconda3:24.7.1-0
+
+WORKDIR /opt/adme
+
+# Layer 1: Environment (only rebuilds when environment.yml changes)
+COPY server/environment.yml ./environment.yml
+RUN conda env create -f environment.yml && conda clean -afy
+
+ENV PATH=/opt/conda/envs/ncats-adme/bin:$PATH
+
+# TensorFlow settings for cleaner logs
+ENV TF_CPP_MIN_LOG_LEVEL=2
+
+# Layer 2: Models (only rebuilds when models change)
+COPY server/models ./models
+
+# Layer 3: Static predictor files (scaler, descriptor CSVs, train_data)
+COPY server/predictors ./predictors
+COPY server/train_data ./train_data
+
+# Layer 4: Application code (rebuilds on any code change - fast)
+COPY server/app.py server/wsgi.py server/kekule_smiles.csv ./
+COPY server/images ./images
+
+# Layer 5: Scripts and entrypoint
+COPY server/scripts ./scripts
+RUN chmod +x scripts/*.sh
+
+# Layer 6: Testing data (baseline for comparison)
+COPY testing/baseline_predictions.json ./testing/baseline_predictions.json
+
+# Warmup: Pre-load models during build to speed up startup
+RUN python scripts/warmup_models.py || echo "Warmup completed with some warnings"
+
+EXPOSE 5000
+
+# Default: run autonomous test mode
+CMD ["./scripts/autonomous_test.sh"]
+

@@ -1,3 +1,10 @@
+# Dockerfile for NCATS subdomain deployment (adme.ncats.nih.gov)
+# Full stack with Angular frontend and Flask backend
+#
+# Usage:
+#   docker build -f docker/Dockerfile.ncats -t ncats-adme-ncats .
+#   docker run -p 5000:5000 ncats-adme-ncats
+
 FROM node:20 AS build
 
 WORKDIR /opt/adme
@@ -6,7 +13,7 @@ COPY client ./
 
 RUN npm install && npm install -g @angular/cli
 
-# parameter for adme.ncats subdomain
+# Build parameter for adme.ncats subdomain
 ENV NODE_OPTIONS=--openssl-legacy-provider
 RUN ng build --configuration production --deploy-url=/models/client/ --base-href=/models
 
@@ -25,7 +32,7 @@ ENV PATH /opt/conda/envs/ncats-adme/bin:$PATH
 
 RUN chmod +x startup.sh
 
-# clean existing client folder
+# Clean existing client folder
 RUN rm -rf client
 COPY --from=build /opt/adme/dist/client client
 

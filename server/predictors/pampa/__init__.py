@@ -1,16 +1,35 @@
-import os
 import sys
+import traceback
 
-from ..utilities.utilities import load_gcnn_model_with_versioninfo
+from ..utilities.utilities import load_gcnn_model_local
 
-pampa_model_file_url = 'https://opendata.ncats.nih.gov/public/adme/models/current/biweekly/pampa/gcnn_model.pt'
-pampa_model_file_path = './models/pampa/gcnn_model.pt'
+pampa_model_file_path = './models/pampa/gcnn_model.ckpt'
 
-print('Loading PAMPA graph convolutional neural network model', file=sys.stdout)
-os.makedirs('./models/pampa', exist_ok=True)
 
-pampa_gcnn_scaler, pampa_gcnn_model, pampa_gcnn_model_version = load_gcnn_model_with_versioninfo(
-    pampa_model_file_path, pampa_model_file_url
-)
+def load_model():
+    """Load PAMPA GCNN model from models directory."""
+    print('Loading PAMPA graph convolutional neural network model', file=sys.stdout)
+    sys.stdout.flush()
 
-print('Finished loading PAMPA 7.4 models', file=sys.stdout)
+    scaler = None
+    model = None
+    model_version = 'unknown'
+
+    try:
+        scaler, model, model_version = load_gcnn_model_local(pampa_model_file_path)
+        print(f'Successfully loaded PAMPA GCNN model version: {model_version}', file=sys.stdout)
+    except FileNotFoundError as e:
+        print(f'ERROR: PAMPA model file not found: {e}', file=sys.stderr)
+    except ModuleNotFoundError as e:
+        print(f'ERROR: PAMPA model requires missing module: {e}', file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
+    except Exception as e:
+        print(f'ERROR: Failed to load PAMPA model: {type(e).__name__}: {e}', file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
+
+    print('Finished loading PAMPA 7.4 models', file=sys.stdout)
+    sys.stdout.flush()
+    return scaler, model, model_version
+
+
+pampa_gcnn_scaler, pampa_gcnn_model, pampa_gcnn_model_version = load_model()

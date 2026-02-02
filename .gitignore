@@ -17,3 +17,9 @@ temp/
 
 server/models
 server/models/
+
+# Test results (generated)
+results/
+
+# Docker build logs
+*.log

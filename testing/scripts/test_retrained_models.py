@@ -2,45 +2,67 @@
 """
 Test retrained ADME models against baseline predictions.
 
-Runs predictions with updated models, stores results, and performs
-comprehensive comparison against the original baseline.
+Runs predictions with updated models, stores results in timestamped
+run directories, and performs comprehensive comparison against the
+original baseline.
 
 Usage:
-    python testing/test_retrained_models.py [--baseline testing/baseline_predictions.json] [--url http://localhost:5000] [--output retrained_predictions.json]
+    # Run from project root (ncats-adme/)
+    python testing/scripts/test_retrained_models.py
+    
+    # With custom URL
+    python testing/scripts/test_retrained_models.py --url http://localhost:5001
+    
+    # Skip comparison (just capture predictions)
+    python testing/scripts/test_retrained_models.py --skip-comparison
+
+Output:
+    Creates a timestamped directory under testing/runs/ containing:
+    - predictions.json: Raw predictions from current models
+    - comparison.json: Detailed comparison with baseline
+    - report.txt: Human-readable performance report
 
 Requirements:
     pip install requests
 """
 
 import json
+import os
 import requests
 import argparse
 from datetime import datetime
+from pathlib import Path
 import sys
-from typing import Dict, List, Tuple, Any
+from typing import Dict, List, Tuple
 import re
 
-# Configuration
+
 DEFAULT_BASE_URL = "http://localhost:5000"
 API_ENDPOINT = "/api/v1/predict"
 
-# Working models that have been retrained and are available
-WORKING_MODELS = [
-    "rlm",        # Rat Liver Microsome - GCNN (Chemprop 2.x)
-    "hlm",        # Human Liver Microsome - XGBoost
-    "pampa",      # PAMPA pH 7.4 - GCNN (Chemprop 2.x)
-    "pampa50",    # PAMPA pH 5.0 - GCNN (Chemprop 2.x)
-    "pampabbb",   # PAMPA Blood-Brain Barrier - GCNN + RDKit
-    "solubility", # Aqueous Solubility - GCNN (Chemprop 2.x)
-    "hlc",        # Human Liver Cytosol - Ensemble RF (3 models)
+# Models that have baseline data (retrained)
+# HLC, CYP450 disabled - sklearn pickle models crash under Rosetta 2
+RETRAINED_MODELS = [
+    "rlm",
+    "hlm",
+    "pampa",
+    "pampa50",
+    "pampabbb",
+    "solubility",
+    # "hlc",    # DISABLED - sklearn pickle crash
+    # "cyp450", # DISABLED - sklearn pickle crash
 ]
 
-# Models with missing components - uncomment when available
-# PENDING_MODELS = [
-#     "cyp450",    # CYP450 substrate models missing (cyp2c9_subs, cyp2d6_subs, cyp3a4_subs)
-# ]
+# New models added in upgrade (no baseline comparison)
+# All new sklearn models disabled
+NEW_MODELS = [
+    # "mlc",  # DISABLED - sklearn pickle crash
+    # "rlc", # DISABLED - model is just ndarray, not classifier
+]
 
-# Same test molecules as baseline
+# All models to test
+WORKING_MODELS = RETRAINED_MODELS + NEW_MODELS
+
 TEST_MOLECULES = [
     ("Ethanol", "CCO"),
     ("Methanol", "CO"),
@@ -64,6 +86,25 @@ TEST_MOLECULES = [
     ("Omeprazole", "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC"),
     ("Atorvastatin", "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4"),
 ]
+
+
+def get_testing_dir() -> Path:
+    """Get the testing directory path relative to script location."""
+    script_dir = Path(__file__).parent
+    return script_dir.parent
+
+
+def create_run_directory() -> Path:
+    """Create a timestamped run directory under testing/runs/."""
+    testing_dir = get_testing_dir()
+    runs_dir = testing_dir / "runs"
+    runs_dir.mkdir(exist_ok=True)
+    
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+    run_dir = runs_dir / timestamp
+    run_dir.mkdir(exist_ok=True)
+    
+    return run_dir
 
 
 def make_single_prediction(base_url: str, smiles: str, model: str, timeout: int = 300) -> dict:
@@ -107,7 +148,7 @@ def capture_predictions(base_url: str, models: List[str]) -> dict:
             "api_endpoint": API_ENDPOINT,
             "models_tested": models,
             "num_valid_molecules": len(TEST_MOLECULES),
-            "script_version": "1.0.0",
+            "script_version": "2.0.0",
         },
         "test_molecules": {name: smiles for name, smiles in TEST_MOLECULES},
         "predictions": {},
@@ -174,10 +215,10 @@ def capture_predictions(base_url: str, models: List[str]) -> dict:
         results["predictions"][model] = model_results
         
         if model_results["failed_count"] == 0:
-            print(f"    ✓ Success: {model_results['successful_count']}/{len(TEST_MOLECULES)} predictions")
+            print(f"    Success: {model_results['successful_count']}/{len(TEST_MOLECULES)} predictions")
             results["summary"]["models_successful"].append(model)
         else:
-            print(f"    ⚠ Partial: {model_results['successful_count']}/{len(TEST_MOLECULES)} succeeded, {model_results['failed_count']} failed")
+            print(f"    Partial: {model_results['successful_count']}/{len(TEST_MOLECULES)} succeeded, {model_results['failed_count']} failed")
             if model_results["successful_count"] > 0:
                 results["summary"]["models_successful"].append(model)
             else:
@@ -218,6 +259,11 @@ def extract_prediction_class(data: dict) -> str:
 def compare_with_baseline(baseline: dict, updated: dict) -> dict:
     """Compare new predictions against baseline."""
     comparison = {
+        "metadata": {
+            "comparison_date": datetime.now().isoformat(),
+            "baseline_date": baseline.get("metadata", {}).get("capture_date", "Unknown"),
+            "updated_date": updated.get("metadata", {}).get("capture_date", "Unknown"),
+        },
         "models_compared": [],
         "per_model_stats": {},
         "overall_summary": {
@@ -230,7 +276,8 @@ def compare_with_baseline(baseline: dict, updated: dict) -> dict:
     
     baseline_models = set(baseline.get("predictions", {}).keys())
     updated_models = set(updated.get("predictions", {}).keys())
-    common_models = baseline_models & updated_models & set(WORKING_MODELS)
+    # Only compare retrained models (ones that have baseline data)
+    common_models = baseline_models & updated_models & set(RETRAINED_MODELS)
     
     comparison["models_compared"] = sorted(list(common_models))
     comparison["overall_summary"]["models_tested"] = len(common_models)
@@ -324,14 +371,14 @@ def compare_with_baseline(baseline: dict, updated: dict) -> dict:
     return comparison
 
 
-def generate_performance_report(baseline: dict, updated: dict, comparison: dict) -> str:
+def generate_performance_report(baseline: dict, updated: dict, comparison: dict, run_dir: Path) -> str:
     """Generate detailed performance comparison report."""
     report = []
     report.append("=" * 70)
     report.append("RETRAINED MODEL PERFORMANCE REPORT")
     report.append("=" * 70)
     report.append("")
-    
+    report.append(f"Run directory: {run_dir}")
     report.append(f"Baseline captured: {baseline.get('metadata', {}).get('capture_date', 'Unknown')}")
     report.append(f"Updated captured: {updated.get('metadata', {}).get('capture_date', 'Unknown')}")
     report.append("")
@@ -340,7 +387,7 @@ def generate_performance_report(baseline: dict, updated: dict, comparison: dict)
     report.append("-" * 70)
     overall = comparison["overall_summary"]
     report.append(f"Models tested: {overall['models_tested']}")
-    report.append(f"Models passing (≥50% agreement): {overall['models_passing']}")
+    report.append(f"Models passing (>=50% agreement): {overall['models_passing']}")
     report.append(f"Models failing: {overall['models_failing']}")
     report.append("")
     
@@ -355,16 +402,22 @@ def generate_performance_report(baseline: dict, updated: dict, comparison: dict)
         report.append(f"  Class disagreements: {stats['class_disagreements']}")
         report.append(f"  Agreement rate: {stats['class_agreement_rate']:.2%}")
         report.append(f"  Avg probability difference: {stats['average_probability_difference']:.4f}")
-        report.append(f"  Status: {'✓ PASSING' if stats['passing'] else '✗ FAILING'}")
+        report.append(f"  Status: {'PASSING' if stats['passing'] else 'FAILING'}")
         
         if stats["mismatches"]:
             report.append(f"  Class mismatches ({len(stats['mismatches'])}):")
             for mismatch in stats["mismatches"][:5]:
-                report.append(f"    - {mismatch['molecule']}: {mismatch['baseline']} → {mismatch['updated']}")
+                report.append(f"    - {mismatch['molecule']}: {mismatch['baseline']} -> {mismatch['updated']}")
             if len(stats["mismatches"]) > 5:
                 report.append(f"    ... and {len(stats['mismatches']) - 5} more")
     
     report.append("")
+    report.append("=" * 70)
+    report.append("OUTPUT FILES")
+    report.append("-" * 70)
+    report.append(f"  predictions.json  - Raw prediction data")
+    report.append(f"  comparison.json   - Detailed comparison metrics")
+    report.append(f"  report.txt        - This report")
     report.append("=" * 70)
     
     return "\n".join(report)
@@ -379,31 +432,32 @@ def check_server(base_url: str) -> bool:
         return False
 
 
-def main():
+def main() -> int:
     parser = argparse.ArgumentParser(
         description="Test retrained ADME models against baseline predictions",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-    # Default: localhost:5000, baseline from testing/baseline_predictions.json
-    python testing/test_retrained_models.py
+    # Run from project root with defaults
+    python testing/scripts/test_retrained_models.py
     
-    # Custom paths
-    python testing/test_retrained_models.py --baseline my_baseline.json --output my_results.json
+    # Custom server URL
+    python testing/scripts/test_retrained_models.py --url http://localhost:5001
     
-    # Custom URL
-    python testing/test_retrained_models.py --url http://adme-server:5000
+    # Skip comparison (just capture predictions)
+    python testing/scripts/test_retrained_models.py --skip-comparison
+
+Output:
+    Creates testing/runs/YYYY-MM-DD_HHMMSS/ containing:
+    - predictions.json
+    - comparison.json
+    - report.txt
         """
     )
     parser.add_argument(
         "--baseline", "-b",
-        default="testing/baseline_predictions.json",
+        default=None,
         help="Path to baseline predictions JSON (default: testing/baseline_predictions.json)"
-    )
-    parser.add_argument(
-        "--output", "-o",
-        default="testing/retrained_predictions.json",
-        help="Output file path (default: testing/retrained_predictions.json)"
     )
     parser.add_argument(
         "--url", "-u",
@@ -424,6 +478,9 @@ Examples:
     
     base_url = args.url.rstrip("/")
     
+    testing_dir = get_testing_dir()
+    baseline_path = Path(args.baseline) if args.baseline else testing_dir / "baseline_predictions.json"
+    
     if not args.skip_healthcheck:
         print(f"Checking server at {base_url}...")
         if not check_server(base_url):
@@ -432,16 +489,19 @@ Examples:
             return 1
         print("Server is running!\n")
     
+    run_dir = create_run_directory()
+    print(f"Run directory: {run_dir}\n")
+    
     updated_results = capture_predictions(base_url, WORKING_MODELS)
     
-    with open(args.output, "w") as f:
+    predictions_file = run_dir / "predictions.json"
+    with open(predictions_file, "w") as f:
         json.dump(updated_results, f, indent=2, default=str)
-    
-    print(f"\nPredictions saved to: {args.output}")
+    print(f"\nPredictions saved to: {predictions_file}")
     
     if not args.skip_comparison:
         try:
-            with open(args.baseline, "r") as f:
+            with open(baseline_path, "r") as f:
                 baseline_results = json.load(f)
             
             print("\n" + "=" * 70)
@@ -450,27 +510,37 @@ Examples:
             
             comparison = compare_with_baseline(baseline_results, updated_results)
             
-            report = generate_performance_report(baseline_results, updated_results, comparison)
-            print(report)
-            
-            comparison_file = args.output.replace(".json", "_comparison.json")
+            comparison_file = run_dir / "comparison.json"
             with open(comparison_file, "w") as f:
                 json.dump(comparison, f, indent=2, default=str)
-            print(f"\nComparison saved to: {comparison_file}")
+            print(f"Comparison saved to: {comparison_file}")
+            
+            report = generate_performance_report(baseline_results, updated_results, comparison, run_dir)
+            print(report)
+            
+            report_file = run_dir / "report.txt"
+            with open(report_file, "w") as f:
+                f.write(report)
+            print(f"\nReport saved to: {report_file}")
             
             if comparison["overall_summary"]["models_failing"] > 0:
                 return 1
+                
         except FileNotFoundError:
-            print(f"\nWARNING: Baseline file not found: {args.baseline}")
+            print(f"\nWARNING: Baseline file not found: {baseline_path}")
             print("Skipping comparison. Run with --skip-comparison to suppress this warning.")
             return 0
         except Exception as e:
             print(f"\nERROR: Failed to compare with baseline: {e}")
             return 1
     
+    print(f"\n{'=' * 70}")
+    print(f"TEST RUN COMPLETE")
+    print(f"{'=' * 70}")
+    print(f"Results saved to: {run_dir}")
+    
     return 0
 
 
 if __name__ == "__main__":
     sys.exit(main())
-

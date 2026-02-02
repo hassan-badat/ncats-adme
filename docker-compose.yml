@@ -1,0 +1,72 @@
+version: '3.8'
+
+# Docker Compose for ADME development and testing
+#
+# Services:
+#   adme-dev  - Hot-reload development mode (volume-mounted code)
+#   adme-test - Autonomous test runner (build, test, output results)
+#
+# Usage:
+#   # Development with hot reload (code changes reflect immediately)
+#   docker-compose up adme-dev
+#   # Then restart to pick up code changes: docker-compose restart adme-dev
+#
+#   # Autonomous testing (start and walk away)
+#   docker-compose up adme-test
+#   # Results in ./results/predictions.json
+
+services:
+  # Development server with hot-reload via volume mounting
+  # Code changes are reflected immediately (restart container to apply)
+  adme-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile-cached
+    container_name: adme-dev
+    ports:
+      - "5000:5000"
+    volumes:
+      # Mount code for hot-reloading (changes reflected on restart)
+      - ./server/app.py:/opt/adme/app.py:ro
+      - ./server/wsgi.py:/opt/adme/wsgi.py:ro
+      - ./server/predictors:/opt/adme/predictors:ro
+      # Results directory for any test output
+      - ./results:/results
+    environment:
+      - FLASK_DEBUG=1
+      - KEEP_RUNNING=true
+    # Override CMD to just run the server (not autonomous tests)
+    command: ["python", "app.py"]
+    # Healthcheck to verify server is up
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+
+  # Autonomous test runner - starts server, waits for models, runs tests
+  # Can be started and left to run (close laptop, come back to results)
+  adme-test:
+    build:
+      context: .
+      dockerfile: Dockerfile-cached
+    container_name: adme-test
+    volumes:
+      # Mount results directory to retrieve output
+      - ./results:/results
+    environment:
+      # Timeout for model loading (default 30 minutes)
+      - MODEL_TIMEOUT=1800
+      # Don't keep server running after tests complete
+      - KEEP_RUNNING=false
+    # Uses default CMD from Dockerfile (autonomous_test.sh)
+
+  # Build-only service (useful for just building the cached image)
+  adme-build:
+    build:
+      context: .
+      dockerfile: Dockerfile-cached
+    image: adme-cached:latest
+    command: ["echo", "Build complete"]
+

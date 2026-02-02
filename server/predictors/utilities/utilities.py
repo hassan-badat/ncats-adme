@@ -63,95 +63,144 @@ def addMolsKekuleSmilesToFrame(df: DataFrame, smi_column_name: str):
             df.loc[index, 'kekule_smiles'] = None
 
 
-def download_model_file(model_file_path: str, model_file_url: str) -> None:
-    """
-    Download a model file from URL if it doesn't exist locally.
+# DISABLED: Server download functions commented out - using local models only
+# def download_model_file(model_file_path: str, model_file_url: str) -> None:
+#     """
+#     Download a model file from URL if it doesn't exist locally.
+#
+#     Parameters:
+#         model_file_path: Local path to save the model
+#         model_file_url: URL to download from
+#     """
+#     print(f'Model File Does not Exist. Downloading from {model_file_url}')
+#     response = requests.get(model_file_url, allow_redirects=True)
+#     with tqdm.wrapattr(
+#         open(os.devnull, "wb"),
+#         "write",
+#         miniters=1,
+#         desc=model_file_url.split('/')[-1],
+#         total=int(response.headers.get('content-length', 0))
+#     ) as fout:
+#         for chunk in response.iter_content(chunk_size=4096):
+#             fout.write(chunk)
+#     with open(model_file_path, 'wb') as model_file:
+#         model_file.write(response.content)
 
-    Parameters:
-        model_file_path: Local path to save the model
-        model_file_url: URL to download from
-    """
-    print(f'Model File Does not Exist. Downloading from {model_file_url}')
-    response = requests.get(model_file_url, allow_redirects=True)
-    with tqdm.wrapattr(
-        open(os.devnull, "wb"),
-        "write",
-        miniters=1,
-        desc=model_file_url.split('/')[-1],
-        total=int(response.headers.get('content-length', 0))
-    ) as fout:
-        for chunk in response.iter_content(chunk_size=4096):
-            fout.write(chunk)
-    with open(model_file_path, 'wb') as model_file:
-        model_file.write(response.content)
+
+# DISABLED: Server download functions commented out - using local models only
+# def load_gcnn_model(model_file_path: str, model_file_url: str):
+#     """
+#     Load a Chemprop 2.x GCNN model from a checkpoint file.
+#
+#     Parameters:
+#         model_file_path: Local path to the model checkpoint
+#         model_file_url: URL to download from if not present locally
+#
+#     Returns:
+#         Tuple of (model, None) - scaler is embedded in Chemprop 2.x checkpoints
+#     """
+#     if not path.exists(model_file_path):
+#         download_model_file(model_file_path, model_file_url)
+#     else:
+#         print('Model File Exists Locally')
+#
+#     # Load model using Chemprop 2.x API
+#     # Some checkpoints may be missing Lightning metadata, so we patch it if needed
+#     import torch
+#     checkpoint = torch.load(model_file_path, map_location='cpu')
+#     
+#     # Patch checkpoint if it's missing Lightning version info
+#     if isinstance(checkpoint, dict) and 'pytorch-lightning_version' not in checkpoint:
+#         checkpoint['pytorch-lightning_version'] = '2.0.0'
+#         # Save patched checkpoint temporarily
+#         import tempfile
+#         import os as os_module
+#         with tempfile.NamedTemporaryFile(delete=False, suffix='.pt') as tmp_file:
+#             tmp_path = tmp_file.name
+#             torch.save(checkpoint, tmp_path)
+#         
+#         try:
+#             model = MPNN.load_from_checkpoint(tmp_path, map_location='cpu')
+#         finally:
+#             # Clean up temporary file
+#             if os_module.path.exists(tmp_path):
+#                 os_module.unlink(tmp_path)
+#     else:
+#         # Load normally if checkpoint has proper metadata
+#         model = MPNN.load_from_checkpoint(model_file_path, map_location='cpu')
+#     
+#     model.eval()
+#
+#     # In Chemprop 2.x, scaler is embedded in checkpoint, return None for compatibility
+#     return None, model
 
 
-def load_gcnn_model(model_file_path: str, model_file_url: str):
+# DISABLED: Server download functions commented out - using local models only
+# def load_gcnn_model_with_versioninfo(model_file_path: str, model_file_url: str):
+#     """
+#     Load a Chemprop 2.x GCNN model with version information.
+#
+#     Parameters:
+#         model_file_path: Local path to the model checkpoint
+#         model_file_url: URL to download from if not present locally
+#
+#     Returns:
+#         Tuple of (None, model, version_string)
+#     """
+#     scaler, model = load_gcnn_model(model_file_path, model_file_url)
+#
+#     # Generate version from file creation timestamp
+#     model_timestamp = datetime.fromtimestamp(
+#         os.path.getctime(model_file_path)
+#     ).strftime('%Y-%m-%d')
+#
+#     return scaler, model, model_timestamp
+
+
+def load_gcnn_model_local(model_file_path: str):
     """
-    Load a Chemprop 2.x GCNN model from a checkpoint file.
+    Load a Chemprop 2.x GCNN model from a local checkpoint file only.
+    No downloading - raises FileNotFoundError if file doesn't exist.
 
     Parameters:
         model_file_path: Local path to the model checkpoint
-        model_file_url: URL to download from if not present locally
 
     Returns:
-        Tuple of (model, None) - scaler is embedded in Chemprop 2.x checkpoints
+        Tuple of (scaler, model, version_string)
     """
     if not path.exists(model_file_path):
-        download_model_file(model_file_path, model_file_url)
-    else:
-        print('Model File Exists Locally')
+        raise FileNotFoundError(f'Model file not found: {model_file_path}')
 
-    # Load model using Chemprop 2.x API
-    # Some checkpoints may be missing Lightning metadata, so we patch it if needed
+    print(f'Loading model from {model_file_path}')
+
     import torch
     checkpoint = torch.load(model_file_path, map_location='cpu')
-    
+
     # Patch checkpoint if it's missing Lightning version info
     if isinstance(checkpoint, dict) and 'pytorch-lightning_version' not in checkpoint:
         checkpoint['pytorch-lightning_version'] = '2.0.0'
-        # Save patched checkpoint temporarily
         import tempfile
         import os as os_module
         with tempfile.NamedTemporaryFile(delete=False, suffix='.pt') as tmp_file:
             tmp_path = tmp_file.name
             torch.save(checkpoint, tmp_path)
-        
+
         try:
             model = MPNN.load_from_checkpoint(tmp_path, map_location='cpu')
         finally:
-            # Clean up temporary file
             if os_module.path.exists(tmp_path):
                 os_module.unlink(tmp_path)
     else:
-        # Load normally if checkpoint has proper metadata
         model = MPNN.load_from_checkpoint(model_file_path, map_location='cpu')
-    
+
     model.eval()
 
-    # In Chemprop 2.x, scaler is embedded in checkpoint, return None for compatibility
-    return None, model
-
-
-def load_gcnn_model_with_versioninfo(model_file_path: str, model_file_url: str):
-    """
-    Load a Chemprop 2.x GCNN model with version information.
-
-    Parameters:
-        model_file_path: Local path to the model checkpoint
-        model_file_url: URL to download from if not present locally
-
-    Returns:
-        Tuple of (None, model, version_string)
-    """
-    scaler, model = load_gcnn_model(model_file_path, model_file_url)
-
-    # Generate version from file creation timestamp
+    # Generate version from file modification timestamp
     model_timestamp = datetime.fromtimestamp(
-        os.path.getctime(model_file_path)
+        os.path.getmtime(model_file_path)
     ).strftime('%Y-%m-%d')
 
-    return scaler, model, model_timestamp
+    return None, model, model_timestamp
 
 
 def get_similar_mols(kekule_smiles: list, model: str):
