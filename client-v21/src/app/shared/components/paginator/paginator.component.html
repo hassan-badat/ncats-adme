@@ -1,0 +1,60 @@
+<div class="paginator">
+  <div class="paginator-page-size">
+    <label for="pageSize">Items per page:</label>
+    <select 
+      id="pageSize" 
+      [ngModel]="currentPageSize()" 
+      (ngModelChange)="onPageSizeChange($event)"
+    >
+      @for (size of pageSizeOptions; track size) {
+        <option [value]="size">{{ size }}</option>
+      }
+    </select>
+  </div>
+  
+  <span class="paginator-range">{{ rangeLabel() }}</span>
+  
+  <div class="paginator-buttons">
+    <button 
+      class="paginator-btn" 
+      [disabled]="!hasPreviousPage()" 
+      (click)="firstPage()"
+      title="First page"
+    >
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z"/>
+      </svg>
+    </button>
+    <button 
+      class="paginator-btn" 
+      [disabled]="!hasPreviousPage()" 
+      (click)="previousPage()"
+      title="Previous page"
+    >
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+      </svg>
+    </button>
+    <button 
+      class="paginator-btn" 
+      [disabled]="!hasNextPage()" 
+      (click)="nextPage()"
+      title="Next page"
+    >
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+      </svg>
+    </button>
+    <button 
+      class="paginator-btn" 
+      [disabled]="!hasNextPage()" 
+      (click)="lastPage()"
+      title="Last page"
+    >
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M5.59 7.41L10.18 12l-4.59 4.59L7 18l6-6-6-6zM16 6h2v12h-2z"/>
+      </svg>
+    </button>
+  </div>
+</div>
+

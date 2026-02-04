@@ -1,0 +1,22 @@
+<div class="tab-group">
+  <div class="tab-header" role="tablist">
+    @for (tab of tabs; track tab.label; let i = $index) {
+      <button 
+        class="tab-button"
+        [class.active]="i === selectedIndex"
+        [class.disabled]="tab.disabled"
+        [disabled]="tab.disabled"
+        (click)="selectTab(i, tab)"
+        role="tab"
+        [attr.aria-selected]="i === selectedIndex"
+        [attr.aria-controls]="'tabpanel-' + i"
+      >
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+  <div class="tab-content" role="tabpanel" [attr.aria-labelledby]="'tab-' + selectedIndex">
+    <ng-content />
+  </div>
+</div>
+

@@ -1,0 +1,101 @@
+<div class="predictions-page">
+  <div class="page-header">
+    <h1>ADME Predictions</h1>
+    <p>Select models and provide molecular input to get predictions</p>
+  </div>
+  
+  <section class="model-selection card">
+    <h3>Choose models to predict:</h3>
+    <div class="model-checkboxes">
+      @for (model of models; track model.id) {
+        <label class="model-checkbox">
+          <input 
+            type="checkbox" 
+            [checked]="model.checked" 
+            (change)="toggleModel(model)"
+          >
+          <span class="checkbox-label">{{ model.name }}</span>
+        </label>
+      }
+    </div>
+  </section>
+  
+  <section class="molecule-input card">
+    <adme-tab-group
+      [tabs]="inputTabs"
+      [selectedTabIndex]="selectedInputTab()"
+      (tabChange)="onInputTabChange($event)"
+    >
+      @switch (selectedInputTab()) {
+        @case (0) {
+          <div class="tab-content">
+            <adme-sketcher 
+              [apiBaseUrl]="apiKetcherUrl" 
+              (moleculeInput)="processSketcherInput($event)"
+            />
+          </div>
+        }
+        @case (1) {
+          <div class="tab-content">
+            <adme-file-upload (fileProcess)="processFile($event)" />
+          </div>
+        }
+      }
+    </adme-tab-group>
+    
+    @if (errorMessage()) {
+      <div class="global-error">
+        <div class="error-content">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+          <span>{{ errorMessage() }}</span>
+        </div>
+        <button class="error-dismiss" (click)="clearError()">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
+    }
+  </section>
+  
+  <!-- Sketcher Results -->
+  @if (sketcherData()) {
+    <section class="results-section">
+      <adme-tab-group [tabs]="resultTabs">
+        @for (model of selectedModels(); track model; let i = $index) {
+          @if (i === 0) {
+            <adme-results-table
+              dataHandling="concat"
+              [model]="model"
+              [predictionsData]="sketcherData()![model]"
+              [predictionsDataAll]="sketcherData()"
+              (download)="downloadCSV($event)"
+            />
+          }
+        }
+      </adme-tab-group>
+    </section>
+  }
+  
+  <!-- File Results -->
+  @if (fileData()) {
+    <section class="results-section">
+      <adme-tab-group [tabs]="resultTabs">
+        @for (model of selectedModels(); track model; let i = $index) {
+          @if (i === 0) {
+            <adme-results-table
+              dataHandling="replace"
+              [model]="model"
+              [predictionsData]="fileData()![model]"
+              [predictionsDataAll]="fileData()"
+              (download)="downloadCSV($event)"
+            />
+          }
+        }
+      </adme-tab-group>
+    </section>
+  }
+</div>
+

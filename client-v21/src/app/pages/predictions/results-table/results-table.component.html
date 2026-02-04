@@ -1,0 +1,104 @@
+@if (errorMessage()) {
+  <div class="error-container">
+    <div class="error-message">
+      <div class="error-text">{{ errorMessage() }}</div>
+      @if (errorMessages().length) {
+        <ul class="error-list">
+          @for (msg of errorMessages(); track msg) {
+            <li>{{ msg }}</li>
+          }
+        </ul>
+      }
+    </div>
+    <button class="error-close" (click)="clearError()" aria-label="Close error">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+      </svg>
+    </button>
+  </div>
+}
+
+@if (pagedData().length) {
+  <div class="results-container">
+    <h3 class="results-title">Model predictions</h3>
+    
+    <div class="results-actions">
+      <div class="action-buttons">
+        <button class="btn-primary" (click)="downloadCSV()">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+          </svg>
+          Download
+        </button>
+        <button class="btn-secondary" (click)="downloadAllCSV()">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+          </svg>
+          Download All
+        </button>
+      </div>
+      
+      <adme-paginator
+        [length]="filteredData().length"
+        [pageIndex]="pageIndex()"
+        [pageSize]="pageSize()"
+        [pageSizeOptions]="[5, 10, 25, 100]"
+        (page)="onPageChange($event)"
+      />
+    </div>
+    
+    <div class="table-wrapper">
+      <table class="results-table">
+        <thead>
+          <tr>
+            @for (col of displayedColumns(); track col) {
+              <th [title]="getColumnDescription(col)">
+                {{ isSmilesColumn(col) ? 'mol' : col }}
+              </th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of pagedData(); track $index) {
+            <tr>
+              @for (col of displayedColumns(); track col) {
+                <td>
+                  @if (isSmilesColumn(col)) {
+                    <button class="structure-btn" (click)="openImageModal(row[col] + '')" [title]="row[col] + ''">
+                      <img [src]="getStructureImageUrl(row[col] + '')" [alt]="row[col] + ''" class="structure-img" loading="lazy" />
+                    </button>
+                  } @else {
+                    {{ formatCellValue(row[col]) }}
+                  }
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    
+    <adme-paginator
+      [length]="filteredData().length"
+      [pageIndex]="pageIndex()"
+      [pageSize]="pageSize()"
+      [pageSizeOptions]="[5, 10, 25, 100]"
+      (page)="onPageChange($event)"
+    />
+  </div>
+}
+
+<adme-modal-dialog
+  [open]="modalOpen()"
+  [title]="'Structure'"
+  [showFooter]="false"
+  (closed)="closeModal()"
+>
+  <div class="structure-modal-content">
+    @if (selectedSmiles()) {
+      <img [src]="getStructureImageUrl(selectedSmiles())" [alt]="selectedSmiles()" class="structure-modal-img" />
+      <p class="smiles-text">{{ selectedSmiles() }}</p>
+    }
+  </div>
+</adme-modal-dialog>
+
