@@ -1,0 +1,110 @@
+@import '../../../node_modules/swagger-ui-dist/swagger-ui.css';
+
+.api-page {
+  min-height: 100%;
+  background: var(--background);
+}
+
+.page-header {
+  text-align: center;
+  padding: var(--spacing-xl) var(--spacing-lg);
+  background: linear-gradient(180deg, var(--primary-lightest) 0%, var(--background) 100%);
+  
+  h1 {
+    margin-bottom: var(--spacing-sm);
+    color: var(--primary-dark);
+  }
+  
+  p {
+    color: var(--text-secondary);
+    margin: 0;
+  }
+}
+
+.swagger-container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+}
+
+// Swagger UI Overrides
+#swagger-ui {
+  .swagger-ui {
+    font-family: var(--font-family-body);
+    
+    .topbar {
+      display: none;
+    }
+    
+    .info {
+      margin: var(--spacing-lg) 0;
+    }
+    
+    .info .title {
+      font-family: var(--font-family-heading);
+      color: var(--text-primary);
+    }
+    
+    .opblock-tag {
+      font-family: var(--font-family-heading);
+      border-bottom-color: var(--border-color);
+    }
+    
+    .opblock {
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      border-color: var(--border-color);
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .opblock-summary {
+      border-radius: var(--radius-md);
+    }
+    
+    .opblock.opblock-get {
+      border-color: var(--info);
+      background: var(--info-light);
+      
+      .opblock-summary {
+        border-color: var(--info);
+      }
+    }
+    
+    .opblock.opblock-post {
+      border-color: var(--success);
+      background: var(--success-light);
+      
+      .opblock-summary {
+        border-color: var(--success);
+      }
+    }
+    
+    .btn {
+      border-radius: var(--radius-sm);
+      font-family: var(--font-family-body);
+    }
+    
+    .btn.execute {
+      background: var(--primary);
+      border-color: var(--primary);
+      
+      &:hover {
+        background: var(--primary-dark);
+      }
+    }
+    
+    .parameters-col_description {
+      font-family: var(--font-family-body);
+    }
+    
+    table thead tr th {
+      font-family: var(--font-family-body);
+      color: var(--text-primary);
+    }
+    
+    .response-col_status {
+      font-family: var(--font-family-mono);
+    }
+  }
+}
+

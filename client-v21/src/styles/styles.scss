@@ -1,0 +1,349 @@
+// ============================================
+// ADME@NCATS Global Styles
+// ============================================
+
+@use 'variables';
+@use 'mixins' as *;
+@use 'components';
+
+// ===========================================
+// CSS Reset & Base
+// ===========================================
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family-body);
+  font-size: 16px;
+  line-height: var(--line-height-normal);
+  color: var(--text-primary);
+  background: var(--background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// ===========================================
+// Typography
+// ===========================================
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--text-primary);
+  margin-top: 0;
+  margin-bottom: var(--spacing-md);
+}
+
+h1 { 
+  @include heading-1;
+}
+
+h2 { 
+  @include heading-2;
+}
+
+h3 { 
+  @include heading-3;
+}
+
+h4 { 
+  @include heading-4;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: var(--spacing-md);
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  
+  &:hover {
+    color: var(--primary-dark);
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+}
+
+strong, b {
+  font-weight: var(--font-weight-semibold);
+}
+
+code, pre {
+  font-family: var(--font-family-mono);
+}
+
+code {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--gray-100);
+  border-radius: var(--radius-sm);
+  font-size: 0.875em;
+}
+
+pre {
+  padding: var(--spacing-md);
+  background: var(--gray-900);
+  color: var(--gray-100);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  @include custom-scrollbar;
+  
+  code {
+    padding: 0;
+    background: transparent;
+  }
+}
+
+// ===========================================
+// Lists
+// ===========================================
+ul, ol {
+  margin-top: 0;
+  margin-bottom: var(--spacing-md);
+  padding-left: var(--spacing-lg);
+  
+  li {
+    margin-bottom: var(--spacing-xs);
+  }
+}
+
+// ===========================================
+// Utility Classes
+// ===========================================
+.container {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+.container-narrow {
+  max-width: var(--container-narrow);
+}
+
+.container-wide {
+  max-width: var(--container-wide);
+}
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.text-justify { text-align: justify; }
+
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-hint { color: var(--text-hint); }
+.text-success { color: var(--success); }
+.text-warning { color: var(--warning); }
+.text-error { color: var(--error); }
+
+.bg-surface { background: var(--surface); }
+.bg-primary { background: var(--primary); color: var(--text-on-primary); }
+.bg-primary-light { background: var(--primary-lightest); }
+
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.items-end { align-items: flex-end; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.justify-end { justify-content: flex-end; }
+.gap-xs { gap: var(--spacing-xs); }
+.gap-sm { gap: var(--spacing-sm); }
+.gap-md { gap: var(--spacing-md); }
+.gap-lg { gap: var(--spacing-lg); }
+
+.flex-1 { flex: 1; }
+.flex-auto { flex: auto; }
+.flex-none { flex: none; }
+
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+
+.m-0 { margin: 0; }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+.my-md { margin-top: var(--spacing-md); margin-bottom: var(--spacing-md); }
+.my-lg { margin-top: var(--spacing-lg); margin-bottom: var(--spacing-lg); }
+
+.p-0 { padding: 0; }
+.p-md { padding: var(--spacing-md); }
+.p-lg { padding: var(--spacing-lg); }
+
+.rounded { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-full { border-radius: var(--radius-full); }
+
+.shadow { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+
+.visually-hidden {
+  @include visually-hidden;
+}
+
+// ===========================================
+// Page Content Layout
+// ===========================================
+.page-container {
+  padding: var(--spacing-xl) var(--spacing-lg);
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+}
+
+.page-content {
+  max-width: var(--container-narrow);
+  margin: 0 auto;
+}
+
+.page-content-wide {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+  
+  h1 {
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  p {
+    color: var(--text-secondary);
+    font-size: 1.125rem;
+  }
+}
+
+// ===========================================
+// Definition Lists (for model pages)
+// ===========================================
+.definitions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.definition-row {
+  display: flex;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid var(--divider-color);
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  @include respond-below('md') {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+}
+
+.definition-label {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  min-width: 180px;
+  flex-shrink: 0;
+}
+
+.definition-value {
+  color: var(--text-secondary);
+  flex: 1;
+}
+
+// ===========================================
+// Selection & Scrollbar
+// ===========================================
+::selection {
+  background: var(--primary-light);
+  color: var(--text-on-primary);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gray-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gray-400);
+  border-radius: 5px;
+  
+  &:hover {
+    background: var(--gray-500);
+  }
+}
+
+// ===========================================
+// Print Styles
+// ===========================================
+@media print {
+  .app-header,
+  .app-footer {
+    display: none !important;
+  }
+  
+  .page-container {
+    padding: 0;
+  }
+}
+
+// ===========================================
+// Swagger UI Overrides
+// ===========================================
+.swagger-ui {
+  font-family: var(--font-family-body) !important;
+  
+  .topbar {
+    display: none !important;
+  }
+  
+  .info {
+    margin: var(--spacing-lg) 0;
+  }
+  
+  .opblock-tag {
+    font-family: var(--font-family-heading) !important;
+    border-bottom-color: var(--border-color) !important;
+  }
+  
+  .opblock {
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-sm) !important;
+    border-color: var(--border-color) !important;
+  }
+  
+  .opblock-summary {
+    border-radius: var(--radius-md) !important;
+  }
+  
+  .btn {
+    border-radius: var(--radius-sm) !important;
+  }
+}
+

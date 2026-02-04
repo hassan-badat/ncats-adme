@@ -1,0 +1,115 @@
+.data-page {
+  background: var(--background);
+  min-height: 100%;
+  padding: var(--spacing-xl) var(--spacing-lg);
+}
+
+.page-content {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  
+  h1 {
+    margin-bottom: var(--spacing-lg);
+    color: var(--primary-dark);
+  }
+}
+
+.intro {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  text-align: justify;
+  margin-bottom: var(--spacing-xl);
+}
+
+.table-container {
+  overflow-x: auto;
+  margin: var(--spacing-lg) 0;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  
+  th, td {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color-light);
+  }
+  
+  th {
+    background: var(--primary-lightest);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+  
+  td {
+    color: var(--text-secondary);
+  }
+  
+  tbody tr {
+    transition: background var(--transition-fast);
+    
+    &:hover {
+      background: var(--gray-50);
+    }
+    
+    &:last-child td {
+      border-bottom: none;
+    }
+  }
+  
+  .text-center {
+    text-align: center;
+  }
+  
+  a {
+    color: var(--primary);
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--primary-lightest);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  
+  svg {
+    width: 20px;
+    height: 20px;
+    color: var(--primary);
+  }
+  
+  &:hover {
+    background: var(--primary);
+    
+    svg {
+      color: white;
+    }
+  }
+}
+
+.table-footnotes {
+  margin-top: var(--spacing-lg);
+  
+  p {
+    margin: var(--spacing-xs) 0;
+    font-size: 0.875rem;
+    color: var(--text-hint);
+  }
+}
+

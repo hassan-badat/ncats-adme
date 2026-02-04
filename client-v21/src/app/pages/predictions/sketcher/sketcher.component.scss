@@ -1,0 +1,55 @@
+.sketcher-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.ketcher-iframe {
+  width: 100%;
+  height: 450px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: white;
+}
+
+.sketcher-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: var(--primary);
+    color: var(--text-on-primary);
+    font-weight: var(--font-weight-medium);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+    
+    &:hover:not(:disabled) {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.sketcher-hint {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-hint);
+}
+
