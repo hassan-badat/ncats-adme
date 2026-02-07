@@ -22,9 +22,9 @@ fi
 
 DOCKERFILE="docker/Dockerfile.${TARGET}"
 IMAGE_NAME="ncats-adme-${TARGET}:latest"
-LOG_FILE="results/build_${TARGET}.log"
+LOG_FILE="testing/results/build_${TARGET}.log"
 
-mkdir -p results
+mkdir -p testing/results
 
 if [ ! -f "$DOCKERFILE" ]; then
     echo "ERROR: Dockerfile not found: $DOCKERFILE"
@@ -61,7 +61,7 @@ if docker build $EXTRA_ARGS -f "$DOCKERFILE" -t "$IMAGE_NAME" . > "$LOG_FILE" 2>
     echo "Size:  $(docker images "$IMAGE_NAME" --format '{{.Size}}')"
     echo ""
     echo "Next steps:"
-    echo "  Run tests:  docker run -v \$(pwd)/results:/results $IMAGE_NAME"
+    echo "  Run tests:  docker run -v \$(pwd)/testing/results:/results $IMAGE_NAME"
     echo "  Run shell:  docker run -it $IMAGE_NAME bash"
     echo ""
     echo "Full build log: $LOG_FILE"
