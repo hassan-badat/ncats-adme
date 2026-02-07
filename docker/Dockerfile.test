@@ -5,7 +5,7 @@
 #
 # Usage:
 #   docker build -f docker/Dockerfile.test -t ncats-adme-test .
-#   docker run -v $(pwd)/results:/results ncats-adme-test
+#   docker run -v $(pwd)/testing/results:/results ncats-adme-test
 
 FROM continuumio/miniconda3:24.11.1-0
 

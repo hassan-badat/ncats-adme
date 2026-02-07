@@ -25,7 +25,7 @@ MODE="${1:-auto}"
 PORT="${PORT:-5000}"
 
 # Create results directory
-mkdir -p results
+mkdir -p testing/results
 
 case "$MODE" in
     #==========================================================================
@@ -41,7 +41,7 @@ case "$MODE" in
         echo "  1. Build the Docker image"
         echo "  2. Start the server and wait for models to load"
         echo "  3. Run the full test suite"
-        echo "  4. Save results to ./results/<timestamp>/"
+        echo "  4. Save results to ./testing/results/<timestamp>/"
         echo ""
         
         # Build the image
@@ -63,7 +63,7 @@ case "$MODE" in
         
         docker run -d \
             --name adme-test \
-            -v "$(pwd)/results:/results" \
+            -v "$(pwd)/testing/results:/results" \
             -e MODEL_TIMEOUT=1800 \
             ncats-adme-test:latest
         
@@ -75,7 +75,7 @@ case "$MODE" in
         echo "Monitor progress:"
         echo "  docker logs -f adme-test"
         echo ""
-        echo "Results will be in: ./results/<timestamp>/"
+        echo "Results will be in: ./testing/results/<timestamp>/"
         echo ""
         ;;
     
@@ -85,7 +85,7 @@ case "$MODE" in
         echo "LOCAL TEST MODE (No Docker)"
         echo "=========================================="
         
-        RESULTS_DIR="./results"
+        RESULTS_DIR="./testing/results"
         BASE_URL="http://localhost:$PORT"
         
         # Check conda environment

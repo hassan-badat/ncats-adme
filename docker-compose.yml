@@ -13,7 +13,7 @@ version: '3.8'
 #
 #   # Autonomous testing (start and walk away)
 #   docker-compose up adme-test
-#   # Results in ./results/predictions.json
+  #   # Results in ./testing/results/predictions.json
 
 services:
   # Development server with hot-reload via volume mounting
@@ -31,7 +31,7 @@ services:
       - ./server/wsgi.py:/opt/adme/wsgi.py:ro
       - ./server/predictors:/opt/adme/predictors:ro
       # Results directory for any test output
-      - ./results:/results
+      - ./testing/results:/results
     environment:
       - FLASK_DEBUG=1
       - KEEP_RUNNING=true
@@ -54,7 +54,7 @@ services:
     container_name: adme-test
     volumes:
       # Mount results directory to retrieve output
-      - ./results:/results
+      - ./testing/results:/results
     environment:
       # Timeout for model loading (default 30 minutes)
       - MODEL_TIMEOUT=1800

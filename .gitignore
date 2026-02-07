@@ -152,7 +152,7 @@ $RECYCLE.BIN/
 # =============================================================================
 
 # Test results (generated)
-results/
+testing/results/
 
 # Docker build logs
 *.log

@@ -26,10 +26,10 @@ All images are built for `linux/amd64` platform because:
 ```bash
 cd ncats-adme
 docker build -f docker/Dockerfile.test -t ncats-adme-test .
-docker run -v $(pwd)/results:/results ncats-adme-test
+docker run -v $(pwd)/testing/results:/results ncats-adme-test
 ```
 
-Results are saved to `./results/<timestamp>/`:
+Results are saved to `./testing/results/<timestamp>/`:
 - `predictions.json` - Full test data
 - `report.txt` - Summary report
 - `test_run.log` - Execution log
