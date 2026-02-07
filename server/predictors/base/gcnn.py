@@ -74,8 +74,10 @@ class GcnnBase(PredictorBase):
                 valid_index += 1
 
         # Create dataset and dataloader
+        # Use smaller batch size for small datasets to avoid dropping incomplete batches
         dataset = MoleculeDataset(datapoints)
-        dataloader = build_dataloader(dataset, batch_size=64, num_workers=0, shuffle=False)
+        batch_size = min(64, len(dataset)) if len(dataset) > 0 else 1
+        dataloader = build_dataloader(dataset, batch_size=batch_size, num_workers=0, shuffle=False, drop_last=False)
 
         # Run prediction using Chemprop 2.x API
         # In Chemprop 2.x, we iterate through batches and call the model directly
