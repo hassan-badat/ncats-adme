@@ -48,7 +48,6 @@ TEST_MOLECULES: List[Tuple[str, str]] = [
 ]
 
 # Models that have baseline data (from original system - compare these)
-# HLC, CYP450 disabled - sklearn pickle models crash under Rosetta 2
 RETRAINED_MODELS: List[str] = [
     'rlm',        # Rat Liver Microsome - GCNN
     'hlm',        # Human Liver Microsome - XGBoost
@@ -56,15 +55,14 @@ RETRAINED_MODELS: List[str] = [
     'pampa50',    # PAMPA pH 5.0 - GCNN
     'pampabbb',   # PAMPA Blood-Brain Barrier - GCNN
     'solubility', # Aqueous Solubility - GCNN
-    # 'hlc',      # DISABLED - sklearn pickle crash
-    # 'cyp450',   # DISABLED - sklearn pickle crash
+    'hlc',        # Human Liver Cytosol - DNN (BalancedBaggingClassifier)
+    'cyp450',     # CYP450 - Random Forest ensemble
 ]
 
 # New models added in upgrade (no baseline - just show results)
-# All new models disabled - sklearn pickle issues
 NEW_MODELS: List[str] = [
-    # 'mlc',      # DISABLED - sklearn pickle crash
-    # 'rlc',      # DISABLED - model is just ndarray, not classifier
+    'mlc',        # Mouse Liver Cytosol - DNN (BalancedBaggingClassifier)
+    'rlc',        # Rat Liver Cytosol - Random Forest (BalancedBaggingClassifier)
 ]
 
 # All models to test
@@ -115,13 +113,24 @@ def load_baseline(baseline_path: Path) -> Optional[Dict]:
 
 
 def compare_model_to_baseline(model: str, model_results: List[Dict], baseline: Dict) -> Dict:
-    """Compare model predictions to baseline."""
+    """
+    Compare model predictions to baseline with enhanced validation.
+    
+    Checks:
+    1. Class agreement rate (text labels like 'stable'/'unstable')
+    2. Probability value similarity
+    3. Prediction variance (flags if all predictions are identical)
+    """
     comparison = {
         "total_molecules": 0,
         "class_agreements": 0,
         "class_disagreements": 0,
         "probability_diffs": [],
         "mismatches": [],
+        "baseline_classes": [],
+        "updated_classes": [],
+        "baseline_probs": [],
+        "updated_probs": [],
     }
     
     baseline_pred = baseline.get("predictions", {}).get(model, {})
@@ -154,6 +163,11 @@ def compare_model_to_baseline(model: str, model_results: List[Dict], baseline: D
         b_class = extract_prediction_class(b_data)
         u_class = extract_prediction_class(u_data)
         
+        if b_class:
+            comparison["baseline_classes"].append(b_class)
+        if u_class:
+            comparison["updated_classes"].append(u_class)
+        
         if b_class and u_class:
             if b_class == u_class:
                 comparison["class_agreements"] += 1
@@ -165,31 +179,104 @@ def compare_model_to_baseline(model: str, model_results: List[Dict], baseline: D
                     "updated": u_class,
                 })
         
-        # Compare probabilities
+        # Compare probabilities - extract raw values
         prob_key = "Predicted Class (Probability)"
         if prob_key in b_data and prob_key in u_data:
-            _, b_prob = parse_prediction_value(b_data[prob_key])
-            _, u_prob = parse_prediction_value(u_data[prob_key])
+            b_class_val, b_prob = parse_prediction_value(b_data[prob_key])
+            u_class_val, u_prob = parse_prediction_value(u_data[prob_key])
             if b_prob is not None and u_prob is not None:
+                comparison["baseline_probs"].append(b_prob)
+                comparison["updated_probs"].append(u_prob)
                 comparison["probability_diffs"].append({
                     "molecule": mol_name,
+                    "baseline_class": b_class_val,
+                    "updated_class": u_class_val,
                     "baseline_prob": b_prob,
                     "updated_prob": u_prob,
                     "diff": abs(b_prob - u_prob),
                 })
     
-    # Calculate rates
+    # Calculate class agreement rate
     if comparison["total_molecules"] > 0:
         comparison["agreement_rate"] = comparison["class_agreements"] / comparison["total_molecules"]
     else:
         comparison["agreement_rate"] = 0.0
     
+    # Calculate probability statistics
     if comparison["probability_diffs"]:
-        comparison["avg_probability_diff"] = sum(d["diff"] for d in comparison["probability_diffs"]) / len(comparison["probability_diffs"])
+        diffs = [d["diff"] for d in comparison["probability_diffs"]]
+        comparison["avg_probability_diff"] = sum(diffs) / len(diffs)
+        comparison["max_probability_diff"] = max(diffs)
+        comparison["min_probability_diff"] = min(diffs)
     else:
         comparison["avg_probability_diff"] = 0.0
+        comparison["max_probability_diff"] = 0.0
+        comparison["min_probability_diff"] = 0.0
     
-    comparison["passing"] = comparison["agreement_rate"] >= 0.5
+    # Check for suspicious lack of variance in predictions
+    # This catches the case where all predictions are the same class
+    comparison["variance_warnings"] = []
+    
+    if comparison["updated_classes"]:
+        unique_updated = set(comparison["updated_classes"])
+        if len(unique_updated) == 1:
+            comparison["variance_warnings"].append(
+                f"All updated predictions are '{list(unique_updated)[0]}' - model may be broken"
+            )
+    
+    if comparison["updated_probs"]:
+        # Check if all probabilities are the same (e.g., all 1.0)
+        unique_probs = set(round(p, 2) for p in comparison["updated_probs"])
+        if len(unique_probs) == 1:
+            comparison["variance_warnings"].append(
+                f"All updated probabilities are {list(unique_probs)[0]} - model may be broken"
+            )
+    
+    # Check class distribution in baseline vs updated
+    if comparison["baseline_classes"] and comparison["updated_classes"]:
+        baseline_class_counts = {}
+        for c in comparison["baseline_classes"]:
+            baseline_class_counts[c] = baseline_class_counts.get(c, 0) + 1
+        
+        updated_class_counts = {}
+        for c in comparison["updated_classes"]:
+            updated_class_counts[c] = updated_class_counts.get(c, 0) + 1
+        
+        comparison["baseline_class_distribution"] = baseline_class_counts
+        comparison["updated_class_distribution"] = updated_class_counts
+    
+    # Determine passing status with enhanced criteria:
+    # 1. Class agreement rate >= 50%
+    # 2. Average probability difference < 0.3 (probabilities should be similar)
+    # 3. No critical variance warnings (unless baseline also had same issue)
+    
+    class_passing = comparison["agreement_rate"] >= 0.5
+    prob_passing = comparison["avg_probability_diff"] < 0.3
+    
+    # Check if variance warnings are critical
+    has_critical_warnings = bool(comparison["variance_warnings"])
+    
+    # If both baseline and updated have same single class, it's not necessarily broken
+    if has_critical_warnings and comparison["baseline_classes"]:
+        baseline_unique = set(comparison["baseline_classes"])
+        updated_unique = set(comparison["updated_classes"]) if comparison["updated_classes"] else set()
+        if baseline_unique == updated_unique and len(baseline_unique) == 1:
+            has_critical_warnings = False
+    
+    comparison["class_passing"] = class_passing
+    comparison["probability_passing"] = prob_passing
+    comparison["passing"] = class_passing and prob_passing and not has_critical_warnings
+    
+    # Add reason if not passing
+    if not comparison["passing"]:
+        reasons = []
+        if not class_passing:
+            reasons.append(f"class agreement {comparison['agreement_rate']:.1%} < 50%")
+        if not prob_passing:
+            reasons.append(f"avg prob diff {comparison['avg_probability_diff']:.2f} >= 0.3")
+        if has_critical_warnings:
+            reasons.append("variance warnings present")
+        comparison["failure_reasons"] = reasons
     
     return comparison
 
@@ -331,15 +418,25 @@ def run_tests(base_url: str, output_dir: str, baseline_path: Optional[Path] = No
             results['comparisons'][model] = comparison
             
             print(f"  Predictions: {model_passed}/{len(TEST_MOLECULES)}")
-            print(f"  Baseline comparison: {comparison['class_agreements']}/{comparison['total_molecules']} agree ({comparison['agreement_rate']:.1%})")
+            print(f"  Class agreement: {comparison['class_agreements']}/{comparison['total_molecules']} ({comparison['agreement_rate']:.1%})")
+            print(f"  Avg probability diff: {comparison['avg_probability_diff']:.3f}")
+            if comparison.get('variance_warnings'):
+                for warn in comparison['variance_warnings']:
+                    print(f"  WARNING: {warn}")
             if comparison['mismatches']:
                 print(f"  Mismatches: {len(comparison['mismatches'])}")
-            print(f"  Status: {'PASSING' if comparison['passing'] else 'FAILING'}")
+            
+            status = 'PASSING' if comparison['passing'] else 'FAILING'
+            if not comparison['passing'] and comparison.get('failure_reasons'):
+                status += f" ({', '.join(comparison['failure_reasons'])})"
+            print(f"  Status: {status}")
             
             results['summary']['retrained_models_summary'][model] = {
                 'predictions_passed': model_passed,
                 'predictions_failed': model_failed,
                 'baseline_agreement_rate': comparison['agreement_rate'],
+                'avg_probability_diff': comparison['avg_probability_diff'],
+                'variance_warnings': comparison.get('variance_warnings', []),
                 'baseline_passing': comparison['passing'],
             }
         else:
@@ -350,6 +447,8 @@ def run_tests(base_url: str, output_dir: str, baseline_path: Optional[Path] = No
                 'predictions_passed': model_passed,
                 'predictions_failed': model_failed,
                 'baseline_agreement_rate': None,
+                'avg_probability_diff': None,
+                'variance_warnings': [],
                 'baseline_passing': None,
             }
     
@@ -522,18 +621,36 @@ def generate_report(results: Dict, baseline: Optional[Dict]) -> str:
         lines.append(f"  Predictions: {summary['predictions_passed']}/{summary['predictions_passed'] + summary['predictions_failed']}")
         
         if summary['baseline_agreement_rate'] is not None:
-            lines.append(f"  Baseline agreement: {summary['baseline_agreement_rate']:.1%}")
+            lines.append(f"  Class agreement: {summary['baseline_agreement_rate']:.1%}")
+            if summary.get('avg_probability_diff') is not None:
+                lines.append(f"  Avg probability diff: {summary['avg_probability_diff']:.3f}")
+            
+            # Show warnings
+            if summary.get('variance_warnings'):
+                for warn in summary['variance_warnings']:
+                    lines.append(f"  WARNING: {warn}")
+            
             lines.append(f"  Status: {'PASSING' if summary['baseline_passing'] else 'FAILING'}")
             
             # Show mismatches if any
             if model in results.get('comparisons', {}):
                 comparison = results['comparisons'][model]
+                
+                # Show class distribution
+                if comparison.get('baseline_class_distribution') and comparison.get('updated_class_distribution'):
+                    lines.append(f"  Baseline class dist: {comparison['baseline_class_distribution']}")
+                    lines.append(f"  Updated class dist: {comparison['updated_class_distribution']}")
+                
                 if comparison.get('mismatches'):
                     lines.append(f"  Mismatches ({len(comparison['mismatches'])}):")
                     for m in comparison['mismatches'][:5]:
                         lines.append(f"    - {m['molecule']}: {m['baseline']} -> {m['updated']}")
                     if len(comparison['mismatches']) > 5:
                         lines.append(f"    ... and {len(comparison['mismatches']) - 5} more")
+                
+                # Show failure reasons
+                if not comparison['passing'] and comparison.get('failure_reasons'):
+                    lines.append(f"  Failure reasons: {', '.join(comparison['failure_reasons'])}")
         else:
             lines.append("  Baseline comparison: N/A")
     

@@ -40,10 +40,9 @@ for name, module in gcnn_models:
         models_failed.append(name)
 
 # sklearn/XGBoost models
-# CYP450 disabled - sklearn pickle models crash under Rosetta 2
 sklearn_models = [
     ('HLM', 'predictors.hlm'),
-    # ('CYP450', 'predictors.cyp450'),  # DISABLED - sklearn pickle crash
+    ('CYP450', 'predictors.cyp450'),
 ]
 
 print("\n--- Loading sklearn/XGBoost Models ---")
@@ -57,11 +56,24 @@ for name, module in sklearn_models:
         print(f"  ⚠ Warning: {name} - {e}")
         models_failed.append(name)
 
-# Lazy-loaded models - all disabled
-# HLC, MLC, RLC, CYP450 disabled - sklearn pickle issues
-# lazy_models = []
-print("\n--- Lazy-Loaded Models ---")
-print("  All sklearn pickle models disabled (HLC, MLC, RLC, CYP450)")
+# Lazy-loaded models (DNN-based, loaded in background)
+# These use joblib.load and need TensorFlow 2.20+
+lazy_models = [
+    ('HLC', 'predictors.liver_cytosol'),
+    ('MLC', 'predictors.mlc'),
+    ('RLC', 'predictors.rlc'),
+]
+
+print("\n--- Lazy-Loaded Models (DNN) ---")
+for name, module in lazy_models:
+    try:
+        print(f"Initializing {name} loader...")
+        __import__(module)
+        models_loaded.append(f"{name} (lazy)")
+        print(f"  ✓ {name} loader initialized")
+    except Exception as e:
+        print(f"  ⚠ Warning: {name} - {e}")
+        models_failed.append(name)
 
 print("\n" + "=" * 60)
 print(f"WARMUP COMPLETE")

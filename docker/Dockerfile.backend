@@ -5,15 +5,20 @@
 #   docker build -f docker/Dockerfile.backend -t ncats-adme-backend .
 #   docker run -p 5000:5000 ncats-adme-backend
 
-FROM --platform=linux/amd64 continuumio/miniconda3:24.7.1-0
+FROM continuumio/miniconda3:24.11.1-0
 
 WORKDIR /opt/adme
 
 COPY server ./
+COPY server/predictors/functions_for_cytosol.py ./functions_for_cytosol.py
 
-RUN conda env create -f environment.yml
+# Use libmamba solver for faster dependency resolution
+RUN conda config --set solver libmamba && \
+    conda env create -f environment.yml && \
+    conda clean -afy
 
 ENV PATH=/opt/conda/envs/ncats-adme/bin:$PATH
+ENV PYTHONPATH=/opt/adme/predictors:${PYTHONPATH}
 
 EXPOSE 5000
 

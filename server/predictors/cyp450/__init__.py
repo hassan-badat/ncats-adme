@@ -2,7 +2,7 @@ import warnings
 warnings.filterwarnings("ignore")
 import os
 import sys
-import pickle
+import joblib
 import traceback
 
 # CYP450 model endpoints
@@ -41,8 +41,7 @@ def load_model(endpoint: str, model_number: int):
         return None
     
     try:
-        with open(model_path, 'rb') as pkl_file:
-            return pickle.load(pkl_file)
+        return joblib.load(model_path)
     except ModuleNotFoundError as e:
         print(f'ERROR: CYP450 {endpoint}/model_{model_number} requires missing module: {e}', file=sys.stderr)
         traceback.print_exc(file=sys.stderr)
