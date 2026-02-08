@@ -163,6 +163,10 @@ client/tmp/
 client/out-tsc/
 client/.angular/
 client/coverage/
+client/node_modules/
+
+# Pre-built Angular bundle served by Flask (regenerate with: cd client && npm run build:embedded)
+server/client/
 
 # =============================================================================
 # Environment & Secrets
@@ -197,5 +201,5 @@ notebooks
 temp/
 temp
 
-# Node modules (handled by client/.gitignore but adding here for completeness)
-client/node_modules/
+# Node modules
+node_modules/

@@ -1,33 +1,98 @@
-<adme-loading></adme-loading>
-<mat-toolbar color="primary">
-  <a class="title" routerLink="/home">ADME@NCATS</a>
-  <div class="navigation">
-    <a class="nav-item" routerLink="/predictions">Predict</a>
-    <a class="nav-item" [matMenuTriggerFor]="navMenu" >Models</a>
-    <mat-menu #navMenu="matMenu">
-      <button mat-menu-item routerLink="/models/hlm">HLM Stability</button>
-      <button mat-menu-item routerLink="/models/rlm">RLM Stability</button>
-      <button mat-menu-item routerLink="/models/pampa_ph5">PAMPA pH 5.0</button>
-      <button mat-menu-item routerLink="/models/pampa_ph74">PAMPA pH 7.4</button>
-      <button mat-menu-item routerLink="/models/pampa_bbb">PAMPA BBB</button>
-      <button mat-menu-item routerLink="/models/solubility">Solubility</button>
-      <button mat-menu-item routerLink="/models/hlc">HLC Stability</button>
-      <button mat-menu-item routerLink="/models/cyp450">CYP450</button>
-    </mat-menu>
-    <a class="nav-item" routerLink="/data/">Data</a>
-    <a class="nav-item" routerLink="/api">API</a>
-    <!--<a class="nav-item" href="/swagger">API</a>--> <!-- if not embedding -->
-    <a class="nav-item" routerLink="/contact">Contact</a>
+<adme-loading-overlay />
+
+<header class="app-header">
+  <nav class="nav-container">
+    <a routerLink="/home" class="logo" (click)="trackNav('home')">
+      <span class="logo-text">ADME</span>
+      <span class="logo-at">@</span>
+      <span class="logo-ncats">NCATS</span>
+    </a>
+    
+    <!-- Desktop Navigation -->
+    <div class="nav-links desktop-nav">
+      @for (item of navItems; track item.label) {
+        @if (item.children) {
+          <div class="nav-dropdown" 
+               (mouseenter)="modelsMenuOpen.set(true)" 
+               (mouseleave)="modelsMenuOpen.set(false)">
+            <button class="nav-item dropdown-trigger" [class.active]="modelsMenuOpen()">
+              {{ item.label }}
+              <svg viewBox="0 0 24 24" fill="currentColor" class="dropdown-arrow" [class.rotated]="modelsMenuOpen()">
+                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+              </svg>
+            </button>
+            @if (modelsMenuOpen()) {
+              <div class="dropdown-menu">
+                @for (child of item.children; track child.label) {
+                  <a [routerLink]="child.path" class="dropdown-item" (click)="closeModelsMenu(); trackNav(child.label)">
+                    {{ child.label }}
+                  </a>
+                }
+              </div>
+            }
+          </div>
+        } @else {
+          <a [routerLink]="item.path" class="nav-item" routerLinkActive="active" (click)="trackNav(item.label)">
+            {{ item.label }}
+          </a>
+        }
+      }
+    </div>
+    
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" (click)="toggleMobileMenu()" aria-label="Toggle menu">
+      @if (mobileMenuOpen()) {
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+      } @else {
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+        </svg>
+      }
+    </button>
+  </nav>
+  
+  <!-- Mobile Navigation -->
+  @if (mobileMenuOpen()) {
+    <div class="mobile-nav">
+      @for (item of navItems; track item.label) {
+        @if (item.children) {
+          <div class="mobile-nav-group">
+            <span class="mobile-nav-label">{{ item.label }}</span>
+            @for (child of item.children; track child.label) {
+              <a [routerLink]="child.path" class="mobile-nav-item" (click)="closeMobileMenu(); trackNav(child.label)">
+                {{ child.label }}
+              </a>
+            }
+          </div>
+        } @else {
+          <a [routerLink]="item.path" class="mobile-nav-item" routerLinkActive="active" (click)="closeMobileMenu(); trackNav(item.label)">
+            {{ item.label }}
+          </a>
+        }
+      }
+    </div>
+  }
+</header>
+
+<main class="app-content">
+  <router-outlet />
+</main>
+
+<footer class="app-footer">
+  <div class="footer-content">
+    <div class="footer-links">
+      <a href="https://ncats.nih.gov/privacy" target="_blank" rel="noopener">Privacy Policy</a>
+      <a href="https://ncats.nih.gov/disclaimer" target="_blank" rel="noopener">Disclaimer</a>
+      <a href="https://www.hhs.gov/vulnerability-disclosure-policy/index.html" target="_blank" rel="noopener">HHS Vulnerability Disclosure</a>
+    </div>
+    <div class="footer-info">
+      <p>
+        <a href="https://ncats.nih.gov" target="_blank" rel="noopener">National Center for Advancing Translational Sciences (NCATS)</a>
+      </p>
+      <p class="footer-copy">&copy; 2024 NCATS. All Rights Reserved.</p>
+    </div>
   </div>
-  <span class="fill-middle"></span>
-</mat-toolbar>
-<router-outlet></router-outlet>
-<div class="container footer">
-  <p style="text-align: center;"><b>NCATS OpenData is Licensed Under a <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank"><u>CC BY 4.0</u></a> License</b><span class="v-bar-1">|</span> <b>Last Updated</b>: {{release_date}} <span class="v-bar-1">|</span> <b>Current Release</b>: <a href="{{release_url}}" target="_blank"><u>{{tag_name}}</u></a></p>
-  <p><a href="https://www.nih.gov/" target="_blank"><b>NIH</b></a> <span class="v-bar-2">|</span>
-      <a href="https://ncats.nih.gov/" target="_blank"><b>NCATS</b></a> <span class="v-bar-2">|</span>
-      <a href="https://ncats.nih.gov/privacy" target="_blank"><b>PRIVACY ACT</b></a> <span class="v-bar-2">|</span>
-      <a href="https://ncats.nih.gov/accessibility" target="_blank"><b>ACCESSIBILITY</b></a> <span class="v-bar-2">|</span>
-      <a href="https://ncats.nih.gov/disclaimer" target="_blank"><b>DISCLAIMER</b></a>
-  </p>
-</div>
+</footer>
+
