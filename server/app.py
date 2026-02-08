@@ -33,7 +33,6 @@ import threading
 # CYP450 models (sklearn Random Forest)
 from predictors.cyp450.cyp450_predictor import CYP450Predictor
 from predictors.utilities.utilities import addMolsKekuleSmilesToFrame
-from predictors.utilities.utilities import get_similar_mols
 from flask_swagger_ui import get_swaggerui_blueprint
 import urllib
 from healthcheck import HealthCheck, EnvironmentDump
@@ -334,31 +333,6 @@ def predict_df(df, smi_column_name, models):
         columns_dict =  predictor.columns_dict()
         dict_length = len(columns_dict.keys())
         columns_dict[smi_column_name] = { 'order': 0, 'description': 'SMILES', 'isSmilesColumn': True }
-
-        if response_df.shape[0] <= 100: # go for similarity assessment only if the response df contains 100 compounds or less
-
-            if model.lower() != 'cyp450':
-                # for all models except cyp450, calculate the nearest neigbors and add additional column to response_df
-                try:
-                    sim_vals = get_similar_mols(response_df[smi_column_name].values, model.lower())
-                    sim_series = pd.Series(sim_vals).round(2).astype(str)
-                    response_df['Tanimoto Similarity'] = sim_series.values
-                    columns_dict['Tanimoto Similarity'] = { 'order': 3, 'description': 'similarity towards nearest neighbor in training data', 'isSmilesColumn': False }
-                except Exception as e:
-                    app.logger.error('Error calculating similarity')
-                    app.logger.error(f'error type: {type(e)}')
-                    app.logger.error(e)
-            else:
-                # for cyp450 models, a similarity value is calculated using a global dataset that is representative of all six cyp450 endpoints
-                try:
-                    sim_vals = get_similar_mols(response_df[smi_column_name].values, model.lower())
-                    sim_series = pd.Series(sim_vals).round(2).astype(str)
-                    response_df['Tanimoto Similarity'] = sim_series.values
-                    columns_dict['Tanimoto Similarity'] = { 'order': 7, 'description': 'similarity towards nearest neighbor in training data that was obtained by combining the compounds from all six individual datasets', 'isSmilesColumn': False }
-                except Exception as e:
-                    app.logger.error('Error calculating similarity')
-                    app.logger.error(f'error type: {type(e)}')
-                    app.logger.error(e)
 
         # replace SMILES with interpret SMILES when interpretation available
         #if len(model_errors) == 0:

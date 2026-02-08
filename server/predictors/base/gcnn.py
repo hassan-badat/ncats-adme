@@ -77,7 +77,7 @@ class GcnnBase(PredictorBase):
         # Use smaller batch size for small datasets to avoid dropping incomplete batches
         dataset = MoleculeDataset(datapoints)
         batch_size = min(64, len(dataset)) if len(dataset) > 0 else 1
-        dataloader = build_dataloader(dataset, batch_size=batch_size, num_workers=0, shuffle=False, drop_last=False)
+        dataloader = build_dataloader(dataset, batch_size=batch_size, num_workers=0, shuffle=False)
 
         # Run prediction using Chemprop 2.x API
         # In Chemprop 2.x, we iterate through batches and call the model directly
@@ -86,13 +86,16 @@ class GcnnBase(PredictorBase):
         
         with torch.no_grad():
             for batch in dataloader:
-                # Get model predictions for this batch
-                # The model returns logits, we apply sigmoid to get probabilities for binary classification
-                batch_preds = model(batch)
+                # Unpack TrainingBatch namedtuple — MPNN.forward() expects (bmg, V_d, X_d),
+                # not the full TrainingBatch which also contains targets, weights, masks
+                bmg, V_d, X_d, *_ = batch
+                batch_preds = model(bmg, V_d, X_d)
                 # If output is a tensor, convert to numpy and apply sigmoid if needed
                 if isinstance(batch_preds, torch.Tensor):
-                    # Apply sigmoid for binary classification to get probabilities
-                    batch_preds = torch.sigmoid(batch_preds).cpu().numpy()
+                    # BinaryClassificationFFN.forward() already applies sigmoid,
+                    # so we do NOT apply it again here (double sigmoid would compress
+                    # all predictions toward 0.5, breaking classification)
+                    batch_preds = batch_preds.cpu().numpy()
                 else:
                     batch_preds = np.array(batch_preds)
                 

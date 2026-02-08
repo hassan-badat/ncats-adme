@@ -4,8 +4,8 @@ from pandas import DataFrame
 import numpy as np
 from numpy import array
 from rdkit import Chem
-from ..features.descriptor_gen import DescriptorGen
-from ..liver_cytosol import get_hlc_model
+from ..features.comprehensive_features import generate_features
+from ..liver_cytosol import get_hlc_model, get_hlc_feature_cols, get_hlc_scaler_dict
 import time
 import csv
 from datetime import timezone
@@ -48,16 +48,12 @@ class LCPredictor:
         if len(kekule_smiles) == 0:
             raise ValueError('Please provide valid SMILES')
 
-        kekule_smiles_df = pd.DataFrame(kekule_smiles, columns=['kekule_smiles'])
+        self.kekule_smiles = kekule_smiles
 
         # create dataframe to be filled with predictions
         columns = self._columns_dict.keys()
         self.predictions_df = pd.DataFrame(columns=columns)
         self.raw_predictions_df = pd.DataFrame()
-
-        desc_gen = DescriptorGen()
-        kekule_smiles_df['desc'] = kekule_smiles_df['kekule_smiles'].apply(desc_gen.from_smiles)
-        self.morgan_fp = np.stack(kekule_smiles_df.desc)
 
         self.smiles = smiles
         self.has_errors = False
@@ -65,15 +61,28 @@ class LCPredictor:
 
     def get_predictions(self):
 
-        features = self.morgan_fp
         start = time.time()
 
         hlc_model = get_hlc_model()
+        feature_cols = get_hlc_feature_cols()
+        scaler_dict = get_hlc_scaler_dict()
         
         if hlc_model is None:
             self.has_errors = True
             self.model_errors.append('HLC model not loaded or still loading')
             return self.predictions_df
+
+        if feature_cols is None:
+            self.has_errors = True
+            self.model_errors.append('HLC feature_cols not available')
+            return self.predictions_df
+
+        # Generate comprehensive features matching the model's expected input
+        features = generate_features(
+            list(self.kekule_smiles),
+            feature_cols,
+            scaler_dict
+        )
 
         pred_probs = hlc_model.predict_proba(features).T[1]
         self.raw_predictions_df['hlc'] = pred_probs

@@ -18,7 +18,7 @@ RUN conda config --set solver libmamba && \
     conda clean -afy
 
 ENV PATH=/opt/conda/envs/ncats-adme/bin:$PATH
-ENV PYTHONPATH=/opt/adme/predictors:${PYTHONPATH}
+ENV PYTHONPATH=/opt/adme/predictors
 
 # TensorFlow settings for cleaner logs
 ENV TF_CPP_MIN_LOG_LEVEL=2
@@ -26,13 +26,12 @@ ENV TF_CPP_MIN_LOG_LEVEL=2
 # Layer 2: Models (only rebuilds when models change)
 COPY server/models ./models
 
-# Layer 3: Static predictor files (scaler, descriptor CSVs, train_data)
+# Layer 3: Static predictor files (scaler, descriptor CSVs)
 COPY server/predictors ./predictors
-COPY server/train_data ./train_data
 COPY server/predictors/functions_for_cytosol.py ./functions_for_cytosol.py
 
 # Layer 4: Application code (rebuilds on any code change - fast)
-COPY server/app.py server/wsgi.py server/kekule_smiles.csv ./
+COPY server/app.py server/wsgi.py ./
 COPY server/images ./images
 
 # Layer 5: Scripts and entrypoint

@@ -2,7 +2,6 @@ from numpy import array
 from rdkit import Chem
 from pandas import DataFrame
 from rdkit.Chem.rdchem import Mol
-from FPSim2 import FPSim2Engine
 from os import path
 import requests
 from tqdm import tqdm
@@ -174,11 +173,40 @@ def load_gcnn_model_local(model_file_path: str):
     print(f'Loading model from {model_file_path}')
 
     import torch
+    import torch.nn as nn
     checkpoint = torch.load(model_file_path, map_location='cpu')
+
+    needs_patching = False
 
     # Patch checkpoint if it's missing Lightning version info
     if isinstance(checkpoint, dict) and 'pytorch-lightning_version' not in checkpoint:
         checkpoint['pytorch-lightning_version'] = '2.0.0'
+        needs_patching = True
+
+    # Patch activation hyperparameters: Chemprop 2.x expects string names
+    # (e.g. "relu") but some checkpoints store instantiated nn.Module objects
+    # (e.g. ReLU()). Convert them back to strings.
+    ACTIVATION_MODULE_TO_NAME = {
+        nn.ReLU: "relu",
+        nn.Tanh: "tanh",
+        nn.SELU: "selu",
+        nn.ELU: "elu",
+        nn.LeakyReLU: "leakyrelu",
+        nn.GELU: "gelu",
+    }
+
+    if isinstance(checkpoint, dict) and 'hyper_parameters' in checkpoint:
+        hparams = checkpoint['hyper_parameters']
+        for key, value in hparams.items():
+            if isinstance(value, dict) and 'activation' in value:
+                act = value['activation']
+                if isinstance(act, nn.Module):
+                    act_name = ACTIVATION_MODULE_TO_NAME.get(type(act), "relu")
+                    print(f"  Patching checkpoint: {key}.activation {type(act).__name__}() -> '{act_name}'")
+                    value['activation'] = act_name
+                    needs_patching = True
+
+    if needs_patching:
         import tempfile
         import os as os_module
         with tempfile.NamedTemporaryFile(delete=False, suffix='.pt') as tmp_file:
@@ -201,26 +229,6 @@ def load_gcnn_model_local(model_file_path: str):
     ).strftime('%Y-%m-%d')
 
     return None, model, model_timestamp
-
-
-def get_similar_mols(kekule_smiles: list, model: str):
-    """
-    Calculate Tanimoto similarity for molecules against training data.
-    """
-    start = time.time()
-
-    sim_vals = []
-    fp_dict_path = ''.join(['./train_data/', model, '.h5'])
-    fp_dict_path = path.abspath(path.join(os.getcwd(), fp_dict_path))
-    fp_engine = FPSim2Engine(fp_dict_path)
-    for smi in kekule_smiles:
-        res = fp_engine.on_disk_similarity(smi, 0.01)
-        sim_vals.append(res[0][1])
-
-    end = time.time()
-    print(f'{end - start} seconds to calculate Tanimoto similarity for {len(kekule_smiles)} molecules')
-
-    return sim_vals
 
 
 # RDKit Descriptor utilities
