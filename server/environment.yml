@@ -5,7 +5,6 @@ channels:
 dependencies:
   - python=3.11
   - rdkit
-  - fpsim2
   - pip
   - pip:
       - numpy==1.26.4
@@ -31,3 +30,4 @@ dependencies:
       - scikeras==0.13.0
       - tensorflow==2.18.0
       - cloudpickle==3.1.2
+      - mordredcommunity>=2.0.0

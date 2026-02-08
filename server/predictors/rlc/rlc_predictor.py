@@ -4,8 +4,8 @@ from pandas import DataFrame
 import numpy as np
 from numpy import array
 from rdkit import Chem
-from ..features.descriptor_gen import DescriptorGen
-from ..rlc import get_rlc_model, get_rlc_status
+from ..features.comprehensive_features import generate_features
+from ..rlc import get_rlc_model, get_rlc_feature_cols, get_rlc_scaler_dict, get_rlc_status
 import time
 import csv
 from datetime import timezone
@@ -48,16 +48,12 @@ class RLCPredictor:
         if len(kekule_smiles) == 0:
             raise ValueError('Please provide valid SMILES')
 
-        kekule_smiles_df = pd.DataFrame(kekule_smiles, columns=['kekule_smiles'])
+        self.kekule_smiles = kekule_smiles
 
         # create dataframe to be filled with predictions
         columns = self._columns_dict.keys()
         self.predictions_df = pd.DataFrame(columns=columns)
         self.raw_predictions_df = pd.DataFrame()
-
-        desc_gen = DescriptorGen()
-        kekule_smiles_df['desc'] = kekule_smiles_df['kekule_smiles'].apply(desc_gen.from_smiles)
-        self.morgan_fp = np.stack(kekule_smiles_df.desc)
 
         self.smiles = smiles
         self.has_errors = False
@@ -65,10 +61,12 @@ class RLCPredictor:
 
     def get_predictions(self):
 
-        features = self.morgan_fp
         start = time.time()
 
         rlc_model = get_rlc_model()
+        feature_cols = get_rlc_feature_cols()
+        scaler_dict = get_rlc_scaler_dict()
+
         if rlc_model is None:
             self.has_errors = True
             status = get_rlc_status()
@@ -79,6 +77,19 @@ class RLCPredictor:
             else:
                 self.model_errors.append('RLC model not loaded')
             return self.predictions_df
+
+        if feature_cols is None:
+            self.has_errors = True
+            self.model_errors.append('RLC feature_cols not available')
+            return self.predictions_df
+
+        # Generate comprehensive features matching the model's expected input
+        # RLC only needs rdkit_ds_ features (163 descriptors)
+        features = generate_features(
+            list(self.kekule_smiles),
+            feature_cols,
+            scaler_dict
+        )
 
         pred_probs = rlc_model.predict_proba(features).T[1]
 
@@ -124,4 +135,3 @@ class RLCPredictor:
                 rows = self.raw_predictions_df.values.tolist()
                 cw = csv.writer(fw)
                 cw.writerows(rows)
-

@@ -95,6 +95,18 @@ def extract_prediction_class(data: dict) -> Optional[str]:
         if class_val is not None:
             return "stable" if class_val == 0 else "unstable"
     
+    # CYP450 format: columns like 'CYP2C9 Inhibition' with values like '0 (0.99)'
+    # Combine all CYP450 predictions into a single string for comparison
+    cyp_keys = sorted(k for k in data.keys() if k.startswith('CYP'))
+    if cyp_keys:
+        classes = []
+        for k in cyp_keys:
+            class_val, _ = parse_prediction_value(data[k])
+            if class_val is not None:
+                classes.append(str(class_val))
+        if classes:
+            return ','.join(classes)
+    
     return None
 
 
@@ -373,7 +385,15 @@ def run_tests(base_url: str, output_dir: str, baseline_path: Optional[Path] = No
                         # Count as passed if we got valid prediction data
                         # (API may set hasErrors but still return valid predictions)
                         data = model_data.get('data', [])
-                        has_valid_prediction = data and len(data) > 0 and 'Prediction' in data[0]
+                        has_valid_prediction = False
+                        if data and len(data) > 0:
+                            first_row = data[0]
+                            # Check for standard 'Prediction' key (most models)
+                            if 'Prediction' in first_row:
+                                has_valid_prediction = True
+                            # Check for CYP450-style columns (e.g., 'CYP2C9 Inhibition')
+                            elif any(k.startswith('CYP') for k in first_row.keys()):
+                                has_valid_prediction = True
                         
                         if has_valid_prediction:
                             model_passed += 1
@@ -493,7 +513,13 @@ def run_tests(base_url: str, output_dir: str, baseline_path: Optional[Path] = No
                         
                         # Count as passed if we got valid prediction data
                         data = model_data.get('data', [])
-                        has_valid_prediction = data and len(data) > 0 and 'Prediction' in data[0]
+                        has_valid_prediction = False
+                        if data and len(data) > 0:
+                            first_row = data[0]
+                            if 'Prediction' in first_row:
+                                has_valid_prediction = True
+                            elif any(k.startswith('CYP') for k in first_row.keys()):
+                                has_valid_prediction = True
                         
                         if has_valid_prediction:
                             model_passed += 1

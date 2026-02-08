@@ -1,13 +1,9 @@
 import sys
 import traceback
-import pandas as pd
-from pickle import load
 
 from ..utilities.utilities import load_gcnn_model_local
 
 pampa_model_file_path = './models/pampabbb/gcnn_model.ckpt'
-pampa_rdkit_desc_path = 'predictors/pampabbb/rdkit_desc.csv'
-pampa_rdkit_desc_scaler_path = 'predictors/pampabbb/scaler.pkl'
 
 
 def load_model():
@@ -15,11 +11,10 @@ def load_model():
     print('Loading PAMPA BBB graph convolutional neural network model', file=sys.stdout)
     sys.stdout.flush()
 
-    scaler = None
     model = None
 
     try:
-        scaler, model, _ = load_gcnn_model_local(pampa_model_file_path)
+        _, model, _ = load_gcnn_model_local(pampa_model_file_path)
         print(f'Successfully loaded PAMPA BBB GCNN model', file=sys.stdout)
     except FileNotFoundError as e:
         print(f'ERROR: PAMPA BBB model file not found: {e}', file=sys.stderr)
@@ -32,11 +27,7 @@ def load_model():
 
     print('Finished loading PAMPA BBB models', file=sys.stdout)
     sys.stdout.flush()
-    return scaler, model
+    return model
 
 
-pampa_gcnn_scaler, pampa_gcnn_model = load_model()
-
-df_rdkit_desc = pd.read_csv(pampa_rdkit_desc_path, header=None)
-pampa_rdkit_desc = df_rdkit_desc[0].tolist()
-pampa_rdkit_desc_scaler = load(open(pampa_rdkit_desc_scaler_path, 'rb'))
+pampa_gcnn_model = load_model()
