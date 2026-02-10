@@ -4,6 +4,7 @@ import os
 import sys
 import joblib
 import traceback
+import time
 
 # CYP450 model endpoints
 CYP450_ENDPOINTS = [
@@ -17,29 +18,31 @@ CYP450_ENDPOINTS = [
 
 NUM_MODELS_PER_ENDPOINT = 64
 
+# Global model cache: { 'cyp2c9_inhib': { 0: model, 1: model, ... }, ... }
+_model_cache = {}
+
 
 def get_model_path(endpoint: str, model_number: int) -> str:
     """Get the file path for a specific CYP450 model."""
     return f'./models/cyp450/{endpoint}/model_{model_number}.pkl'
 
 
-def load_model(endpoint: str, model_number: int):
+def _load_model_from_disk(endpoint: str, model_number: int):
     """
-    Load a single CYP450 model on demand.
-    
+    Load a single CYP450 model from disk.
+
     Parameters:
         endpoint: One of the CYP450 endpoints (e.g., 'cyp2c9_inhib')
         model_number: Model number (0-63)
-    
+
     Returns:
         Loaded model object, or None if loading fails
     """
     model_path = get_model_path(endpoint, model_number)
-    
+
     if not os.path.exists(model_path):
-        print(f'ERROR: CYP450 model not found at {model_path}', file=sys.stderr)
         return None
-    
+
     try:
         return joblib.load(model_path)
     except ModuleNotFoundError as e:
@@ -52,38 +55,65 @@ def load_model(endpoint: str, model_number: int):
         return None
 
 
-def verify_models_exist() -> dict:
+def load_model(endpoint: str, model_number: int):
     """
-    Verify that all CYP450 model files exist without loading them.
-    
+    Get a CYP450 model from the pre-loaded cache.
+
+    Parameters:
+        endpoint: One of the CYP450 endpoints (e.g., 'cyp2c9_inhib')
+        model_number: Model number (0-63)
+
     Returns:
-        Dictionary with endpoint names and count of existing models
+        Loaded model object, or None if not available
     """
+    return _model_cache.get(endpoint, {}).get(model_number, None)
+
+
+def load_all_models() -> dict:
+    """
+    Pre-load all 384 CYP450 models into memory.
+
+    Returns:
+        Dictionary with endpoint names and count of successfully loaded models
+    """
+    global _model_cache
+
+    print('CYP450: Pre-loading all models into memory...', file=sys.stdout)
+    sys.stdout.flush()
+    start = time.time()
+
     status = {}
+    total_loaded = 0
+
     for endpoint in CYP450_ENDPOINTS:
+        _model_cache[endpoint] = {}
         count = 0
         for model_num in range(NUM_MODELS_PER_ENDPOINT):
-            if os.path.exists(get_model_path(endpoint, model_num)):
+            model = _load_model_from_disk(endpoint, model_num)
+            if model is not None:
+                _model_cache[endpoint][model_num] = model
                 count += 1
         status[endpoint] = count
+        total_loaded += count
+        print(f'  {endpoint}: {count}/{NUM_MODELS_PER_ENDPOINT} models loaded', file=sys.stdout)
+        sys.stdout.flush()
+
+    elapsed = time.time() - start
+    expected_total = len(CYP450_ENDPOINTS) * NUM_MODELS_PER_ENDPOINT
+
+    if total_loaded == expected_total:
+        print(f'CYP450: All {total_loaded} models loaded in {elapsed:.1f}s', file=sys.stdout)
+    else:
+        print(f'WARNING: CYP450 loaded {total_loaded}/{expected_total} models in {elapsed:.1f}s', file=sys.stderr)
+
+    sys.stdout.flush()
     return status
 
 
-# Verify models exist at startup (doesn't load them, just checks paths)
-print('Verifying CYP450 model files exist (lazy loading - models loaded on demand)', file=sys.stdout)
-sys.stdout.flush()
+def get_model_status() -> dict:
+    """Get the number of loaded models per endpoint."""
+    return {endpoint: len(models) for endpoint, models in _model_cache.items()}
 
-model_status = verify_models_exist()
-total_models = sum(model_status.values())
-expected_total = len(CYP450_ENDPOINTS) * NUM_MODELS_PER_ENDPOINT
 
-if total_models == expected_total:
-    print(f'CYP450: All {total_models} model files found', file=sys.stdout)
-else:
-    print(f'WARNING: CYP450 found {total_models}/{expected_total} model files', file=sys.stderr)
-    for endpoint, count in model_status.items():
-        if count != NUM_MODELS_PER_ENDPOINT:
-            print(f'  {endpoint}: {count}/{NUM_MODELS_PER_ENDPOINT} models', file=sys.stderr)
-
-print('CYP450 models will be loaded on-demand during prediction', file=sys.stdout)
-sys.stdout.flush()
+# Pre-load all models at import time
+load_all_models()

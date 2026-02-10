@@ -4,13 +4,16 @@ from pandas import DataFrame
 import numpy as np
 from numpy import array
 from rdkit import Chem
-from ..features.descriptor_gen import DescriptorGen
+from ..features.morgan_fp import MorganFPGenerator
+from ..features.rdkit_descriptors import RDKitDescriptorsGenerator
 from . import load_model, CYP450_ENDPOINTS, NUM_MODELS_PER_ENDPOINT
 import time
 import csv
 from datetime import timezone
 import datetime
-import gc
+
+# RDKit descriptors used during model training (must match exactly)
+_CYP450_RDKIT_DESCRIPTORS = ['MolLogP', 'TPSA', 'ExactMolWt', 'NumHDonors', 'NumHAcceptors']
 
 
 class CYP450Predictor:
@@ -24,7 +27,11 @@ class CYP450Predictor:
     - cyp3a4_subs: CYP3A4 Substrate
 
     Each endpoint uses 64 Random Forest models with consensus voting.
-    Models are loaded on-demand to minimize memory usage.
+    Models are pre-loaded at startup and served from an in-memory cache.
+
+    Feature vector (1029 features per molecule):
+    - 1024-bit count-based Morgan fingerprints (radius=2)
+    - 5 RDKit descriptors: MolLogP, TPSA, ExactMolWt, NumHDonors, NumHAcceptors
     """
 
     _columns_dict = {
@@ -81,18 +88,18 @@ class CYP450Predictor:
         if kekule_mols is None or len(kekule_mols) == 0:
             raise ValueError('Please provide valid molecules')
 
-        # Generate Morgan fingerprints from mol objects
-        desc_gen = DescriptorGen()
-        fingerprints = []
-        for mol in kekule_mols:
-            if mol is not None:
-                fp = desc_gen.from_mol(mol)
-                fingerprints.append(fp)
-            else:
-                fingerprints.append(None)
+        self.kekule_mols = kekule_mols
 
-        self.morgan_fp = np.array([fp for fp in fingerprints if fp is not None])
-        self.valid_indices = [i for i, fp in enumerate(fingerprints) if fp is not None]
+        # Generate 1024-bit count-based Morgan fingerprints (matches model training)
+        morgan_fp_generator = MorganFPGenerator(self.kekule_mols)
+        morgan_fp_matrix = morgan_fp_generator.get_morgan_features()
+
+        # Generate 5 RDKit descriptors (matches model training)
+        rdkit_desc_generator = RDKitDescriptorsGenerator(self.kekule_mols)
+        rdkit_desc_matrix = rdkit_desc_generator.get_rdkit_descriptors(_CYP450_RDKIT_DESCRIPTORS)
+
+        # Concatenate to produce 1029-feature vector (1024 FP + 5 descriptors)
+        self.features = np.append(morgan_fp_matrix, rdkit_desc_matrix, axis=1)
 
         # Create dataframe for predictions
         columns = self._columns_dict.keys()
@@ -106,7 +113,7 @@ class CYP450Predictor:
     def _predict_endpoint(self, endpoint: str, features: array) -> array:
         """
         Make predictions for a single CYP450 endpoint using all 64 models.
-        Models are loaded one at a time to minimize memory usage.
+        Models are read from the pre-loaded in-memory cache.
 
         Parameters:
             endpoint: The CYP450 endpoint name
@@ -116,7 +123,7 @@ class CYP450Predictor:
             Array of averaged prediction probabilities
         """
         all_predictions = []
-        models_loaded = 0
+        models_used = 0
 
         for model_num in range(NUM_MODELS_PER_ENDPOINT):
             model = load_model(endpoint, model_num)
@@ -124,26 +131,16 @@ class CYP450Predictor:
                 try:
                     pred_probs = model.predict_proba(features)[:, 1]
                     all_predictions.append(pred_probs)
-                    models_loaded += 1
+                    models_used += 1
                 except Exception as e:
                     print(f'ERROR: Prediction failed for {endpoint}/model_{model_num}: {e}')
-                finally:
-                    # Release model from memory
-                    del model
 
-            # Periodically run garbage collection to free memory
-            if model_num % 16 == 15:
-                gc.collect()
-
-        if models_loaded == 0:
+        if models_used == 0:
             self.model_errors.append(f'No models loaded for {endpoint}')
             return np.zeros(len(features))
 
         # Average predictions across all models
         avg_predictions = np.mean(all_predictions, axis=0)
-
-        # Final garbage collection after endpoint
-        gc.collect()
 
         return avg_predictions
 
@@ -154,12 +151,12 @@ class CYP450Predictor:
         Returns:
             DataFrame with predictions for all endpoints
         """
-        if len(self.morgan_fp) == 0:
+        if len(self.features) == 0:
             self.has_errors = True
             self.model_errors.append('No valid molecules to predict')
             return self.predictions_df
 
-        features = self.morgan_fp
+        features = self.features
         start = time.time()
 
         # Process each endpoint
@@ -170,13 +167,16 @@ class CYP450Predictor:
             pred_probs = self._predict_endpoint(endpoint, features)
 
             # Format predictions with class and probability
+            # Use explicit >= 0.5 threshold (not round(), which uses banker's rounding)
+            pred_classes = np.where(np.asarray(pred_probs) >= 0.5, 1, 0)
+            pred_confidence = np.where(
+                np.asarray(pred_probs) >= 0.5,
+                np.asarray(pred_probs),
+                (1 - np.asarray(pred_probs))
+            )
             self.predictions_df[column_name] = pd.Series(
-                pd.Series(pred_probs).round().astype(int).astype(str) + ' (' +
-                pd.Series(np.where(
-                    np.asarray(pred_probs) >= 0.5,
-                    np.asarray(pred_probs),
-                    (1 - np.asarray(pred_probs))
-                )).round(2).astype(str) + ')'
+                pd.Series(pred_classes).astype(str) + ' (' +
+                pd.Series(pred_confidence).round(2).astype(str) + ')'
             )
 
         # Populate raw predictions for recording
@@ -193,7 +193,7 @@ class CYP450Predictor:
                 self.raw_predictions_df = pd.concat([
                     self.raw_predictions_df,
                     pd.DataFrame({
-                        'SMILES': self.smiles[self.valid_indices],
+                        'SMILES': self.smiles,
                         'model': endpoint,
                         'prediction': probs.values,
                         'timestamp': utc_timestamp
@@ -225,4 +225,3 @@ class CYP450Predictor:
                 rows = self.raw_predictions_df.values.tolist()
                 cw = csv.writer(fw)
                 cw.writerows(rows)
-
