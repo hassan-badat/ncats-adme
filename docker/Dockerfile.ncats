@@ -14,7 +14,7 @@ COPY client ./
 RUN npm install
 
 # Build parameter for adme.ncats subdomain
-RUN npx ng build --configuration=production --base-href=/models/
+RUN npx ng build --configuration=production --base-href=/adme/
 
 FROM continuumio/miniconda3:24.11.1-0
 

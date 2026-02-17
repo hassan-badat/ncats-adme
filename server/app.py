@@ -479,6 +479,15 @@ def send_js(path):
     print(path, file=sys.stdout)
     return send_from_directory('client', path)
 
+# Serve static files from base-href paths (e.g., /models/ or /adme/)
+@app.route(f'{root_route_path}/models/<path:path>')
+def send_models_static(path):
+    return send_from_directory('client', path)
+
+@app.route(f'{root_route_path}/adme/<path:path>')
+def send_adme_static(path):
+    return send_from_directory('client', path)
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def return_index(path):
