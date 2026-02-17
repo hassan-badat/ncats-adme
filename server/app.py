@@ -14,7 +14,6 @@ from rdkit.Chem import Draw
 from rdkit.Chem.Draw import rdMolDraw2D
 from rdkit.Chem import rdDepictor
 rdDepictor.SetPreferCoordGen(True)
-from rdkit.Chem.Draw import IPythonConsole
 import rdkit
 from flask import abort, send_file
 from predictors.rlm.rlm_predictor import RLMPredictior
@@ -23,10 +22,17 @@ from predictors.pampa.pampa_predictor import PAMPAPredictior
 from predictors.pampa50.pampa_predictor import PAMPA50Predictior
 from predictors.pampabbb.pampa_predictor import PAMPABBBPredictior
 from predictors.solubility.solubility_predictor import SolubilityPredictior
+# Cytosol stability models (TensorFlow DNNs via scikeras)
 from predictors.liver_cytosol.lc_predictor import LCPredictor
+from predictors.liver_cytosol import get_hlc_status, start_hlc_loading, wait_for_hlc
+from predictors.mlc.mlc_predictor import MLCPredictor
+from predictors.mlc import get_mlc_status, start_mlc_loading
+from predictors.rlc.rlc_predictor import RLCPredictor
+from predictors.rlc import get_rlc_status
+import threading
+# CYP450 models (sklearn Random Forest)
 from predictors.cyp450.cyp450_predictor import CYP450Predictor
 from predictors.utilities.utilities import addMolsKekuleSmilesToFrame
-from predictors.utilities.utilities import get_similar_mols
 from flask_swagger_ui import get_swaggerui_blueprint
 import urllib
 from healthcheck import HealthCheck, EnvironmentDump
@@ -289,6 +295,10 @@ def predict_df(df, smi_column_name, models):
             predictor = SolubilityPredictior(kekule_smiles = working_df['kekule_smiles'].values, smiles=working_df[smi_column_name].values)
         elif model.lower() == 'hlc':
             predictor = LCPredictor(kekule_smiles = working_df['kekule_smiles'].values, smiles=working_df[smi_column_name].values)
+        elif model.lower() == 'mlc':
+            predictor = MLCPredictor(kekule_smiles = working_df['kekule_smiles'].values, smiles=working_df[smi_column_name].values)
+        elif model.lower() == 'rlc':
+            predictor = RLCPredictor(kekule_smiles = working_df['kekule_smiles'].values, smiles=working_df[smi_column_name].values)
         elif model.lower() == 'cyp450':
             predictor = CYP450Predictor(kekule_mols = working_df['mols'].values, smiles=working_df[smi_column_name].values)
         else:
@@ -314,7 +324,7 @@ def predict_df(df, smi_column_name, models):
         model_errors = errors_dict['model_errors']
 
         if len(model_errors) > 0:
-            error_message = base_models_error_message + model_errors.join(', ')
+            error_message = base_models_error_message + ', '.join(model_errors)
             error_messages.append(error_message)
 
         response[model]['errorMessages'] = error_messages
@@ -323,31 +333,6 @@ def predict_df(df, smi_column_name, models):
         columns_dict =  predictor.columns_dict()
         dict_length = len(columns_dict.keys())
         columns_dict[smi_column_name] = { 'order': 0, 'description': 'SMILES', 'isSmilesColumn': True }
-
-        if response_df.shape[0] <= 100: # go for similarity assessment only if the response df contains 100 compounds or less
-
-            if model.lower() != 'cyp450':
-                # for all models except cyp450, calculate the nearest neigbors and add additional column to response_df
-                try:
-                    sim_vals = get_similar_mols(response_df[smi_column_name].values, model.lower())
-                    sim_series = pd.Series(sim_vals).round(2).astype(str)
-                    response_df['Tanimoto Similarity'] = sim_series.values
-                    columns_dict['Tanimoto Similarity'] = { 'order': 3, 'description': 'similarity towards nearest neighbor in training data', 'isSmilesColumn': False }
-                except Exception as e:
-                    app.logger.error('Error calculating similarity')
-                    app.logger.error(f'error type: {type(e)}')
-                    app.logger.error(e)
-            else:
-                # for cyp450 models, a similarity value is calculated using a global dataset that is representative of all six cyp450 endpoints
-                try:
-                    sim_vals = get_similar_mols(response_df[smi_column_name].values, model.lower())
-                    sim_series = pd.Series(sim_vals).round(2).astype(str)
-                    response_df['Tanimoto Similarity'] = sim_series.values
-                    columns_dict['Tanimoto Similarity'] = { 'order': 7, 'description': 'similarity towards nearest neighbor in training data that was obtained by combining the compounds from all six individual datasets', 'isSmilesColumn': False }
-                except Exception as e:
-                    app.logger.error('Error calculating similarity')
-                    app.logger.error(f'error type: {type(e)}')
-                    app.logger.error(e)
 
         # replace SMILES with interpret SMILES when interpretation available
         #if len(model_errors) == 0:
@@ -510,8 +495,50 @@ def api_available():
 
 health.add_check(api_available)
 
+# Model loading status endpoint
+@app.route(root_route_path + '/api/model-status', methods=['GET'])
+def get_model_status():
+    """Get the loading status of lazy-loaded models."""
+    return jsonify({
+        'models': [
+            get_hlc_status(),
+            get_mlc_status(),
+            get_rlc_status()
+        ]
+    })
+
+@app.route(root_route_path + '/api/model-status/<model_name>', methods=['GET'])
+def get_specific_model_status(model_name):
+    """Get the loading status of a specific model."""
+    model_name = model_name.lower()
+    if model_name == 'hlc':
+        return jsonify(get_hlc_status())
+    elif model_name == 'mlc':
+        return jsonify(get_mlc_status())
+    elif model_name == 'rlc':
+        return jsonify(get_rlc_status())
+    else:
+        return jsonify({'error': f'Model {model_name} not found'}), 404
+
 # Add a flask route to expose information
 app.add_url_rule("/healthcheck", "healthcheck", view_func=lambda: health.run())
+
+
+def _load_large_models_sequentially():
+    """Load HLC and MLC models sequentially in background to avoid resource contention."""
+    print('Starting sequential loading of large models (HLC -> MLC)', file=sys.stdout)
+    sys.stdout.flush()
+    start_hlc_loading()
+    wait_for_hlc()
+    start_mlc_loading()
+    print('Sequential model loading initiated (HLC -> MLC)', file=sys.stdout)
+    sys.stdout.flush()
+
+# Start background loading of large models
+threading.Thread(target=_load_large_models_sequentially, daemon=True).start()
+print('All eager models loaded. HLC/MLC loading in background.', file=sys.stdout)
+sys.stdout.flush()
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

@@ -1,0 +1,60 @@
+<div class="contact-page">
+  <div class="page-content">
+    <h1>Contact</h1>
+    
+    <p class="intro">
+      If you have any questions related to the models and data, please contact us at 
+      <a href="mailto:adme-ncats@mail.nih.gov">adme-ncats&#64;mail.nih.gov</a>. 
+      Please find below the contact details of the team members.
+    </p>
+    
+    <section class="team-section">
+      <h2>Current Team</h2>
+      <div class="team-grid">
+        @for (member of currentMembers; track member.name) {
+          <div class="team-card">
+            <div class="member-image">
+              <img [src]="member.image" [alt]="member.name" loading="lazy" />
+            </div>
+            <div class="member-info">
+              <h3>{{ member.name }}</h3>
+              <p class="member-title">{{ member.title }}</p>
+              @if (member.email) {
+                <a [href]="'mailto:' + member.email" class="member-email">{{ member.email }}</a>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+    
+    <section class="team-section">
+      <h2>Former Team Members</h2>
+      <div class="team-grid">
+        @for (member of formerMembers; track member.name) {
+          <div class="team-card">
+            <div class="member-image">
+              <img [src]="member.image" [alt]="member.name" loading="lazy" />
+            </div>
+            <div class="member-info">
+              <h3>{{ member.name }}</h3>
+              <p class="member-title">{{ member.company || member.title }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+    
+    <section class="resources-section">
+      <h2>Resources</h2>
+      <div class="resources-grid">
+        @for (resource of resources; track resource.name) {
+          <a [href]="resource.url" target="_blank" rel="noopener" class="resource-card">
+            <img [src]="resource.image" [alt]="resource.name" />
+          </a>
+        }
+      </div>
+    </section>
+  </div>
+</div>
+

@@ -1,0 +1,46 @@
+# Dockerfile for NCATS subdomain deployment (adme.ncats.nih.gov)
+# Full stack with Angular frontend and Flask backend
+#
+# Usage:
+#   docker build -f docker/Dockerfile.ncats -t ncats-adme-ncats .
+#   docker run -p 5000:5000 ncats-adme-ncats
+
+FROM node:22 AS build
+
+WORKDIR /opt/adme
+
+COPY client ./
+
+RUN npm install
+
+# Build parameter for adme.ncats subdomain
+RUN npx ng build --configuration=production --base-href=/models/
+
+FROM continuumio/miniconda3:24.11.1-0
+
+# Install required packages
+RUN apt-get update && apt-get install -y iproute2 && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt/adme
+
+COPY server ./
+COPY server/predictors/functions_for_cytosol.py ./functions_for_cytosol.py
+
+# Use libmamba solver for faster dependency resolution
+RUN conda config --set solver libmamba && \
+    conda env create -f environment.yml && \
+    conda clean -afy
+
+ENV PATH /opt/conda/envs/ncats-adme/bin:$PATH
+ENV PYTHONPATH=/opt/adme/predictors:${PYTHONPATH}
+
+RUN chmod +x startup.sh
+
+# Clean existing client folder
+RUN rm -rf client
+COPY --from=build /opt/adme/dist/adme-client/browser client
+
+CMD /bin/bash startup.sh
+
+EXPOSE 5000
+

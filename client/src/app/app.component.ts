@@ -1,60 +1,68 @@
-import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
-import { HttpClient } from "@angular/common/http";
-import { MatIconRegistry } from '@angular/material/icon';
-import { DomSanitizer } from '@angular/platform-browser';
-import { ResolveEnd, Router, RouterEvent } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { GoogleAnalyticsService } from './google-analytics/google-analytics.service';
-import { DOCUMENT } from '@angular/common';
-import { DEPLOY_URL } from './utilities/deploy-url';
-import * as moment from 'moment';
+import { Component, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { LoadingOverlayComponent } from '@shared/components/loading-overlay/loading-overlay.component';
+import { ConfigService } from '@core/config.service';
+import { AnalyticsService } from '@core/analytics.service';
+
+interface NavItem {
+  label: string;
+  path: string;
+  children?: NavItem[];
+}
 
 @Component({
   selector: 'adme-root',
+  standalone: true,
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, LoadingOverlayComponent],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit, OnDestroy {
-  private routerSubscription: Subscription;
-  data: any = [];
-  release_date: string;
-  release_url: string;
-  tag_name: string;
-  constructor(
-    iconRegistry: MatIconRegistry,
-    sanitizer: DomSanitizer,
-    private router: Router,
-    private gaService: GoogleAnalyticsService,
-    private http: HttpClient,
-    // tslint:disable-next-line:variable-name
-    @Inject(DOCUMENT) private _document: HTMLDocument,
-    @Inject(DEPLOY_URL) private deployUrl: string
-  ) {
-    iconRegistry.addSvgIcon(
-      'cancel',
-      sanitizer.bypassSecurityTrustResourceUrl(`${deployUrl}assets/icons/cancel-24px.svg`));
+export class AppComponent {
+  private configService = inject(ConfigService);
+  private analyticsService = inject(AnalyticsService);
+  
+  modelsMenuOpen = signal(false);
+  mobileMenuOpen = signal(false);
+  
+  navItems: NavItem[] = [
+    { label: 'Predict', path: '/predictions' },
+    { 
+      label: 'Models', 
+      path: '/models',
+      children: [
+        { label: 'HLM Stability', path: '/models/hlm' },
+        { label: 'RLM Stability', path: '/models/rlm' },
+        { label: 'PAMPA pH 7.4', path: '/models/pampa_ph74' },
+        { label: 'PAMPA pH 5.0', path: '/models/pampa_ph5' },
+        { label: 'PAMPA BBB', path: '/models/pampa_bbb' },
+        { label: 'Solubility', path: '/models/solubility' },
+        { label: 'HLC Stability', path: '/models/hlc' },
+        { label: 'CYP450', path: '/models/cyp450' }
+      ]
+    },
+    { label: 'Data', path: '/data' },
+    { label: 'API', path: '/api' },
+    { label: 'Contact', path: '/contact' }
+  ];
+  
+  toggleModelsMenu(): void {
+    this.modelsMenuOpen.update(v => !v);
   }
-  getReleaseData(){
-   const url ='https://api.github.com/repos/ncats/ncats-adme/releases/latest'
-   this.http.get(url).subscribe((res)=>{
-     this.data = res
-     this.release_date = moment.utc(this.data.published_at).local().format('DD/MM/YYYY');
-     this.release_url = this.data.html_url
-     this.tag_name = this.data.tag_name
-   })
+  
+  closeModelsMenu(): void {
+    this.modelsMenuOpen.set(false);
   }
-  ngOnInit() {
-    this._document.getElementById('appFavicon').setAttribute('href', `${this.deployUrl}assets/icons/favicon.ico`);
-    this.routerSubscription = this.router.events.subscribe((event: RouterEvent) => {
-      if (event instanceof ResolveEnd) {
-        this.gaService.sendPageView(event.state.root.firstChild.data.pageTitle, event.state.url);
-      }
-    });
-    this.getReleaseData();
+  
+  toggleMobileMenu(): void {
+    this.mobileMenuOpen.update(v => !v);
   }
-  ngOnDestroy() {
-    if (this.routerSubscription != null) {
-      this.routerSubscription.unsubscribe();
-    }
+  
+  closeMobileMenu(): void {
+    this.mobileMenuOpen.set(false);
+  }
+  
+  trackNav(label: string): void {
+    this.analyticsService.sendEvent('click:nav', 'navigation', label);
   }
 }

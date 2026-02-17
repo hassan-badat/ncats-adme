@@ -1,0 +1,397 @@
+<div class="models-page">
+  <div class="page-content">
+    
+    <!-- HLM Stability -->
+    @if (modelType() === 'hlm') {
+      <article class="model-article">
+        <h1>HLM Stability</h1>
+        
+        <div class="definitions">
+          <div class="definition-row">
+            <span class="definition-label">Name:</span>
+            <span class="definition-value">Human Liver Microsomal Stability</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Dataset Type:</span>
+            <span class="definition-value">Classification</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Dataset Size:</span>
+            <span class="definition-value">6648 compounds</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Validation:</span>
+            <span class="definition-value">5-Fold CV</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Descriptors:</span>
+            <span class="definition-value">RDKit descriptors</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Model Details:</span>
+            <span class="definition-value">
+              The best model is based on the XGBoost algorithm. The XGBoost model comprises of 300 trees and uses a selected list of RDKit descriptors as features. The models were built using 
+              <a href="https://scikit-learn.org/stable/" target="_blank" rel="noopener">scikit-learn</a> library.
+            </span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Interpretation:</span>
+            <span class="definition-value">
+              The model provides predicted class (1 or 0) for a given compound. If the predicted class is '1', it means the compound is predicted as unstable (t<sub>1/2</sub> ≤ 30 min) and if the predicted class is '0', the compound is predicted as stable (t<sub>1/2</sub> > 30 min). The model also provides a probability score (between 0 and 1), shown in parentheses next to the predicted class.
+            </span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Data Availability:</span>
+            <span class="definition-value">
+              A subset of the dataset used for developing these models will be deposited to the
+              <a href="https://pubchem.ncbi.nlm.nih.gov" target="_blank" rel="noopener">PubChem Bioassay database</a>.
+            </span>
+          </div>
+        </div>
+        
+        <h3>HLM Assay Protocol</h3>
+        <p>
+          The substrate depletion method, also called the in vitro t<sub>1/2</sub> method was used to analyze test compounds. Each reaction mixture (110 μL) consisted of a test article (1 μM), human liver microsomes (HLM) (0.5 mg/mL), and NADPH regenerating system in phosphate buffer at pH 7.4. Samples were incubated in 384-well plates at 37°C for 0, 5, 10, 15, 30 and 60 min.
+        </p>
+        
+        <h3>References:</h3>
+        <ol class="references">
+          <li>Shah, P. et al. <a href="https://doi.org/10.1124/dmd.116.072017" target="_blank" rel="noopener">An Automated High-Throughput Metabolic Stability Assay Using an Integrated High Resolution Accurate Mass Method and Automated Data Analysis Software.</a> <em>Drug Metab Dispos.</em> 44, 1653-1661 (2016).</li>
+          <li>Shah, P., Siramshetty, V.B., Zakharov, A.V. et al., <a href="https://doi.org/10.1186/s13321-020-00426-7" target="_blank" rel="noopener">Predicting liver cytosol stability of small molecules.</a> <em>J Cheminform.</em> 12, 21 (2020).</li>
+        </ol>
+      </article>
+    }
+    
+    <!-- RLM Stability -->
+    @if (modelType() === 'rlm') {
+      <article class="model-article">
+        <h1>RLM Stability</h1>
+        
+        <div class="definitions">
+          <div class="definition-row">
+            <span class="definition-label">Name:</span>
+            <span class="definition-value">Rat Liver Microsomal Stability</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Dataset Type:</span>
+            <span class="definition-value">Classification</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Dataset Size:</span>
+            <span class="definition-value">22,016 compounds</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Validation:</span>
+            <span class="definition-value">5-Fold CV and Time-Split CV</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Descriptors:</span>
+            <span class="definition-value">Molecular Graphs</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Model Details:</span>
+            <span class="definition-value">
+              The model is based on a message-passing variant of graph convolutional neural network (GCNN) that directly operates on molecular graphs. The model was built using MIT's 
+              <a href="https://github.com/chemprop/chemprop" target="_blank" rel="noopener">Chemprop</a>.
+            </span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Inference:</span>
+            <span class="definition-value">
+              The model provides predicted class (1 or 0) for a given compound. If the predicted class is '1', it means the compound is predicted as unstable (t<sub>1/2</sub> ≤ 30 min) and if the predicted class is '0', the compound is predicted as stable (t<sub>1/2</sub> > 30 min).
+            </span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Data Availability:</span>
+            <span class="definition-value">
+              A subset of the dataset used for developing these models is made publicly available at PubChem Bioassay database: 
+              <a href="https://pubchem.ncbi.nlm.nih.gov/bioassay/1508591" target="_blank" rel="noopener">AID 1508591</a>.
+            </span>
+          </div>
+        </div>
+        
+        <h3>References:</h3>
+        <ol class="references">
+          <li>Siramshetty, V.B., Shah, P., Kerns, E. et al., <a href="https://doi.org/10.1038/s41598-020-77327-0" target="_blank" rel="noopener">Retrospective assessment of rat liver microsomal stability at NCATS: data and QSAR models.</a> <em>Sci Rep.</em> 10, 20713 (2020).</li>
+        </ol>
+      </article>
+    }
+    
+    <!-- PAMPA pH 7.4 -->
+    @if (modelType() === 'pampa_ph74') {
+      <article class="model-article">
+        <h1>PAMPA at pH 7.4</h1>
+        
+        <div class="definitions">
+          <div class="definition-row">
+            <span class="definition-label">Name:</span>
+            <span class="definition-value">Parallel artificial membrane permeability assay (PAMPA)</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Assay pH:</span>
+            <span class="definition-value">7.4</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Dataset Type:</span>
+            <span class="definition-value">Classification</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Dataset Size:</span>
+            <span class="definition-value">16,624 compounds</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Validation:</span>
+            <span class="definition-value">5-Fold CV</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Descriptors:</span>
+            <span class="definition-value">Molecular Graphs</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Inference:</span>
+            <span class="definition-value">
+              The model provides predicted class (1 or 0). If '1', the compound is predicted to have 'low or moderate permeability' (log P<sub>eff</sub> &lt; 2.0). If '0', predicted to have 'high permeability' (log P<sub>eff</sub> > 2.5).
+            </span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Data Availability:</span>
+            <span class="definition-value">
+              <a href="https://pubchem.ncbi.nlm.nih.gov/bioassay/1508612" target="_blank" rel="noopener">AID 1508612</a>
+            </span>
+          </div>
+        </div>
+        
+        <h3>References:</h3>
+        <ol class="references">
+          <li>Siramshetty, V.B., Williams, J., Nguyen D.T. et al., <a href="https://doi.org/10.1177/24725552211017520" target="_blank" rel="noopener">Validating ADME QSAR Models Using Marketed Drugs.</a> <em>SLAS Discov.</em> (2021).</li>
+        </ol>
+      </article>
+    }
+    
+    <!-- PAMPA pH 5.0 -->
+    @if (modelType() === 'pampa_ph5') {
+      <article class="model-article">
+        <h1>PAMPA at pH 5.0</h1>
+        
+        <div class="definitions">
+          <div class="definition-row">
+            <span class="definition-label">Name:</span>
+            <span class="definition-value">Parallel artificial membrane permeability assay (PAMPA)</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Assay pH:</span>
+            <span class="definition-value">5.0</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Dataset Type:</span>
+            <span class="definition-value">Classification</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Dataset Size:</span>
+            <span class="definition-value">5,227 compounds</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Validation:</span>
+            <span class="definition-value">5-Fold CV</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Descriptors:</span>
+            <span class="definition-value">Molecular Graphs + RDKit descriptors</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Inference:</span>
+            <span class="definition-value">
+              If predicted class is '1', compound is predicted to have 'low permeability' (log P<sub>eff</sub> &lt; 1.0). If '0', predicted to have 'moderate to high permeability' (log P<sub>eff</sub> > 1.0).
+            </span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Data Availability:</span>
+            <span class="definition-value">
+              <a href="https://pubchem.ncbi.nlm.nih.gov/bioassay/1645871" target="_blank" rel="noopener">AID 1645871</a>
+            </span>
+          </div>
+        </div>
+        
+        <h3>References:</h3>
+        <ol class="references">
+          <li>Williams, J., Siramshetty, V.B., Nguyen D.T. et al., <a href="https://doi.org/10.1016/j.bmc.2021.116588" target="_blank" rel="noopener">Using in vitro ADME data for lead compound selection.</a> <em>Bioorg. Med. Chem.</em> 56, 116588 (2022).</li>
+        </ol>
+      </article>
+    }
+    
+    <!-- PAMPA BBB -->
+    @if (modelType() === 'pampa_bbb') {
+      <article class="model-article">
+        <h1>PAMPA BBB</h1>
+        
+        <div class="definitions">
+          <div class="definition-row">
+            <span class="definition-label">Name:</span>
+            <span class="definition-value">Parallel artificial membrane permeability assay for blood-brain barrier (PAMPA-BBB)</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Dataset Type:</span>
+            <span class="definition-value">Classification</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Dataset Size:</span>
+            <span class="definition-value">1,958 compounds</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Validation:</span>
+            <span class="definition-value">5-Fold CV</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Descriptors:</span>
+            <span class="definition-value">Molecular Graphs and RDKit Descriptors</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Data Availability:</span>
+            <span class="definition-value">
+              <a href="https://pubchem.ncbi.nlm.nih.gov/bioassay/1845228" target="_blank" rel="noopener">AID 1845228</a>
+            </span>
+          </div>
+        </div>
+      </article>
+    }
+    
+    <!-- Solubility -->
+    @if (modelType() === 'solubility') {
+      <article class="model-article">
+        <h1>Aqueous Kinetic Solubility</h1>
+        
+        <div class="definitions">
+          <div class="definition-row">
+            <span class="definition-label">Name:</span>
+            <span class="definition-value">Pion's patented μSOL assay (Solubility)</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Dataset Type:</span>
+            <span class="definition-value">Classification</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Dataset Size:</span>
+            <span class="definition-value">22,209 compounds</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Validation:</span>
+            <span class="definition-value">5-Fold CV</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Descriptors:</span>
+            <span class="definition-value">Molecular graphs</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Inference:</span>
+            <span class="definition-value">
+              If predicted class is '1', compound is predicted to have 'low solubility' (&lt;10 μg/ml). If '0', predicted to have 'high solubility' (>10 μg/ml).
+            </span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Data Availability:</span>
+            <span class="definition-value">
+              <a href="https://pubchem.ncbi.nlm.nih.gov/bioassay/1645848" target="_blank" rel="noopener">AID 1645848</a>
+            </span>
+          </div>
+        </div>
+        
+        <h3>References:</h3>
+        <ol class="references">
+          <li>Siramshetty, V.B., Williams, J., Nguyen D.T. et al., <a href="https://doi.org/10.1177/24725552211017520" target="_blank" rel="noopener">Validating ADME QSAR Models Using Marketed Drugs.</a> <em>SLAS Discov.</em> (2021).</li>
+        </ol>
+      </article>
+    }
+    
+    <!-- HLC Stability -->
+    @if (modelType() === 'hlc') {
+      <article class="model-article">
+        <h1>HLC Stability</h1>
+        
+        <div class="definitions">
+          <div class="definition-row">
+            <span class="definition-label">Name:</span>
+            <span class="definition-value">Human Liver Cytosolic Stability</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Dataset Type:</span>
+            <span class="definition-value">Classification</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Dataset Size:</span>
+            <span class="definition-value">1,214 compounds</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Validation:</span>
+            <span class="definition-value">5-Fold CV</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Descriptors:</span>
+            <span class="definition-value">Morgan Fingerprints</span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Model Details:</span>
+            <span class="definition-value">
+              A consensus of three individual Random Forest models using multiple-undersampling technique. Each model comprises 100 trees using Morgan fingerprints as features.
+            </span>
+          </div>
+          <div class="definition-row">
+            <span class="definition-label">Data Availability:</span>
+            <span class="definition-value">
+              <a href="https://pubchem.ncbi.nlm.nih.gov/bioassay/1508603" target="_blank" rel="noopener">AID 1508603</a>
+            </span>
+          </div>
+        </div>
+        
+        <h3>References:</h3>
+        <ol class="references">
+          <li>Shah, P., Siramshetty, V.B., Zakharov, A.V. et al., <a href="https://doi.org/10.1186/s13321-020-00426-7" target="_blank" rel="noopener">Predicting liver cytosol stability of small molecules.</a> <em>J Cheminform.</em> 12, 21 (2020).</li>
+        </ol>
+      </article>
+    }
+    
+    <!-- CYP450 -->
+    @if (modelType() === 'cyp450') {
+      <article class="model-article">
+        <h1>Cytochrome P450 Isoforms</h1>
+        
+        <h3>High-throughput metabolic stability assays:</h3>
+        <p>
+          The substrate depletion assay was employed to determine metabolic stability, using an established mid-density (384-well format) protocol. The workflow included a robotic system for incubation and sample clean-up, coupled with an automated ultra-high performance liquid chromatography-high resolution mass spectrometry (UHPLC-HRMS) method for sample analysis.
+        </p>
+        
+        <h3>Data Availability:</h3>
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Enzyme</th>
+                <th>PubChem Bioassay</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>CYP3A4</td>
+                <td><a href="https://pubchem.ncbi.nlm.nih.gov/bioassay/1645841" target="_blank" rel="noopener">AID 1645841</a></td>
+              </tr>
+              <tr>
+                <td>CYP2C9</td>
+                <td><a href="https://pubchem.ncbi.nlm.nih.gov/bioassay/1645842" target="_blank" rel="noopener">AID 1645842</a></td>
+              </tr>
+              <tr>
+                <td>CYP2D6</td>
+                <td><a href="https://pubchem.ncbi.nlm.nih.gov/bioassay/1645840" target="_blank" rel="noopener">AID 1645840</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <h3>References:</h3>
+        <ol class="references">
+          <li>Gonzalez, E., Jain, S., Shah P. et al., <a href="https://doi.org/10.1124/dmd.120.000320" target="_blank" rel="noopener">Development of Robust QSAR Models for CYP2C9, CYP2D6, and CYP3A4 Catalysis and Inhibition.</a> <em>Drug Metab Dispos.</em> (2021).</li>
+        </ol>
+      </article>
+    }
+    
+  </div>
+</div>
+

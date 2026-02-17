@@ -1,30 +1,20 @@
 import os
-import random
-import string
-import sys
 import pandas as pd
 from pandas import DataFrame
 import numpy as np
-from rdkit.Chem import PandasTools
 from numpy import array
-from typing import Tuple
-from rdkit.Chem.rdchem import Mol
-from ..utilities.utilities import get_processed_smi
 from rdkit import Chem
-from ..features.descriptor_gen import DescriptorGen
-from ..liver_cytosol import lc_models_dict
+from ..features.comprehensive_features import generate_features
+from ..liver_cytosol import get_hlc_model, get_hlc_feature_cols, get_hlc_scaler_dict
 import time
-from tqdm import tqdm
-from copy import deepcopy
-import multiprocessing as mp
-import platform
 import csv
 from datetime import timezone
 import datetime
 
+
 class LCPredictor:
     """
-    Makes Livr Cytosol Stability preditions
+    Makes Liver Cytosol Stability predictions
 
     Attributes:
         df (DataFrame): DataFrame containing column with smiles
@@ -47,7 +37,7 @@ class LCPredictor:
 
     def __init__(self, kekule_smiles: array = None, morgan_fp: array = None, smiles: array = None):
         """
-        Constructor for RLMPredictior class
+        Constructor for LCPredictor class
 
         Parameters:
             kekule_mols (array): n x 1 array of RDKit molecule objects kekulized
@@ -58,16 +48,12 @@ class LCPredictor:
         if len(kekule_smiles) == 0:
             raise ValueError('Please provide valid SMILES')
 
-        kekule_smiles_df = pd.DataFrame(kekule_smiles, columns=['kekule_smiles'])
+        self.kekule_smiles = kekule_smiles
 
         # create dataframe to be filled with predictions
         columns = self._columns_dict.keys()
         self.predictions_df = pd.DataFrame(columns=columns)
         self.raw_predictions_df = pd.DataFrame()
-
-        desc_gen = DescriptorGen()
-        kekule_smiles_df['desc'] = kekule_smiles_df['kekule_smiles'].apply(desc_gen.from_smiles)
-        self.morgan_fp = np.stack(kekule_smiles_df.desc)
 
         self.smiles = smiles
         self.has_errors = False
@@ -75,21 +61,43 @@ class LCPredictor:
 
     def get_predictions(self):
 
-        features = self.morgan_fp
         start = time.time()
 
-        for model_name in lc_models_dict.keys():
-            model = lc_models_dict[model_name]
-            pred_probs = model.predict_proba(features).T[1]
-            self.raw_predictions_df[model_name] =  pred_probs
+        hlc_model = get_hlc_model()
+        feature_cols = get_hlc_feature_cols()
+        scaler_dict = get_hlc_scaler_dict()
+        
+        if hlc_model is None:
+            self.has_errors = True
+            self.model_errors.append('HLC model not loaded or still loading')
+            return self.predictions_df
 
-        self.raw_predictions_df['average'] = self.raw_predictions_df.mean(axis=1)
-        avg_pred_probs = self.raw_predictions_df['average'].tolist()
-        #self.predictions_df['Predicted Class (Probability)'] = pd.Series(pd.Series(avg_pred_probs).round().astype(int).astype(str) + ' (' + pd.Series(avg_pred_probs).round(2).astype(str) + ')')
-        self.predictions_df['Predicted Class (Probability)'] = pd.Series(pd.Series(avg_pred_probs).round().astype(int).astype(str) + ' (' + pd.Series(np.where(np.asarray(avg_pred_probs)>=0.5, np.asarray(avg_pred_probs), (1-np.asarray(avg_pred_probs)))).round(2).astype(str) + ')')
-        self.predictions_df['Prediction'] = pd.Series(pd.Series(np.where(np.asarray(avg_pred_probs)>=0.5, 'unstable', 'stable')))
+        if feature_cols is None:
+            self.has_errors = True
+            self.model_errors.append('HLC feature_cols not available')
+            return self.predictions_df
 
-        # empyting the raw df
+        # Generate comprehensive features matching the model's expected input
+        features = generate_features(
+            list(self.kekule_smiles),
+            feature_cols,
+            scaler_dict
+        )
+
+        pred_probs = hlc_model.predict_proba(features).T[1]
+        self.raw_predictions_df['hlc'] = pred_probs
+
+        avg_pred_probs = pred_probs.tolist()
+
+        self.predictions_df['Predicted Class (Probability)'] = pd.Series(
+            pd.Series(avg_pred_probs).round().astype(int).astype(str) + ' (' +
+            pd.Series(np.where(np.asarray(avg_pred_probs) >= 0.5, np.asarray(avg_pred_probs), (1-np.asarray(avg_pred_probs)))).round(2).astype(str) + ')'
+        )
+        self.predictions_df['Prediction'] = pd.Series(
+            pd.Series(np.where(np.asarray(avg_pred_probs) >= 0.5, 'unstable', 'stable'))
+        )
+
+        # emptying the raw df
         self.raw_predictions_df = pd.DataFrame(None)
 
         # populate raw df for recording preds
@@ -97,12 +105,12 @@ class LCPredictor:
             dt = datetime.datetime.now(timezone.utc)
             utc_time = dt.replace(tzinfo=timezone.utc)
             utc_timestamp = utc_time.timestamp()
-            self.raw_predictions_df = self.raw_predictions_df.append(
+            self.raw_predictions_df = pd.concat([
+                self.raw_predictions_df,
                 pd.DataFrame(
-                    { 'SMILES': self.smiles, 'model': 'hlc', 'prediction': avg_pred_probs, 'timestamp': utc_timestamp }
-                ),
-                ignore_index = True
-            )
+                    {'SMILES': self.smiles, 'model': 'hlc', 'prediction': avg_pred_probs, 'timestamp': utc_timestamp}
+                )
+            ], ignore_index=True)
 
         end = time.time()
         print(f'HLC: {end - start} seconds to predict {len(self.raw_predictions_df.index)} molecules')

@@ -1,3 +1,0 @@
-[submodule "server/chemprop"]
-	path = server/predictors/chemprop
-	url = git@github.com:chemprop/chemprop.git

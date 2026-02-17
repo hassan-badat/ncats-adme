@@ -1,0 +1,26 @@
+# Dockerfile for backend-only deployment
+# Minimal image with just the Flask API server
+#
+# Usage:
+#   docker build -f docker/Dockerfile.backend -t ncats-adme-backend .
+#   docker run -p 5000:5000 ncats-adme-backend
+
+FROM continuumio/miniconda3:24.11.1-0
+
+WORKDIR /opt/adme
+
+COPY server ./
+COPY server/predictors/functions_for_cytosol.py ./functions_for_cytosol.py
+
+# Use libmamba solver for faster dependency resolution
+RUN conda config --set solver libmamba && \
+    conda env create -f environment.yml && \
+    conda clean -afy
+
+ENV PATH=/opt/conda/envs/ncats-adme/bin:$PATH
+ENV PYTHONPATH=/opt/adme/predictors:${PYTHONPATH}
+
+EXPOSE 5000
+
+CMD ["python", "app.py"]
+

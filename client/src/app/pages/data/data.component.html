@@ -1,0 +1,52 @@
+<div class="data-page">
+  <div class="page-content">
+    <h1>Data Availability</h1>
+    
+    <p class="intro">
+      Along with the predictions, we provide open access to the data underlying the prediction models. 
+      The experimental data associated with all compounds that could be made public have been deposited 
+      into the PubChem database as bioassay records that are open for public access. Links to the 
+      bioassay records and downloadable data files are provided below. Further details on the datasets 
+      are provided in individual model pages.
+    </p>
+    
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ADME Endpoint</th>
+            <th class="text-center">Training Data<sup>a</sup></th>
+            <th class="text-center">Public Data<sup>b</sup></th>
+            <th class="text-center">PubChem Bioassay</th>
+            <th class="text-center">Data File</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (endpoint of endpoints; track endpoint.name) {
+            <tr>
+              <td>{{ endpoint.name }}</td>
+              <td class="text-center">{{ endpoint.training | number }}</td>
+              <td class="text-center">{{ endpoint.public | number }}</td>
+              <td class="text-center">
+                <a [href]="endpoint.assayUrl" target="_blank" rel="noopener">{{ endpoint.assayId }}</a>
+              </td>
+              <td class="text-center">
+                <a [href]="endpoint.downloadUrl" target="_blank" rel="noopener" class="download-btn" title="Download CSV">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                  </svg>
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="table-footnotes">
+      <p><sup>a</sup> <em>Total number of compounds present in the training dataset.</em></p>
+      <p><sup>b</sup> <em>Total number of compounds present in the publicly available dataset.</em></p>
+    </div>
+  </div>
+</div>
+

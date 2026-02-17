@@ -1,0 +1,142 @@
+.models-page {
+  background: var(--background);
+  min-height: 100%;
+  padding: var(--spacing-xl) var(--spacing-lg);
+}
+
+.page-content {
+  max-width: var(--container-narrow);
+  margin: 0 auto;
+}
+
+.model-article {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  
+  h1 {
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--primary-lightest);
+    color: var(--primary-dark);
+  }
+  
+  h3 {
+    margin-top: var(--spacing-xl);
+    margin-bottom: var(--spacing-md);
+    color: var(--text-primary);
+  }
+  
+  p {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    text-align: justify;
+  }
+}
+
+.definitions {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.definition-row {
+  display: flex;
+  padding: var(--spacing-md) 0;
+  border-bottom: 1px solid var(--border-color-light);
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.definition-label {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  min-width: 160px;
+  flex-shrink: 0;
+}
+
+.definition-value {
+  color: var(--text-secondary);
+  flex: 1;
+  line-height: 1.6;
+  
+  a {
+    color: var(--primary);
+    text-decoration: underline;
+  }
+}
+
+.references {
+  padding-left: var(--spacing-lg);
+  
+  li {
+    margin-bottom: var(--spacing-md);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    
+    &::marker {
+      color: var(--primary);
+    }
+  }
+  
+  a {
+    color: var(--primary);
+  }
+  
+  em {
+    color: var(--text-hint);
+  }
+}
+
+.data-table-container {
+  overflow-x: auto;
+  margin: var(--spacing-lg) 0;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  
+  th, td {
+    padding: var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid var(--border-color-light);
+  }
+  
+  th {
+    background: var(--primary-lightest);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+  }
+  
+  td {
+    color: var(--text-secondary);
+  }
+  
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+  
+  a {
+    color: var(--primary);
+  }
+}
+
+@media (max-width: 768px) {
+  .definition-row {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  
+  .definition-label {
+    min-width: auto;
+  }
+}
+

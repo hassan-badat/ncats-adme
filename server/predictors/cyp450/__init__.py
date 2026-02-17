@@ -1,87 +1,119 @@
 import warnings
 warnings.filterwarnings("ignore")
-import os, sys
-import numpy as np
-import pandas as pd
-import pickle
-# import zipfile
-# import tempfile
-import shutil
-from tqdm import tqdm
-import requests
-from io import BytesIO
-from os import path
-import multiprocessing
+import os
+import sys
+import joblib
+import traceback
+import time
 
-# for model_name in cyp450_models_dict.keys():
-#     for model_number in range(0, 64):
-#         model_path = os.path.join(os.getcwd(), f'models/CYP450/{model_name}/model_{model_number}')
-#         cyp450_models_dict[model_name][f'model_{model_number}'] = pickle.load(open(model_path, 'rb'))
+# CYP450 model endpoints
+CYP450_ENDPOINTS = [
+    'cyp2c9_inhib',
+    'cyp2c9_subs',
+    'cyp2d6_inhib',
+    'cyp2d6_subs',
+    'cyp3a4_inhib',
+    'cyp3a4_subs'
+]
 
-def download_file(base_url, model_name, model_number, models_dict):
-    cyp450_rf_pkl_url = f'{base_url}/{model_name}/model_{model_number}'
-    cyp450_model_path = f'./models/cyp450/{model_name}/model_{model_number}'
-    cyp450_rf_pkl_file_request = requests.get(cyp450_rf_pkl_url)
-    with tqdm.wrapattr(
-        open(os.devnull, "wb"),
-        "write",
-        miniters=1,
-        desc=f'{model_name}-model_{model_number}',
-        total=int(cyp450_rf_pkl_file_request.headers.get('content-length', 0))
-    ) as fout:
-        for chunk in cyp450_rf_pkl_file_request.iter_content(chunk_size=4096):
-            fout.write(chunk)
-    with open(cyp450_model_path, 'wb') as cyp450_rf_pkl_file_writer:
-        cyp450_rf_pkl_file_writer.write(cyp450_rf_pkl_file_request.content)
+NUM_MODELS_PER_ENDPOINT = 64
 
-    cyp450_rf_model = pickle.load(BytesIO(cyp450_rf_pkl_file_request.content))
-    return cyp450_rf_model
-    # with open(cyp450_model_path, 'r') as cyp450_rf_pkl_file_reader:
-    #     print(model_name)
-    #     print(model_number)
-    #     cyp450_models_dict[model_name][f'model_{model_number}'] = pickle.load(cyp450_rf_pkl_file_reader)
-
-def load_models():
-    # processes = []
-    #with ThreadPoolExecutor() as executor:
-    base_url = 'https://opendata.ncats.nih.gov/public/adme/models/current/static/cyp450/'
-    print(f'Loading CYP450 random forest models', file=sys.stdout)
-
-    # manager = multiprocessing.Manager()
-
-    # cyp450_models_dict = manager.dict({
-    #     'CYP2C9_inhib': manager.dict(),
-    #     'CYP2C9_subs': manager.dict(),
-    #     'CYP2D6_inhib': manager.dict(),
-    #     'CYP2D6_subs': manager.dict(),
-    #     'CYP3A4_inhib': manager.dict(),
-    #     'CYP3A4_subs': manager.dict()
-    # })
-
-    cyp450_models_dict = {
-        'cyp2c9_inhib': {},
-        'cyp2c9_subs': {},
-        'cyp2d6_inhib': {},
-        'cyp2d6_subs': {},
-        'cyp3a4_inhib': {},
-        'cyp3a4_subs': {}
-    }
-
-    for model_name in tqdm(cyp450_models_dict.keys()):
-    # for model_name in cyp450_models_dict.keys():
-        for model_number in tqdm(range(0, 64)):
-        # for model_number in range(0, 64):
-            cyp450_model_path = f'./models/cyp450/{model_name}/model_{model_number}'
-            if path.exists(cyp450_model_path) and os.path.getsize(cyp450_model_path) > 0:
-                with open(cyp450_model_path, 'rb') as pkl_file:
-                    cyp450_models_dict[model_name][f'model_{model_number}'] = pickle.load(pkl_file)
-            else:
-                os.makedirs(f'./models/cyp450/{model_name}', exist_ok=True)
-                # processes.append(executor.submit(download_file, base_url, model_name, model_number, cyp450_models_dict))
-                cyp450_models_dict[model_name][f'model_{model_number}'] = download_file(base_url, model_name, model_number, cyp450_models_dict)
-
-    print(f'Finished loading CYP450 model files', file=sys.stdout)
-    return cyp450_models_dict
+# Global model cache: { 'cyp2c9_inhib': { 0: model, 1: model, ... }, ... }
+_model_cache = {}
 
 
-cyp450_models_dict = load_models()
+def get_model_path(endpoint: str, model_number: int) -> str:
+    """Get the file path for a specific CYP450 model."""
+    return f'./models/cyp450/{endpoint}/model_{model_number}.pkl'
+
+
+def _load_model_from_disk(endpoint: str, model_number: int):
+    """
+    Load a single CYP450 model from disk.
+
+    Parameters:
+        endpoint: One of the CYP450 endpoints (e.g., 'cyp2c9_inhib')
+        model_number: Model number (0-63)
+
+    Returns:
+        Loaded model object, or None if loading fails
+    """
+    model_path = get_model_path(endpoint, model_number)
+
+    if not os.path.exists(model_path):
+        return None
+
+    try:
+        return joblib.load(model_path)
+    except ModuleNotFoundError as e:
+        print(f'ERROR: CYP450 {endpoint}/model_{model_number} requires missing module: {e}', file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
+        return None
+    except Exception as e:
+        print(f'ERROR: Failed to load CYP450 {endpoint}/model_{model_number}: {type(e).__name__}: {e}', file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
+        return None
+
+
+def load_model(endpoint: str, model_number: int):
+    """
+    Get a CYP450 model from the pre-loaded cache.
+
+    Parameters:
+        endpoint: One of the CYP450 endpoints (e.g., 'cyp2c9_inhib')
+        model_number: Model number (0-63)
+
+    Returns:
+        Loaded model object, or None if not available
+    """
+    return _model_cache.get(endpoint, {}).get(model_number, None)
+
+
+def load_all_models() -> dict:
+    """
+    Pre-load all 384 CYP450 models into memory.
+
+    Returns:
+        Dictionary with endpoint names and count of successfully loaded models
+    """
+    global _model_cache
+
+    print('CYP450: Pre-loading all models into memory...', file=sys.stdout)
+    sys.stdout.flush()
+    start = time.time()
+
+    status = {}
+    total_loaded = 0
+
+    for endpoint in CYP450_ENDPOINTS:
+        _model_cache[endpoint] = {}
+        count = 0
+        for model_num in range(NUM_MODELS_PER_ENDPOINT):
+            model = _load_model_from_disk(endpoint, model_num)
+            if model is not None:
+                _model_cache[endpoint][model_num] = model
+                count += 1
+        status[endpoint] = count
+        total_loaded += count
+        print(f'  {endpoint}: {count}/{NUM_MODELS_PER_ENDPOINT} models loaded', file=sys.stdout)
+        sys.stdout.flush()
+
+    elapsed = time.time() - start
+    expected_total = len(CYP450_ENDPOINTS) * NUM_MODELS_PER_ENDPOINT
+
+    if total_loaded == expected_total:
+        print(f'CYP450: All {total_loaded} models loaded in {elapsed:.1f}s', file=sys.stdout)
+    else:
+        print(f'WARNING: CYP450 loaded {total_loaded}/{expected_total} models in {elapsed:.1f}s', file=sys.stderr)
+
+    sys.stdout.flush()
+    return status
+
+
+def get_model_status() -> dict:
+    """Get the number of loaded models per endpoint."""
+    return {endpoint: len(models) for endpoint, models in _model_cache.items()}
+
+
+# Pre-load all models at import time
+load_all_models()

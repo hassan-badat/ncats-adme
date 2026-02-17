@@ -1,0 +1,2291 @@
+{
+  "metadata": {
+    "capture_date": "2025-12-03T19:28:09.835973",
+    "base_url": "http://localhost:5001",
+    "api_endpoint": "/api/v1/predict",
+    "models_tested": [
+      "rlm",
+      "hlm",
+      "pampa",
+      "pampa50",
+      "pampabbb",
+      "solubility",
+      "hlc",
+      "cyp450"
+    ],
+    "num_valid_molecules": 21,
+    "num_invalid_molecules": 3,
+    "script_version": "1.1.0"
+  },
+  "test_molecules": {
+    "Ethanol": "CCO",
+    "Methanol": "CO",
+    "Acetone": "CC(=O)C",
+    "Benzaldehyde": "C1=CC=C(C=C1)C=O",
+    "Phenol": "C1=CC=C(C=C1)O",
+    "Toluene": "CC1=CC=CC=C1",
+    "Aspirin": "CC(=O)OC1=CC=CC=C1C(=O)O",
+    "Caffeine": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+    "Ibuprofen": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+    "Paracetamol": "CC(=O)NC1=CC=C(C=C1)O",
+    "Metformin": "CN(C)C(=N)NC(=N)N",
+    "Warfarin": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O",
+    "Pyridine": "C1=CC=NC=C1",
+    "Imidazole": "C1=CN=CN1",
+    "Thiophene": "C1=CSC=C1",
+    "Glycine": "NCC(=O)O",
+    "Acetic_acid": "CC(=O)O",
+    "Ethylamine": "CCN",
+    "Diethyl_ether": "CCOCC",
+    "Omeprazole": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC",
+    "Atorvastatin": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4"
+  },
+  "invalid_molecules": {
+    "Invalid_random": "INVALID_SMILES_12345",
+    "Invalid_chars": "XYZ123!!!",
+    "Empty_string": ""
+  },
+  "predictions": {
+    "rlm": {
+      "molecules": {
+        "Ethanol": {
+          "smiles": "CCO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.18",
+            "smiles": "CCO"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Methanol": {
+          "smiles": "CO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.09",
+            "smiles": "CO"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Acetone": {
+          "smiles": "CC(=O)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.97)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.23",
+            "smiles": "CC(=O)C"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Benzaldehyde": {
+          "smiles": "C1=CC=C(C=C1)C=O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.96)",
+            "Prediction": "unstable",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "C1=CC=C(C=C1)C=O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Phenol": {
+          "smiles": "C1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.97)",
+            "Prediction": "unstable",
+            "Tanimoto Similarity": "0.33",
+            "smiles": "C1=CC=C(C=C1)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Toluene": {
+          "smiles": "CC1=CC=CC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "unstable",
+            "Tanimoto Similarity": "0.36",
+            "smiles": "CC1=CC=CC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Aspirin": {
+          "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.87)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Caffeine": {
+          "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Ibuprofen": {
+          "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.94)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.39",
+            "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Paracetamol": {
+          "smiles": "CC(=O)NC1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.64",
+            "smiles": "CC(=O)NC1=CC=C(C=C1)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Metformin": {
+          "smiles": "CN(C)C(=N)NC(=N)N",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.94)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.2",
+            "smiles": "CN(C)C(=N)NC(=N)N"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Warfarin": {
+          "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.87)",
+            "Prediction": "unstable",
+            "Tanimoto Similarity": "0.35",
+            "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Pyridine": {
+          "smiles": "C1=CC=NC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.82)",
+            "Prediction": "unstable",
+            "Tanimoto Similarity": "0.35",
+            "smiles": "C1=CC=NC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Imidazole": {
+          "smiles": "C1=CN=CN1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.98)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.19",
+            "smiles": "C1=CN=CN1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Thiophene": {
+          "smiles": "C1=CSC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "unstable",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "C1=CSC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Glycine": {
+          "smiles": "NCC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.23",
+            "smiles": "NCC(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Acetic_acid": {
+          "smiles": "CC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.27",
+            "smiles": "CC(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Ethylamine": {
+          "smiles": "CCN",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CCN"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Diethyl_ether": {
+          "smiles": "CCOCC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.98)",
+            "Prediction": "unstable",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CCOCC"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Omeprazole": {
+          "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.99)",
+            "Prediction": "unstable",
+            "Tanimoto Similarity": "0.6",
+            "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Atorvastatin": {
+          "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.98)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.31",
+            "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        }
+      },
+      "successful_count": 21,
+      "failed_count": 0,
+      "columns": [
+        "smiles",
+        "Predicted Class (Probability)",
+        "Prediction"
+      ]
+    },
+    "hlm": {
+      "molecules": {
+        "Ethanol": {
+          "smiles": "CCO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.98)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.23",
+            "smiles": "CCO"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Methanol": {
+          "smiles": "CO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.98)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CO"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Acetone": {
+          "smiles": "CC(=O)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.98)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.27",
+            "smiles": "CC(=O)C"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Benzaldehyde": {
+          "smiles": "C1=CC=C(C=C1)C=O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.9)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.33",
+            "smiles": "C1=CC=C(C=C1)C=O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Phenol": {
+          "smiles": "C1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.81)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.35",
+            "smiles": "C1=CC=C(C=C1)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Toluene": {
+          "smiles": "CC1=CC=CC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.82)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.35",
+            "smiles": "CC1=CC=CC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Aspirin": {
+          "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.9)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.39",
+            "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Caffeine": {
+          "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.95)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.6",
+            "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Ibuprofen": {
+          "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.99)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.6",
+            "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Paracetamol": {
+          "smiles": "CC(=O)NC1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.99)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.57",
+            "smiles": "CC(=O)NC1=CC=C(C=C1)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Metformin": {
+          "smiles": "CN(C)C(=N)NC(=N)N",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.24",
+            "smiles": "CN(C)C(=N)NC(=N)N"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Warfarin": {
+          "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.87)",
+            "Prediction": "unstable",
+            "Tanimoto Similarity": "0.57",
+            "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Pyridine": {
+          "smiles": "C1=CC=NC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.89)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.22",
+            "smiles": "C1=CC=NC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Imidazole": {
+          "smiles": "C1=CN=CN1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.94)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.12",
+            "smiles": "C1=CN=CN1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Thiophene": {
+          "smiles": "C1=CSC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.84)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.15",
+            "smiles": "C1=CSC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Glycine": {
+          "smiles": "NCC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.99)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.25",
+            "smiles": "NCC(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Acetic_acid": {
+          "smiles": "CC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.99)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.25",
+            "smiles": "CC(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Ethylamine": {
+          "smiles": "CCN",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.99)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.17",
+            "smiles": "CCN"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Diethyl_ether": {
+          "smiles": "CCOCC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.88)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.19",
+            "smiles": "CCOCC"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Omeprazole": {
+          "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.65)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.6",
+            "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Atorvastatin": {
+          "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.81)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.28",
+            "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        }
+      },
+      "successful_count": 21,
+      "failed_count": 0,
+      "columns": [
+        "smiles",
+        "Predicted Class (Probability)",
+        "Prediction"
+      ]
+    },
+    "pampa": {
+      "molecules": {
+        "Ethanol": {
+          "smiles": "CCO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "low or moderate permeability",
+            "Tanimoto Similarity": "0.18",
+            "smiles": "CCO"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Methanol": {
+          "smiles": "CO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "low or moderate permeability",
+            "Tanimoto Similarity": "0.11",
+            "smiles": "CO"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Acetone": {
+          "smiles": "CC(=O)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.99)",
+            "Prediction": "low or moderate permeability",
+            "Tanimoto Similarity": "0.23",
+            "smiles": "CC(=O)C"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Benzaldehyde": {
+          "smiles": "C1=CC=C(C=C1)C=O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.99)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.27",
+            "smiles": "C1=CC=C(C=C1)C=O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Phenol": {
+          "smiles": "C1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.99)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.33",
+            "smiles": "C1=CC=C(C=C1)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Toluene": {
+          "smiles": "CC1=CC=CC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.88)",
+            "Prediction": "low or moderate permeability",
+            "Tanimoto Similarity": "0.32",
+            "smiles": "CC1=CC=CC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Aspirin": {
+          "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "low or moderate permeability",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Caffeine": {
+          "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.98)",
+            "Prediction": "low or moderate permeability",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Ibuprofen": {
+          "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "low or moderate permeability",
+            "Tanimoto Similarity": "0.39",
+            "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Paracetamol": {
+          "smiles": "CC(=O)NC1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "low or moderate permeability",
+            "Tanimoto Similarity": "0.64",
+            "smiles": "CC(=O)NC1=CC=C(C=C1)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Metformin": {
+          "smiles": "CN(C)C(=N)NC(=N)N",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "low or moderate permeability",
+            "Tanimoto Similarity": "0.2",
+            "smiles": "CN(C)C(=N)NC(=N)N"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Warfarin": {
+          "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.9)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.35",
+            "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Pyridine": {
+          "smiles": "C1=CC=NC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.35",
+            "smiles": "C1=CC=NC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Imidazole": {
+          "smiles": "C1=CN=CN1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "low or moderate permeability",
+            "Tanimoto Similarity": "0.19",
+            "smiles": "C1=CN=CN1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Thiophene": {
+          "smiles": "C1=CSC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.91)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "C1=CSC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Glycine": {
+          "smiles": "NCC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "low or moderate permeability",
+            "Tanimoto Similarity": "0.23",
+            "smiles": "NCC(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Acetic_acid": {
+          "smiles": "CC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "low or moderate permeability",
+            "Tanimoto Similarity": "0.22",
+            "smiles": "CC(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Ethylamine": {
+          "smiles": "CCN",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "low or moderate permeability",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CCN"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Diethyl_ether": {
+          "smiles": "CCOCC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CCOCC"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Omeprazole": {
+          "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.98)",
+            "Prediction": "high permeability",
+            "Tanimoto Similarity": "0.6",
+            "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Atorvastatin": {
+          "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "low or moderate permeability",
+            "Tanimoto Similarity": "0.28",
+            "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        }
+      },
+      "successful_count": 21,
+      "failed_count": 0,
+      "columns": [
+        "smiles",
+        "Predicted Class (Probability)",
+        "Prediction"
+      ]
+    },
+    "pampa50": {
+      "molecules": {
+        "Ethanol": {
+          "smiles": "CCO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.98)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.17",
+            "smiles": "CCO"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Methanol": {
+          "smiles": "CO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.92)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.09",
+            "smiles": "CO"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Acetone": {
+          "smiles": "CC(=O)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.98)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.23",
+            "smiles": "CC(=O)C"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Benzaldehyde": {
+          "smiles": "C1=CC=C(C=C1)C=O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.27",
+            "smiles": "C1=CC=C(C=C1)C=O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Phenol": {
+          "smiles": "C1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.33",
+            "smiles": "C1=CC=C(C=C1)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Toluene": {
+          "smiles": "CC1=CC=CC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.31",
+            "smiles": "CC1=CC=CC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Aspirin": {
+          "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.96)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Caffeine": {
+          "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.88)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Ibuprofen": {
+          "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.3",
+            "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Paracetamol": {
+          "smiles": "CC(=O)NC1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.89)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.64",
+            "smiles": "CC(=O)NC1=CC=C(C=C1)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Metformin": {
+          "smiles": "CN(C)C(=N)NC(=N)N",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.16",
+            "smiles": "CN(C)C(=N)NC(=N)N"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Warfarin": {
+          "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.94)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.26",
+            "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Pyridine": {
+          "smiles": "C1=CC=NC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.21",
+            "smiles": "C1=CC=NC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Imidazole": {
+          "smiles": "C1=CN=CN1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.98)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "C1=CN=CN1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Thiophene": {
+          "smiles": "C1=CSC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.11",
+            "smiles": "C1=CSC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Glycine": {
+          "smiles": "NCC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.19",
+            "smiles": "NCC(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Acetic_acid": {
+          "smiles": "CC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.22",
+            "smiles": "CC(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Ethylamine": {
+          "smiles": "CCN",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.11",
+            "smiles": "CCN"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Diethyl_ether": {
+          "smiles": "CCOCC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CCOCC"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Omeprazole": {
+          "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.6",
+            "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Atorvastatin": {
+          "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.97)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.31",
+            "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        }
+      },
+      "successful_count": 21,
+      "failed_count": 0,
+      "columns": [
+        "smiles",
+        "Predicted Class (Probability)",
+        "Prediction"
+      ]
+    },
+    "pampabbb": {
+      "molecules": {
+        "Ethanol": {
+          "smiles": "CCO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.97)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.17",
+            "smiles": "CCO"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Methanol": {
+          "smiles": "CO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.1",
+            "smiles": "CO"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Acetone": {
+          "smiles": "CC(=O)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.61)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.24",
+            "smiles": "CC(=O)C"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Benzaldehyde": {
+          "smiles": "C1=CC=C(C=C1)C=O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.88)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.28",
+            "smiles": "C1=CC=C(C=C1)C=O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Phenol": {
+          "smiles": "C1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.82)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.3",
+            "smiles": "C1=CC=C(C=C1)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Toluene": {
+          "smiles": "CC1=CC=CC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.6)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.35",
+            "smiles": "CC1=CC=CC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Aspirin": {
+          "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.98)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.51",
+            "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Caffeine": {
+          "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.92)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "1.0",
+            "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Ibuprofen": {
+          "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.6)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.33",
+            "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Paracetamol": {
+          "smiles": "CC(=O)NC1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.82)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "1.0",
+            "smiles": "CC(=O)NC1=CC=C(C=C1)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Metformin": {
+          "smiles": "CN(C)C(=N)NC(=N)N",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.94)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CN(C)C(=N)NC(=N)N"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Warfarin": {
+          "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.58)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.29",
+            "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Pyridine": {
+          "smiles": "C1=CC=NC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.85)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.21",
+            "smiles": "C1=CC=NC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Imidazole": {
+          "smiles": "C1=CN=CN1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.99)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.13",
+            "smiles": "C1=CN=CN1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Thiophene": {
+          "smiles": "C1=CSC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.78)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.11",
+            "smiles": "C1=CSC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Glycine": {
+          "smiles": "NCC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.33",
+            "smiles": "NCC(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Acetic_acid": {
+          "smiles": "CC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.99)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.27",
+            "smiles": "CC(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Ethylamine": {
+          "smiles": "CCN",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.94)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CCN"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Diethyl_ether": {
+          "smiles": "CCOCC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.79)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.13",
+            "smiles": "CCOCC"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Omeprazole": {
+          "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.71)",
+            "Prediction": "moderate or high permeability",
+            "Tanimoto Similarity": "0.33",
+            "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Atorvastatin": {
+          "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.92)",
+            "Prediction": "low permeability",
+            "Tanimoto Similarity": "0.29",
+            "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        }
+      },
+      "successful_count": 21,
+      "failed_count": 0,
+      "columns": [
+        "smiles",
+        "Predicted Class (Probability)",
+        "Prediction"
+      ]
+    },
+    "solubility": {
+      "molecules": {
+        "Ethanol": {
+          "smiles": "CCO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.18",
+            "smiles": "CCO"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Methanol": {
+          "smiles": "CO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.17",
+            "smiles": "CO"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Acetone": {
+          "smiles": "CC(=O)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.99)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.31",
+            "smiles": "CC(=O)C"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Benzaldehyde": {
+          "smiles": "C1=CC=C(C=C1)C=O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.99)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "C1=CC=C(C=C1)C=O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Phenol": {
+          "smiles": "C1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.92)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.33",
+            "smiles": "C1=CC=C(C=C1)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Toluene": {
+          "smiles": "CC1=CC=CC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.99)",
+            "Prediction": "low solubility",
+            "Tanimoto Similarity": "0.36",
+            "smiles": "CC1=CC=CC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Aspirin": {
+          "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.98)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Caffeine": {
+          "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.4",
+            "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Ibuprofen": {
+          "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.39",
+            "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Paracetamol": {
+          "smiles": "CC(=O)NC1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.64",
+            "smiles": "CC(=O)NC1=CC=C(C=C1)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Metformin": {
+          "smiles": "CN(C)C(=N)NC(=N)N",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.83)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.2",
+            "smiles": "CN(C)C(=N)NC(=N)N"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Warfarin": {
+          "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.69)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.35",
+            "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Pyridine": {
+          "smiles": "C1=CC=NC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.99)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.35",
+            "smiles": "C1=CC=NC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Imidazole": {
+          "smiles": "C1=CN=CN1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.99)",
+            "Prediction": "low solubility",
+            "Tanimoto Similarity": "0.19",
+            "smiles": "C1=CN=CN1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Thiophene": {
+          "smiles": "C1=CSC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.68)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "C1=CSC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Glycine": {
+          "smiles": "NCC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (1.0)",
+            "Prediction": "low solubility",
+            "Tanimoto Similarity": "0.24",
+            "smiles": "NCC(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Acetic_acid": {
+          "smiles": "CC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.79)",
+            "Prediction": "low solubility",
+            "Tanimoto Similarity": "0.38",
+            "smiles": "CC(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Ethylamine": {
+          "smiles": "CCN",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CCN"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Diethyl_ether": {
+          "smiles": "CCOCC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CCOCC"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Omeprazole": {
+          "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.98)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.6",
+            "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Atorvastatin": {
+          "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (1.0)",
+            "Prediction": "high solubility",
+            "Tanimoto Similarity": "0.31",
+            "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        }
+      },
+      "successful_count": 21,
+      "failed_count": 0,
+      "columns": [
+        "smiles",
+        "Predicted Class (Probability)",
+        "Prediction"
+      ]
+    },
+    "hlc": {
+      "molecules": {
+        "Ethanol": {
+          "smiles": "CCO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.65)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.1",
+            "smiles": "CCO"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Methanol": {
+          "smiles": "CO",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.66)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.08",
+            "smiles": "CO"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Acetone": {
+          "smiles": "CC(=O)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.66)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.11",
+            "smiles": "CC(=O)C"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Benzaldehyde": {
+          "smiles": "C1=CC=C(C=C1)C=O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.62)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.3",
+            "smiles": "C1=CC=C(C=C1)C=O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Phenol": {
+          "smiles": "C1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.68)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.2",
+            "smiles": "C1=CC=C(C=C1)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Toluene": {
+          "smiles": "CC1=CC=CC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.74)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.29",
+            "smiles": "CC1=CC=CC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Aspirin": {
+          "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.62)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.2",
+            "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Caffeine": {
+          "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.68)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.22",
+            "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Ibuprofen": {
+          "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.71)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.16",
+            "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Paracetamol": {
+          "smiles": "CC(=O)NC1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.68)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.25",
+            "smiles": "CC(=O)NC1=CC=C(C=C1)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Metformin": {
+          "smiles": "CN(C)C(=N)NC(=N)N",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.73)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CN(C)C(=N)NC(=N)N"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Warfarin": {
+          "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.7)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.19",
+            "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Pyridine": {
+          "smiles": "C1=CC=NC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.72)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.17",
+            "smiles": "C1=CC=NC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Imidazole": {
+          "smiles": "C1=CN=CN1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.73)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.1",
+            "smiles": "C1=CN=CN1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Thiophene": {
+          "smiles": "C1=CSC=C1",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.67)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.07",
+            "smiles": "C1=CSC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Glycine": {
+          "smiles": "NCC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.72)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.11",
+            "smiles": "NCC(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Acetic_acid": {
+          "smiles": "CC(=O)O",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.68)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.11",
+            "smiles": "CC(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Ethylamine": {
+          "smiles": "CCN",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.69)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.07",
+            "smiles": "CCN"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Diethyl_ether": {
+          "smiles": "CCOCC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.66)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.09",
+            "smiles": "CCOCC"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Omeprazole": {
+          "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "1 (0.52)",
+            "Prediction": "unstable",
+            "Tanimoto Similarity": "0.21",
+            "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Atorvastatin": {
+          "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4",
+          "status_code": 200,
+          "data": {
+            "Predicted Class (Probability)": "0 (0.72)",
+            "Prediction": "stable",
+            "Tanimoto Similarity": "0.22",
+            "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        }
+      },
+      "successful_count": 21,
+      "failed_count": 0,
+      "columns": [
+        "smiles",
+        "Predicted Class (Probability)",
+        "Prediction"
+      ]
+    },
+    "cyp450": {
+      "molecules": {
+        "Ethanol": {
+          "smiles": "CCO",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (0.99)",
+            "CYP2C9_subs": "0 (0.88)",
+            "CYP2D6_inhib": "0 (0.78)",
+            "CYP2D6_subs": "0 (0.73)",
+            "CYP3A4_inhib": "0 (0.83)",
+            "CYP3A4_subs": "0 (0.91)",
+            "Tanimoto Similarity": "0.28",
+            "smiles": "CCO"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Methanol": {
+          "smiles": "CO",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (0.99)",
+            "CYP2C9_subs": "0 (0.92)",
+            "CYP2D6_inhib": "0 (0.77)",
+            "CYP2D6_subs": "0 (0.83)",
+            "CYP3A4_inhib": "0 (0.82)",
+            "CYP3A4_subs": "0 (0.95)",
+            "Tanimoto Similarity": "0.14",
+            "smiles": "CO"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Acetone": {
+          "smiles": "CC(=O)C",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (0.99)",
+            "CYP2C9_subs": "0 (0.87)",
+            "CYP2D6_inhib": "0 (0.83)",
+            "CYP2D6_subs": "0 (0.79)",
+            "CYP3A4_inhib": "0 (0.83)",
+            "CYP3A4_subs": "0 (0.93)",
+            "Tanimoto Similarity": "0.27",
+            "smiles": "CC(=O)C"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Benzaldehyde": {
+          "smiles": "C1=CC=C(C=C1)C=O",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (0.86)",
+            "CYP2C9_subs": "0 (0.71)",
+            "CYP2D6_inhib": "0 (0.72)",
+            "CYP2D6_subs": "0 (0.7)",
+            "CYP3A4_inhib": "0 (0.68)",
+            "CYP3A4_subs": "0 (0.79)",
+            "Tanimoto Similarity": "0.5",
+            "smiles": "C1=CC=C(C=C1)C=O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Phenol": {
+          "smiles": "C1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (0.91)",
+            "CYP2C9_subs": "0 (0.74)",
+            "CYP2D6_inhib": "0 (0.72)",
+            "CYP2D6_subs": "0 (0.73)",
+            "CYP3A4_inhib": "0 (0.64)",
+            "CYP3A4_subs": "0 (0.76)",
+            "Tanimoto Similarity": "0.58",
+            "smiles": "C1=CC=C(C=C1)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Toluene": {
+          "smiles": "CC1=CC=CC=C1",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (0.88)",
+            "CYP2C9_subs": "0 (0.74)",
+            "CYP2D6_inhib": "0 (0.67)",
+            "CYP2D6_subs": "0 (0.72)",
+            "CYP3A4_inhib": "0 (0.71)",
+            "CYP3A4_subs": "0 (0.77)",
+            "Tanimoto Similarity": "0.36",
+            "smiles": "CC1=CC=CC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Aspirin": {
+          "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (0.86)",
+            "CYP2C9_subs": "0 (0.66)",
+            "CYP2D6_inhib": "0 (0.85)",
+            "CYP2D6_subs": "0 (0.79)",
+            "CYP3A4_inhib": "0 (0.75)",
+            "CYP3A4_subs": "0 (0.81)",
+            "Tanimoto Similarity": "1.0",
+            "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Caffeine": {
+          "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (0.8)",
+            "CYP2C9_subs": "0 (0.8)",
+            "CYP2D6_inhib": "0 (0.77)",
+            "CYP2D6_subs": "0 (0.75)",
+            "CYP3A4_inhib": "0 (0.73)",
+            "CYP3A4_subs": "0 (0.78)",
+            "Tanimoto Similarity": "1.0",
+            "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Ibuprofen": {
+          "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (0.82)",
+            "CYP2C9_subs": "0 (0.66)",
+            "CYP2D6_inhib": "0 (0.78)",
+            "CYP2D6_subs": "0 (0.66)",
+            "CYP3A4_inhib": "0 (0.75)",
+            "CYP3A4_subs": "0 (0.78)",
+            "Tanimoto Similarity": "1.0",
+            "smiles": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Paracetamol": {
+          "smiles": "CC(=O)NC1=CC=C(C=C1)O",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (0.91)",
+            "CYP2C9_subs": "0 (0.79)",
+            "CYP2D6_inhib": "0 (0.88)",
+            "CYP2D6_subs": "0 (0.88)",
+            "CYP3A4_inhib": "0 (0.78)",
+            "CYP3A4_subs": "0 (0.81)",
+            "Tanimoto Similarity": "1.0",
+            "smiles": "CC(=O)NC1=CC=C(C=C1)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Metformin": {
+          "smiles": "CN(C)C(=N)NC(=N)N",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (0.91)",
+            "CYP2C9_subs": "0 (0.88)",
+            "CYP2D6_inhib": "0 (0.72)",
+            "CYP2D6_subs": "0 (0.87)",
+            "CYP3A4_inhib": "0 (0.83)",
+            "CYP3A4_subs": "0 (0.92)",
+            "Tanimoto Similarity": "1.0",
+            "smiles": "CN(C)C(=N)NC(=N)N"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Warfarin": {
+          "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (0.66)",
+            "CYP2C9_subs": "0 (0.53)",
+            "CYP2D6_inhib": "0 (0.74)",
+            "CYP2D6_subs": "0 (0.61)",
+            "CYP3A4_inhib": "0 (0.64)",
+            "CYP3A4_subs": "0 (0.57)",
+            "Tanimoto Similarity": "0.77",
+            "smiles": "CC(=O)CC(C1=CC=CC=C1)C2=C(C3=CC=CC=C3OC2=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Pyridine": {
+          "smiles": "C1=CC=NC=C1",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (0.91)",
+            "CYP2C9_subs": "0 (0.79)",
+            "CYP2D6_inhib": "0 (0.66)",
+            "CYP2D6_subs": "0 (0.77)",
+            "CYP3A4_inhib": "0 (0.69)",
+            "CYP3A4_subs": "0 (0.78)",
+            "Tanimoto Similarity": "0.3",
+            "smiles": "C1=CC=NC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Imidazole": {
+          "smiles": "C1=CN=CN1",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (0.91)",
+            "CYP2C9_subs": "0 (0.81)",
+            "CYP2D6_inhib": "0 (0.72)",
+            "CYP2D6_subs": "0 (0.78)",
+            "CYP3A4_inhib": "0 (0.74)",
+            "CYP3A4_subs": "0 (0.83)",
+            "Tanimoto Similarity": "0.17",
+            "smiles": "C1=CN=CN1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Thiophene": {
+          "smiles": "C1=CSC=C1",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (0.93)",
+            "CYP2C9_subs": "0 (0.76)",
+            "CYP2D6_inhib": "0 (0.69)",
+            "CYP2D6_subs": "0 (0.73)",
+            "CYP3A4_inhib": "0 (0.73)",
+            "CYP3A4_subs": "0 (0.8)",
+            "Tanimoto Similarity": "0.16",
+            "smiles": "C1=CSC=C1"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Glycine": {
+          "smiles": "NCC(=O)O",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (0.98)",
+            "CYP2C9_subs": "0 (0.78)",
+            "CYP2D6_inhib": "0 (0.88)",
+            "CYP2D6_subs": "0 (0.81)",
+            "CYP3A4_inhib": "0 (0.71)",
+            "CYP3A4_subs": "0 (0.93)",
+            "Tanimoto Similarity": "0.53",
+            "smiles": "NCC(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Acetic_acid": {
+          "smiles": "CC(=O)O",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (1.0)",
+            "CYP2C9_subs": "0 (0.91)",
+            "CYP2D6_inhib": "0 (0.89)",
+            "CYP2D6_subs": "0 (0.89)",
+            "CYP3A4_inhib": "0 (0.84)",
+            "CYP3A4_subs": "0 (0.94)",
+            "Tanimoto Similarity": "0.3",
+            "smiles": "CC(=O)O"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Ethylamine": {
+          "smiles": "CCN",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (0.99)",
+            "CYP2C9_subs": "0 (0.87)",
+            "CYP2D6_inhib": "0 (0.75)",
+            "CYP2D6_subs": "0 (0.8)",
+            "CYP3A4_inhib": "0 (0.8)",
+            "CYP3A4_subs": "0 (0.93)",
+            "Tanimoto Similarity": "0.36",
+            "smiles": "CCN"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Diethyl_ether": {
+          "smiles": "CCOCC",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (0.98)",
+            "CYP2C9_subs": "0 (0.83)",
+            "CYP2D6_inhib": "0 (0.74)",
+            "CYP2D6_subs": "0 (0.76)",
+            "CYP3A4_inhib": "0 (0.8)",
+            "CYP3A4_subs": "0 (0.89)",
+            "Tanimoto Similarity": "0.22",
+            "smiles": "CCOCC"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Omeprazole": {
+          "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "0 (0.66)",
+            "CYP2C9_subs": "0 (0.63)",
+            "CYP2D6_inhib": "0 (0.63)",
+            "CYP2D6_subs": "0 (0.63)",
+            "CYP3A4_inhib": "0 (0.56)",
+            "CYP3A4_subs": "0 (0.56)",
+            "Tanimoto Similarity": "1.0",
+            "smiles": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=CC(=C3)OC"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        },
+        "Atorvastatin": {
+          "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4",
+          "status_code": 200,
+          "data": {
+            "CYP2C9_inhib": "1 (0.51)",
+            "CYP2C9_subs": "0 (0.56)",
+            "CYP2D6_inhib": "0 (0.57)",
+            "CYP2D6_subs": "0 (0.61)",
+            "CYP3A4_inhib": "0 (0.51)",
+            "CYP3A4_subs": "1 (0.56)",
+            "Tanimoto Similarity": "1.0",
+            "smiles": "CC(C)C1=C(C(=C(N1CCC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F)C3=CC=CC=C3)C(=O)NC4=CC=CC=C4"
+          },
+          "hasErrors": false,
+          "errorMessages": []
+        }
+      },
+      "successful_count": 21,
+      "failed_count": 0,
+      "columns": [
+        "smiles",
+        "CYP2C9_inhib",
+        "CYP2C9_subs",
+        "CYP2D6_inhib",
+        "CYP2D6_subs",
+        "CYP3A4_inhib",
+        "CYP3A4_subs"
+      ]
+    }
+  },
+  "error_handling_tests": {
+    "rlm_Invalid_random": {
+      "smiles": "INVALID_SMILES_12345",
+      "status_code": 418,
+      "response": "<!doctype html>\n<html lang=en>\n<title>418 I&#39;m a teapot</title>\n<h1>I&#39;m a teapot</h1>\n<p>There was an unknown error.</p>\n"
+    },
+    "rlm_Invalid_chars": {
+      "smiles": "XYZ123!!!",
+      "status_code": 418,
+      "response": "<!doctype html>\n<html lang=en>\n<title>418 I&#39;m a teapot</title>\n<h1>I&#39;m a teapot</h1>\n<p>There was an unknown error.</p>\n"
+    },
+    "hlm_Invalid_random": {
+      "smiles": "INVALID_SMILES_12345",
+      "status_code": 418,
+      "response": "<!doctype html>\n<html lang=en>\n<title>418 I&#39;m a teapot</title>\n<h1>I&#39;m a teapot</h1>\n<p>There was an unknown error.</p>\n"
+    },
+    "hlm_Invalid_chars": {
+      "smiles": "XYZ123!!!",
+      "status_code": 418,
+      "response": "<!doctype html>\n<html lang=en>\n<title>418 I&#39;m a teapot</title>\n<h1>I&#39;m a teapot</h1>\n<p>There was an unknown error.</p>\n"
+    },
+    "no_model": {
+      "status_code": 200,
+      "response": {
+        "errorMessages": "Please choose at least one model.",
+        "hasErrors": true
+      }
+    },
+    "no_smiles": {
+      "status_code": 200,
+      "response": {
+        "errorMessages": "Please provide at least one input molecule.",
+        "hasErrors": true
+      }
+    }
+  },
+  "summary": {
+    "models_successful": [
+      "rlm",
+      "hlm",
+      "pampa",
+      "pampa50",
+      "pampabbb",
+      "solubility",
+      "hlc",
+      "cyp450"
+    ],
+    "models_failed": []
+  }
+}

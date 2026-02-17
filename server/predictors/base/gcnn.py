@@ -1,19 +1,22 @@
 from numpy import array
 import numpy as np
 import pandas as pd
-from rdkit.Chem.rdchem import Mol
-from chemprop.data.utils import get_data, get_data_from_smiles, get_data_from_smiles_with_additional_features
-from chemprop.data import MoleculeDataLoader, MoleculeDataset
-from chemprop.train import predict
-from .base import PredictorBase
-#from ..utilities.utilities import get_interpretation
+from rdkit import Chem
 from typing import Tuple
 from datetime import timezone
 import datetime
+import torch
+
+from chemprop.data import MoleculeDatapoint, MoleculeDataset, build_dataloader
+from chemprop.nn import BinaryClassificationFFN
+from chemprop.models import MPNN
+
+from .base import PredictorBase
+
 
 class GcnnBase(PredictorBase):
 
-    def __init__(self, kekule_smiles: array = None, additional_features: array = None, column_dict_key = 'GCNN', columns_dict_order: int = 1, smiles: array = None):
+    def __init__(self, kekule_smiles: array = None, additional_features: array = None, column_dict_key='GCNN', columns_dict_order: int = 1, smiles: array = None):
         PredictorBase.__init__(self)
 
         if kekule_smiles is None or len(kekule_smiles) == 0:
@@ -35,84 +38,108 @@ class GcnnBase(PredictorBase):
         self.model_name = None
         self.model_version = None
 
-    def gcnn_predict(self, model, scaler) -> Tuple[array, array]:
+    def gcnn_predict(self, model: MPNN, scaler=None) -> Tuple[array, array]:
         """
-        Function that handles graph convolutinal neural network predictions, enters them into the predictions DataFrame and reports any errors
+        Function that handles graph convolutional neural network predictions using Chemprop 2.x
 
         Parameters:
-            models (model): model
-            scaler  (scalar): scalar
+            model (MPNN): Chemprop 2.x MPNN model
+            scaler: Optional scaler (may be embedded in model checkpoint)
 
         Returns:
             predictions, prediction_labels (Tuple[array, array]): predictions and labels
         """
 
-        smiles = self.kekule_smiles.tolist()
+        smiles_list = self.kekule_smiles.tolist()
         feat = self.additional_features
 
-        if feat is not None:
-            # feat2 = feat1.copy()
-            # additional_features = list(zip(feat, feat2)) # additional features >1
-            # print(f'Additional Features: {additional_features}')
-            full_data = get_data_from_smiles_with_additional_features(smiles=smiles, features=feat)
-        else:
-            full_data = get_data_from_smiles(smiles=smiles, skip_invalid_smiles=False)
-
+        # Build datapoints for each SMILES
+        datapoints = []
         full_to_valid_indices = {}
         valid_index = 0
-        for full_index in range(len(full_data)):
-            if full_data[full_index].mol is not None:
+
+        for full_index, smi in enumerate(smiles_list):
+            mol = Chem.MolFromSmiles(smi)
+            if mol is not None:
+                # Create datapoint with optional additional features
+                if feat is not None:
+                    dp = MoleculeDatapoint(
+                        mol=mol,
+                        x_d=feat[full_index] if full_index < len(feat) else None
+                    )
+                else:
+                    dp = MoleculeDatapoint(mol=mol)
+                datapoints.append(dp)
                 full_to_valid_indices[full_index] = valid_index
                 valid_index += 1
 
-        data = MoleculeDataset([full_data[i] for i in sorted(full_to_valid_indices.keys())])
+        # Create dataset and dataloader
+        # Use smaller batch size for small datasets to avoid dropping incomplete batches
+        dataset = MoleculeDataset(datapoints)
+        batch_size = min(64, len(dataset)) if len(dataset) > 0 else 1
+        dataloader = build_dataloader(dataset, batch_size=batch_size, num_workers=0, shuffle=False)
 
-        # create data loader
-        data_loader = MoleculeDataLoader(
-            dataset=data,
-            batch_size=1,
-            num_workers=0
-        )
+        # Run prediction using Chemprop 2.x API
+        # In Chemprop 2.x, we iterate through batches and call the model directly
+        model.eval()
+        all_preds = []
+        
+        with torch.no_grad():
+            for batch in dataloader:
+                # Unpack TrainingBatch namedtuple — MPNN.forward() expects (bmg, V_d, X_d),
+                # not the full TrainingBatch which also contains targets, weights, masks
+                bmg, V_d, X_d, *_ = batch
+                batch_preds = model(bmg, V_d, X_d)
+                # If output is a tensor, convert to numpy and apply sigmoid if needed
+                if isinstance(batch_preds, torch.Tensor):
+                    # BinaryClassificationFFN.forward() already applies sigmoid,
+                    # so we do NOT apply it again here (double sigmoid would compress
+                    # all predictions toward 0.5, breaking classification)
+                    batch_preds = batch_preds.cpu().numpy()
+                else:
+                    batch_preds = np.array(batch_preds)
+                
+                # Handle multi-dimensional output (batch_size x num_tasks)
+                if len(batch_preds.shape) > 1:
+                    # For binary classification, take the first (and only) task
+                    batch_preds = batch_preds[:, 0] if batch_preds.shape[1] > 0 else batch_preds.flatten()
+                else:
+                    batch_preds = batch_preds.flatten()
+                
+                all_preds.extend(batch_preds.tolist())
 
-        model_preds = predict(
-            model=model,
-            data_loader=data_loader,
-            scaler=scaler
-        )
-
-        predictions = np.ma.empty(len(full_data))
+        # Map predictions back to original indices
+        predictions = np.ma.empty(len(smiles_list))
         predictions.mask = True
 
-        labels = np.ma.empty(len(full_data), dtype=np.int32)
+        labels = np.ma.empty(len(smiles_list), dtype=np.int32)
         labels.mask = True
 
-        for key in full_to_valid_indices.keys():
-            full_index = int(key)
-            predictions[full_index] = model_preds[full_to_valid_indices[key]][0]
-            labels[full_index] = np.round(model_preds[full_to_valid_indices[key]][0], 0)
+        for full_index, valid_idx in full_to_valid_indices.items():
+            if valid_idx < len(all_preds):
+                pred_value = float(all_preds[valid_idx])
+                predictions[full_index] = pred_value
+                labels[full_index] = int(np.round(pred_value, 0))
 
+        # Record raw predictions if smiles provided
         if self.smiles is not None:
             dt = datetime.datetime.now(timezone.utc)
             utc_time = dt.replace(tzinfo=timezone.utc)
             utc_timestamp = utc_time.timestamp()
 
-            self.raw_predictions_df = self.raw_predictions_df.append(
+            self.raw_predictions_df = pd.concat([
+                self.raw_predictions_df,
                 pd.DataFrame(
-                    { 'SMILES': self.smiles, 'model': self.model_name, 'prediction': predictions, 'timestamp': utc_timestamp }
-                ),
-                ignore_index = True
-            )
+                    {'SMILES': self.smiles, 'model': self.model_name, 'prediction': predictions, 'timestamp': utc_timestamp}
+                )
+            ], ignore_index=True)
 
-        # if self.interpret == True:
-        #     intrprt_df = get_interpretation(self.smiles, self.model_name)
-        # else:
-        #     col_names = ['smiles', 'rationale_smiles', 'rationale_score']
-        #     intrprt_df = pd.DataFrame(columns = col_names)
+        # Format predictions for display
+        self.predictions_df[self.column_dict_key] = pd.Series(
+            pd.Series(labels).fillna('').astype(str) + ' (' +
+            pd.Series(np.where(predictions >= 0.5, predictions, (1 - predictions))).round(2).astype(str) + ')'
+        ).str.replace('(nan)', '', regex=False)
 
-
-        #self.predictions_df['smiles'] = pd.Series(np.where(intrprt_df['rationale_scores']>0, intrprt_df['smiles'] + '_' + intrprt_df['rationale_smiles'], intrprt_df['smiles']))
-
-        self.predictions_df[self.column_dict_key] = pd.Series(pd.Series(labels).fillna('').astype(str) + ' (' + pd.Series(np.where(predictions>=0.5, predictions, (1 - predictions))).round(2).astype(str) + ')').str.replace('(nan)', '', regex=False)
         if len(self.predictions_df.index) > len(predictions) or np.ma.count_masked(predictions) > 0:
             self.model_errors.append('graph convolutional neural network')
             self.has_errors = True
