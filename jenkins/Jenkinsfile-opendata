@@ -92,11 +92,12 @@ pipeline {
                 //cleanWs()
                 checkout scm
                 configFileProvider([
-                   configFile(fileId: 'dev-docker-compose.yaml', targetLocation: 'docker-compose.yaml'),
-                   configFile(fileId: 'config.json', targetLocation: 'config.json'),
-                   configFile(fileId: 'deploy.sh', targetLocation: 'deploy.sh')
+                   configFile(fileId: 'dev-docker-compose.yaml', targetLocation: 'jenkins/docker-compose.yaml'),
+                   configFile(fileId: 'config.json', targetLocation: 'jenkins/config.json'),
+                   configFile(fileId: 'deploy.sh', targetLocation: 'jenkins/deploy.sh')
                 ]) {
                     sh  """
+                        cd jenkins
                         chmod 755 config.json
                         /bin/bash deploy.sh
                         docker-compose -p $PROJECT_NAME down -v --rmi all | xargs echo
