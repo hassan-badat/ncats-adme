@@ -6,10 +6,12 @@ This directory contains all Docker-related files for the NCATS ADME application.
 
 | File | Purpose | Use Case |
 |------|---------|----------|
-| `Dockerfile.test` | Autonomous testing with model warmup | CI/CD, model validation |
+| `Dockerfile.test` | Autonomous testing with model warmup | **Local testing only** - not for deployment |
 | `Dockerfile.backend` | Backend API only | Development, API testing |
-| `Dockerfile.ncats` | Full stack (NCATS subdomain) | Production: adme.ncats.nih.gov |
+| `Dockerfile.ncats` | Full stack (NCATS subdomain) | **All deployment environments** - Production: adme.ncats.nih.gov |
 | `Dockerfile.opendata` | Full stack (OpenData subdomain) | Production: opendata.ncats.nih.gov/adme |
+
+**Note:** `Dockerfile.ncats` should be used for all deployment environments. `Dockerfile.test` is only for local testing and model validation.
 
 ## Platform Requirements
 
@@ -17,11 +19,11 @@ All images are built for `linux/amd64` platform because:
 - RDKit and FPSim2 conda packages are not available for ARM64
 - On Apple Silicon Macs, images run via Rosetta 2 emulation
 
-**Known Limitation:** Some scikit-learn models using `pickle.load()` crash under Rosetta 2 emulation due to AVX instruction incompatibility. Use native x86 Linux for full model testing.
-
 ## Quick Start
 
-### Run Autonomous Tests
+### Run Local Tests (Dockerfile.test)
+
+**Note:** `Dockerfile.test` is for local testing only, not for deployment.
 
 ```bash
 cd ncats-adme
@@ -41,13 +43,19 @@ docker build -f docker/Dockerfile.backend -t ncats-adme-backend .
 docker run -p 5000:5000 ncats-adme-backend
 ```
 
-### Build Production Images
+### Build Deployment Images
+
+**For all deployment environments, use `Dockerfile.ncats`:**
 
 ```bash
-# NCATS subdomain
+# Primary deployment image (use for all environments)
 docker build -f docker/Dockerfile.ncats -t ncats-adme-ncats .
+```
 
-# OpenData subdomain
+**For OpenData subdomain specifically:**
+
+```bash
+# OpenData subdomain only
 docker build -f docker/Dockerfile.opendata -t ncats-adme-opendata .
 ```
 
