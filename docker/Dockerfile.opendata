@@ -13,8 +13,7 @@ COPY client ./
 
 RUN npm install
 
-# Build parameter for opendata subdomain
-RUN npx ng build --configuration=production --base-href=/adme/
+RUN npx ng build --configuration=production
 
 FROM continuumio/miniconda3:24.11.1-0
 
