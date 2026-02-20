@@ -1,3 +1,4 @@
+import json as json_module
 import flask
 from flask import request, jsonify, send_from_directory, Response
 import numpy as np
@@ -478,17 +479,33 @@ def ketcher_uploads():
 def send_js(path):
     return send_from_directory('client', path)
 
+@app.route(f'{root_route_path}/assets/data/config.json')
+def serve_config():
+    """Serve client config with apiBaseUrl derived from ROOT_ROUTE_PATH."""
+    config_path = os.path.join(app.static_folder, 'assets', 'data', 'config.json')
+    try:
+        with open(config_path) as f:
+            config = json_module.load(f)
+    except Exception:
+        config = {}
+    config['apiBaseUrl'] = root_route_path + '/' if root_route_path else '/'
+    return jsonify(config)
+
 @app.route(f'{root_route_path}/', defaults={'path': ''})
 @app.route(f'{root_route_path}/<path:path>')
 def return_index(path):
-    # Try to serve as a static file from the client directory first
     if path and '.' in path.split('/')[-1]:
         try:
             return send_from_directory('client', path)
         except Exception:
             pass
-    # Fall back to index.html for SPA routing
-    return app.send_static_file('index.html')
+    # Serve index.html with the base href rewritten to match the deployment path
+    index_path = os.path.join(app.static_folder, 'index.html')
+    with open(index_path) as f:
+        content = f.read()
+    if root_route_path:
+        content = content.replace('<base href="/">', f'<base href="{root_route_path}/">')
+    return Response(content, mimetype='text/html')
 
 
 # app and API health check
