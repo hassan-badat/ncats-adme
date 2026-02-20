@@ -8,6 +8,7 @@
     "build": "ng build",
     "build:production": "ng build --configuration=production",
     "build:embedded": "ng build --configuration=production --base-href=/ && rimraf ../server/client && cpx \"dist/adme-client/browser/**/*\" ../server/client -u",
+    "build:embedded:adme": "ng build --configuration=production --base-href=/adme/ && rimraf ../server/client && cpx \"dist/adme-client/browser/**/*\" ../server/client -u",
     "watch": "ng build --watch --configuration=development",
     "test": "ng test",
     "lint": "ng lint"

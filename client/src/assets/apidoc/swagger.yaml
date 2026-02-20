@@ -10,7 +10,7 @@ info:
     email: adme-ncats@mail.nih.gov
     x-id: https://github.com/ncats/ncats-adme
 host: opendata.ncats.nih.gov
-basePath: /
+basePath: /adme/
 tags:
   - name: predictions
     description: Predictions for different ADME endpoints

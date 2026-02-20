@@ -41,6 +41,9 @@ app = flask.Flask(__name__, static_folder ='./client')
 CORS(app)
 app.config["DEBUG"] = False
 
+global root_route_path
+root_route_path = os.getenv('ROOT_ROUTE_PATH', '')
+
 global data_path
 data_path = os.getenv('DATA_PATH', '')
 
@@ -50,8 +53,8 @@ if data_path != '' and not os.path.isfile(f'{data_path}predictions.csv'):
 # path for mounted volume will be '/data'
 
 # flask swagger configs
-SWAGGER_URL = '/swagger'
-API_URL = '/client/assets/apidoc/swagger.yaml'
+SWAGGER_URL = root_route_path + '/swagger'
+API_URL = root_route_path + '/client/assets/apidoc/swagger.yaml'
 SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
     SWAGGER_URL,
     API_URL,
@@ -61,7 +64,7 @@ SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
 )
 app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 
-@app.route('/api/v1/predict', methods=['GET'])
+@app.route(f'{root_route_path}/api/v1/predict', methods=['GET'])
 def predict():
     response = {}
     model_error = False
@@ -130,7 +133,7 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/api/v1/predict-file', methods=['POST'])
+@app.route(f'{root_route_path}/api/v1/predict-file', methods=['POST'])
 def upload_file():
 
     response = {}
@@ -207,7 +210,7 @@ def upload_file():
         response['errorMessages'] = 'Only csv, txt or smi files can be processed.'
         return jsonify(response)
 
-# @app.route('/api/v1/structure_image/<path:smiles>', methods=['GET'])
+# @app.route(f'{root_route_path}/api/v1/structure_image/<path:smiles>', methods=['GET'])
 # def get_structure_image(smiles):
 #     try:
 #         mol = Chem.MolFromSmiles(smiles)
@@ -218,7 +221,7 @@ def upload_file():
 #     except:
 #         return send_file('./images/no_image_available.png', mimetype='image/png')
 
-@app.route('/api/v1/structure_image/<path:smiles>', methods=['GET'])
+@app.route(f'{root_route_path}/api/v1/structure_image/<path:smiles>', methods=['GET'])
 def get_image(smiles):
         try:
             mol = Chem.MolFromSmiles(smiles)
@@ -229,7 +232,7 @@ def get_image(smiles):
         except:
             return send_file('./images/no_image_available.png', mimetype='image/png')
 
-@app.route('/api/v1/structure_image_glowing', methods=['GET'])
+@app.route(f'{root_route_path}/api/v1/structure_image_glowing', methods=['GET'])
 def get_glowing_image():
         smiles = request.args.getlist('smiles')
         smiles = [string for string in smiles if string != '']
@@ -345,7 +348,7 @@ def predict_df(df, smi_column_name, models):
 
     return response
 
-@app.route('/ketcher/info', methods=['GET'])
+@app.route(f'{root_route_path}/ketcher/info', methods=['GET'])
 def ketcher_info():
     response = {
         "imago_versions": [],
@@ -354,7 +357,7 @@ def ketcher_info():
 
     return jsonify(response)
 
-@app.route('/ketcher/indigo/layout', methods=['POST'])
+@app.route(f'{root_route_path}/ketcher/indigo/layout', methods=['POST'])
 def ketcher_layout():
 
     mol = Chem.MolFromSmiles(request.json['struct'])
@@ -380,7 +383,7 @@ def ketcher_layout():
         }
         return response, 400
 
-@app.route('/ketcher/indigo/clean', methods=['POST'])
+@app.route(f'{root_route_path}/ketcher/indigo/clean', methods=['POST'])
 def ketcher_clean():
 
     mol = Chem.MolFromMolBlock(request.json['struct'])
@@ -401,7 +404,7 @@ def ketcher_clean():
         }
         return response, 400
 
-@app.route('/ketcher/indigo/aromatize', methods=['POST'])
+@app.route(f'{root_route_path}/ketcher/indigo/aromatize', methods=['POST'])
 def ketcher_aromatize():
 
     mol = Chem.MolFromMolBlock(request.json['struct'])
@@ -422,7 +425,7 @@ def ketcher_aromatize():
         }
         return response, 400
 
-@app.route('/ketcher/indigo/dearomatize', methods=['POST'])
+@app.route(f'{root_route_path}/ketcher/indigo/dearomatize', methods=['POST'])
 def ketcher_dearomatize():
 
     mol = Chem.MolFromMolBlock(request.json['struct'])
@@ -443,40 +446,40 @@ def ketcher_dearomatize():
         }
         return response, 400
 
-@app.route('/ketcher/indigo/calculate_cip', methods=['POST'])
+@app.route(f'{root_route_path}/ketcher/indigo/calculate_cip', methods=['POST'])
 def ketcher_calculate_cip():
     response = {
         'error': 'This feature is not supported at the moment'
     }
     return response, 501
 
-@app.route('/ketcher/indigo/check', methods=['POST'])
+@app.route(f'{root_route_path}/ketcher/indigo/check', methods=['POST'])
 def ketcher_chek():
     response = {
         'error': 'This feature is not supported at the moment'
     }
     return response, 501
 
-@app.route('/ketcher/indigo/calculate', methods=['POST'])
+@app.route(f'{root_route_path}/ketcher/indigo/calculate', methods=['POST'])
 def ketcher_calculate():
     response = {
         'error': 'This feature is not supported at the moment'
     }
     return response, 501
 
-@app.route('/ketcher/imago/uploads', methods=['POST'])
+@app.route(f'{root_route_path}/ketcher/imago/uploads', methods=['POST'])
 def ketcher_uploads():
     response = {
         'error': 'This feature is not supported at the moment'
     }
     return response, 501
 
-@app.route('/client/<path:path>')
+@app.route(f'{root_route_path}/client/<path:path>')
 def send_js(path):
     return send_from_directory('client', path)
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
+@app.route(f'{root_route_path}/', defaults={'path': ''})
+@app.route(f'{root_route_path}/<path:path>')
 def return_index(path):
     # Try to serve as a static file from the client directory first
     if path and '.' in path.split('/')[-1]:
@@ -498,7 +501,7 @@ def api_available():
 health.add_check(api_available)
 
 # Model loading status endpoint
-@app.route('/api/model-status', methods=['GET'])
+@app.route(f'{root_route_path}/api/model-status', methods=['GET'])
 def get_model_status():
     """Get the loading status of lazy-loaded models."""
     return jsonify({
@@ -509,7 +512,7 @@ def get_model_status():
         ]
     })
 
-@app.route('/api/model-status/<model_name>', methods=['GET'])
+@app.route(f'{root_route_path}/api/model-status/<model_name>', methods=['GET'])
 def get_specific_model_status(model_name):
     """Get the loading status of a specific model."""
     model_name = model_name.lower()

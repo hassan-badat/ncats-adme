@@ -13,7 +13,7 @@ COPY client ./
 
 RUN npm install
 
-RUN npx ng build --configuration=production
+RUN npx ng build --configuration=production --base-href=/adme/
 
 FROM continuumio/miniconda3:24.11.1-0
 
